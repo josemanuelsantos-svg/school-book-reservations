@@ -704,7 +704,6 @@ function renderStep2() {
                   <div class="book-details">
                     <div class="book-header-line">
                       <span class="book-subject">${book.subject}</span>
-                      ${book.required ? '<span class="badge badge-required">Obligatorio</span>' : '<span class="badge badge-optional" style="border: 1px solid #f59e0b; color: #b45309; background-color:#fffbeb;">Opcional / Optativa</span>'}
                     </div>
                     <h4 class="book-title">${book.title}</h4>
                     <p class="book-publisher">Editorial: ${book.publisher}</p>
@@ -1741,8 +1740,8 @@ window.handleBulkAction = function(action) {
         const r = reservations.find(item => item.id === id);
         if (r) {
           r.status = "Preparado";
-          const emailBody = `Estimado/a ${r.parentName},\n\nNos complace informarle de que el lote de libros reservados para ${r.studentName} ya está preparado.\n\nPuede pasar a recogerlo por la secretaría del centro en horario de 9:00 a 14:00.\n\nAtentamente,\nAdministración del Colegio San Buenaventura`;
-          sendSimulatedEmail(r.parentEmail, emailSubject, emailBody);
+          const emailBody = `Estimado/a ${r.parentName || ''},\n\nNos complace informarle de que el lote de libros reservados para ${r.studentName || ''} ya está preparado.\n\nPuede pasar a recogerlo por la secretaría del centro en horario de 9:00 a 14:00.\n\nAtentamente,\nAdministración del Colegio San Buenaventura`;
+          sendSimulatedEmail(r.parentEmail || '', emailSubject, emailBody);
         }
       });
       
@@ -2060,9 +2059,9 @@ window.sendPickupNotification = function(resId) {
     // Registrar email virtual en simulador
     const settings = DB.getSettings();
     const emailSubject = "Libros listos para recoger - " + settings.schoolName;
-    const emailBody = `Estimado/a ${r.parentName},\n\nNos complace informarle de que el lote de libros reservados para ${r.studentName} ya está preparado.\n\nPuede pasar a recogerlo por la secretaría del centro en horario de 9:00 a 14:00.\n\nAtentamente,\nAdministración del Colegio San Buenaventura`;
+    const emailBody = `Estimado/a ${r.parentName || ''},\n\nNos complace informarle de que el lote de libros reservados para ${r.studentName || ''} ya está preparado.\n\nPuede pasar a recogerlo por la secretaría del centro en horario de 9:00 a 14:00.\n\nAtentamente,\nAdministración del Colegio San Buenaventura`;
     
-    sendSimulatedEmail(r.parentEmail, emailSubject, emailBody);
+    sendSimulatedEmail(r.parentEmail || '', emailSubject, emailBody);
     
     alert(`Se ha cambiado el estado del pedido a "Preparado" y se ha enviado un email de aviso a ${r.parentEmail}.`);
     render();
@@ -2239,7 +2238,7 @@ function renderAdminComms() {
               <option value="pending" ${admin.commsTarget === 'pending' ? 'selected' : ''}>Tutores con Pedidos "Pendientes" (${reservations.filter(r => r.status === 'Pendiente').length})</option>
               <option value="prepared" ${admin.commsTarget === 'prepared' ? 'selected' : ''}>Tutores con Pedidos "Preparados" (${reservations.filter(r => r.status === 'Preparado').length})</option>
               <optgroup label="Pedido Individual">
-                ${reservations.map(r => `<option value="${r.id}" ${admin.commsTarget === r.id ? 'selected' : ''}>${r.id} - ${r.parentName} (${r.studentName.substring(0, 20)}...)</option>`).join('')}
+                ${reservations.map(r => `<option value="${r.id}" ${admin.commsTarget === r.id ? 'selected' : ''}>${r.id} - ${r.parentName || ''} (${(r.studentName || '').substring(0, 20)}...)</option>`).join('')}
               </optgroup>
             </select>
           </div>
@@ -2327,9 +2326,19 @@ window.handleCommsTemplateChange = function(e) {
 window.handleSendComms = function(e) {
   e.preventDefault();
   
-  const subject = state.admin.commsSubject;
-  const body = state.admin.commsBody;
-  const target = state.admin.commsTarget;
+  // Obtener valores directamente del DOM para máxima robustez
+  const subjectEl = document.getElementById("commsSubject");
+  const bodyEl = document.getElementById("commsBody");
+  const targetEl = document.getElementById("commsTarget");
+  
+  const subject = subjectEl ? subjectEl.value.trim() : "";
+  const body = bodyEl ? bodyEl.value.trim() : "";
+  const target = targetEl ? targetEl.value : "all";
+  
+  // Sincronizar estado
+  state.admin.commsSubject = subject;
+  state.admin.commsBody = body;
+  state.admin.commsTarget = target;
   
   const reservations = DB.getReservations();
   let recipients = [];
@@ -2352,12 +2361,12 @@ window.handleSendComms = function(e) {
   
   recipients.forEach(r => {
     let customizedBody = body
-      .replace(/{tutor}/g, r.parentName)
-      .replace(/{alumno\(s\)}/g, r.studentName)
-      .replace(/{curso\(s\)}/g, r.studentGrade)
-      .replace(/{total}/g, r.total.toFixed(2));
+      .replace(/{tutor}/g, r.parentName || "")
+      .replace(/{alumno\(s\)}/g, r.studentName || "")
+      .replace(/{curso\(s\)}/g, r.studentGrade || "")
+      .replace(/{total}/g, (typeof r.total === 'number' && !isNaN(r.total)) ? r.total.toFixed(2) : parseFloat(r.total || 0).toFixed(2));
       
-    sendSimulatedEmail(r.parentEmail, subject, customizedBody);
+    sendSimulatedEmail(r.parentEmail || "", subject, customizedBody);
   });
   
   alert(`¡Simulación completada! Se han enviado ${recipients.length} correo(s) virtual(es).`);
@@ -2774,7 +2783,7 @@ async function syncFromSupabase() {
         title: b.title,
         subject: b.subject,
         grade: b.grade,
-        price: parseFloat(b.price),
+        price: (b.price !== null && b.price !== undefined) ? (typeof b.price === 'number' ? b.price : parseFloat(b.price)) : 0,
         publisher: b.publisher,
         required: b.required
       }));
@@ -2793,7 +2802,7 @@ async function syncFromSupabase() {
         parentPhone: r.parent_phone,
         books: r.books,
         students: r.students,
-        total: parseFloat(r.total),
+        total: (r.total !== null && r.total !== undefined) ? (typeof r.total === 'number' ? r.total : parseFloat(r.total)) : 0,
         status: r.status,
         createdAt: r.created_at
       }));
