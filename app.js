@@ -31,7 +31,7 @@ window.toggleTheme = function() {
 const DEFAULT_SETTINGS = {
   schoolName: "Colegio San Buenaventura",
   schoolYear: "2026/2027",
-  contactEmail: "reservas@sanbuenaventura.org",
+  contactEmail: "libros@sanbuenaventura.org",
   contactPhone: "+34 915 267 161",
   deadlineDate: "2026-07-20",
   customReceiptMessage: "Gracias por realizar la reserva de libros. Recuerde que el cobro no se realiza por esta plataforma. Se cargará en el recibo escolar habitual del mes de Septiembre."
@@ -323,8 +323,8 @@ const DB = {
     } else {
       try {
         const current = JSON.parse(localStorage.getItem("sb_settings"));
-        if (current && current.contactEmail === "administracion@sanbuenaventura.org") {
-          current.contactEmail = "reservas@sanbuenaventura.org";
+        if (current && (current.contactEmail === "administracion@sanbuenaventura.org" || current.contactEmail === "reservas@sanbuenaventura.org")) {
+          current.contactEmail = "libros@sanbuenaventura.org";
           this.saveSettings(current);
         }
       } catch (e) {
@@ -897,11 +897,16 @@ function renderSuccessScreen() {
           </div>
         </div>
 
-        <div class="receipt-info-alert">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-          </svg>
-          <p>${settings.customReceiptMessage}</p>
+        <div class="receipt-info-alert" style="flex-direction: column; align-items: flex-start; gap: 8px; width: 100%;">
+          <div style="display:flex; gap: 10px; align-items: center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            <p style="margin:0;">${settings.customReceiptMessage}</p>
+          </div>
+          <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.08); font-size: 13px; color: var(--primary); width: 100%; text-align: left;">
+            <strong>Importante:</strong> Para cualquier cambio o solicitud en su reserva, por favor escriba directamente a <a href="mailto:administracion@sanbuenaventura.org" style="color:var(--accent-hover); text-decoration:underline; font-weight: 600;">administracion@sanbuenaventura.org</a>.
+          </div>
         </div>
 
         <div class="success-actions">
@@ -1245,6 +1250,32 @@ function renderAdminDashboard() {
   const preparedCount = reservations.filter(r => r.status === "Preparado").length;
   const deliveredCount = reservations.filter(r => r.status === "Entregado").length;
 
+  // Calcular reservas por curso
+  const courseCounts = {};
+  COURSES.forEach(c => {
+    courseCounts[c] = 0;
+  });
+  reservations.forEach(r => {
+    if (r.students && Array.isArray(r.students) && r.students.length > 0) {
+      r.students.forEach(s => {
+        if (courseCounts[s.studentGrade] !== undefined) {
+          courseCounts[s.studentGrade]++;
+        } else {
+          courseCounts[s.studentGrade] = (courseCounts[s.studentGrade] || 0) + 1;
+        }
+      });
+    } else {
+      const grades = (r.studentGrade || "").split(", ");
+      grades.forEach(g => {
+        if (courseCounts[g] !== undefined) {
+          courseCounts[g]++;
+        } else {
+          courseCounts[g] = (courseCounts[g] || 0) + 1;
+        }
+      });
+    }
+  });
+
   // Libros más reservados
   const bookCounts = {};
   reservations.forEach(r => {
@@ -1391,6 +1422,22 @@ function renderAdminDashboard() {
               `).join('')
           }
         </div>
+      </div>
+    </div>
+
+    <!-- Tabla de reservas por curso -->
+    <div class="dashboard-chart-card card-shadow" style="margin-top: 24px;">
+      <h3 style="margin-bottom: 16px;">Alumnos Reservados por Curso</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px;">
+        ${COURSES.map(c => {
+          const count = courseCounts[c] || 0;
+          return `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background-color: var(--bg-card); transition: var(--transition);">
+              <span style="font-size:13px; font-weight:600; color:var(--text);">${c}</span>
+              <span class="badge ${count > 0 ? 'badge-required' : 'badge-outline'}" style="font-size:12px; font-weight:700; padding:4px 8px; border-radius:12px; ${count > 0 ? 'background-color:var(--primary); color:white;' : ''}">${count} alumnos</span>
+            </div>
+          `;
+        }).join('')}
       </div>
     </div>
 
