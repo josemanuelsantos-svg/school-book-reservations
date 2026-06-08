@@ -469,7 +469,7 @@ function renderHeader() {
     <header class="main-header">
       <div class="header-container">
         <div class="logo-area" onclick="setView('families')">
-          <img src="https://i.ibb.co/YvMv3Qx/Logo-sin-fondo.png" alt="Logo Colegio San Buenaventura" class="school-logo">
+          <img src="${window.location.pathname.endsWith('previsualizacion-san-buenaventura.html') ? 'school-book-reservations/csblogo.png' : 'csblogo.png'}" alt="Logo Colegio San Buenaventura" class="school-logo">
           <div>
             <h1>${settings.schoolName}</h1>
             <p class="subtitle">Reserva de Libros · Curso ${settings.schoolYear}</p>
@@ -553,12 +553,6 @@ function renderFamiliesPortal() {
         <div class="hero-card">
           <h2>Reserva de libros para el próximo curso</h2>
           <p>Rellene esta solicitud para reservar los libros oficiales del <strong>Colegio San Buenaventura</strong>. La facturación se realizará a través de su recibo escolar en Septiembre, por lo que <strong>no debe abonar nada ahora</strong>.</p>
-          <div class="deadline-badge">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <span>Plazo límite de solicitud: <strong>${deadline}</strong></span>
-          </div>
         </div>
       </section>
 

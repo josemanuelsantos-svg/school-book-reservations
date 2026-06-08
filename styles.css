@@ -1475,6 +1475,105 @@ textarea:focus {
   .modal-details-grid {
     grid-template-columns: 1fr;
   }
+
+  /* Optimización para móviles (Paso a Paso y Listas de Libros) */
+  .wizard-card {
+    padding: 24px 16px;
+  }
+  .progress-step .step-label {
+    display: none;
+  }
+  .progress-line {
+    margin-top: 0;
+  }
+  .wizard-progress {
+    margin-bottom: 8px;
+    justify-content: space-around;
+  }
+  .info-hero {
+    margin-bottom: 16px;
+  }
+  .hero-card {
+    padding: 18px;
+    text-align: center;
+    border-left-width: 4px;
+  }
+  .hero-card h2 {
+    font-size: 19px;
+  }
+  .hero-card p {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .book-item-card {
+    padding: 12px;
+    gap: 10px;
+  }
+  .book-check {
+    margin-right: 8px;
+  }
+  .book-details {
+    overflow: hidden;
+  }
+  .book-title {
+    font-size: 13px;
+    line-height: 1.35;
+  }
+  .book-subject {
+    font-size: 10px;
+  }
+  .book-publisher {
+    font-size: 11px;
+  }
+  .book-price {
+    font-size: 14px;
+    margin-left: 8px;
+    text-align: right;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .booking-summary-bar {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+    padding: 14px 16px;
+  }
+  .total-price-display {
+    justify-content: space-between;
+    width: 100%;
+  }
+  .wizard-actions {
+    flex-direction: column-reverse;
+    gap: 16px;
+    align-items: stretch;
+    margin-top: 24px;
+    padding-top: 16px;
+  }
+  .wizard-actions button {
+    width: 100%;
+  }
+  .wizard-actions span {
+    text-align: center;
+  }
+  .header-container {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    text-align: center;
+    padding: 12px 16px;
+  }
+  .logo-area {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .school-logo {
+    height: 44px;
+  }
+  .main-nav {
+    width: 100%;
+    justify-content: center;
+    gap: 12px;
+  }
 }
 
 /* ==========================================
