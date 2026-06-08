@@ -355,6 +355,15 @@ const state = {
   adminTab: "dashboard", // "dashboard" | "reservations" | "catalog" | "settings" | "comms"
   
   // Estado del formulario de reserva
+  familyTab: "booking", // "booking" | "lookup"
+  lookupForm: {
+    resId: "",
+    email: "",
+    searchResult: null,
+    errorMsg: "",
+    changeMessage: "",
+    changeSent: false
+  },
   bookingForm: {
     step: 1,
     students: [
@@ -527,11 +536,23 @@ function renderFooter() {
   `;
 }
 
+window.setFamilyTab = function(tab) {
+  state.familyTab = tab;
+  if (tab === 'lookup') {
+    state.lookupForm.resId = "";
+    state.lookupForm.email = "";
+    state.lookupForm.searchResult = null;
+    state.lookupForm.errorMsg = "";
+    state.lookupForm.changeMessage = "";
+    state.lookupForm.changeSent = false;
+  }
+  render();
+};
+
 // Wizard de Familias
 function renderFamiliesPortal() {
   const form = state.bookingForm;
   const settings = DB.getSettings();
-  const deadline = new Date(settings.deadlineDate).toLocaleDateString("es-ES", { day: 'numeric', month: 'long', year: 'numeric' });
 
   // Si ya se ha guardado con éxito la reserva
   if (form.successReservation) {
@@ -549,35 +570,46 @@ function renderFamiliesPortal() {
 
   return `
     <main class="main-content">
-      <section class="info-hero">
-        <div class="hero-card">
-          <h2>Reserva de libros para el próximo curso</h2>
-          <p>Rellene esta solicitud para reservar los libros oficiales del <strong>Colegio San Buenaventura</strong>. La facturación se realizará a través de su recibo escolar en Septiembre, por lo que <strong>no debe abonar nada ahora</strong>.</p>
-        </div>
-      </section>
+      <!-- Menú de pestañas públicas -->
+      <div class="family-nav-bar">
+        <button class="family-nav-tab ${state.familyTab === 'booking' ? 'active' : ''}" onclick="setFamilyTab('booking')">Nueva Reserva</button>
+        <button class="family-nav-tab ${state.familyTab === 'lookup' ? 'active' : ''}" onclick="setFamilyTab('lookup')">Consultar Estado</button>
+      </div>
 
-      <section class="wizard-container">
-        <div class="wizard-progress">
-          <div class="progress-step ${form.step >= 1 ? 'active' : ''}">
-            <span class="step-num">1</span>
-            <span class="step-label">Datos Alumno</span>
-          </div>
-          <div class="progress-line ${form.step >= 2 ? 'filled' : ''}"></div>
-          <div class="progress-step ${form.step >= 2 ? 'active' : ''}">
-            <span class="step-num">2</span>
-            <span class="step-label">Selección Libros</span>
-          </div>
-          <div class="progress-line ${form.step >= 3 ? 'filled' : ''}"></div>
-          <div class="progress-step ${form.step >= 3 ? 'active' : ''}">
-            <span class="step-num">3</span>
-            <span class="step-label">Confirmación</span>
-          </div>
-        </div>
+      ${state.familyTab === 'booking' 
+        ? `
+          <section class="info-hero">
+            <div class="hero-card">
+              <h2>Reserva de libros para el próximo curso</h2>
+              <p>Rellene esta solicitud para reservar los libros oficiales del <strong>Colegio San Buenaventura</strong>. La facturación se realizará a través de su recibo escolar en Septiembre, por lo que <strong>no debe abonar nada ahora</strong>.</p>
+            </div>
+          </section>
 
-        <div class="wizard-card card-shadow">
-          ${stepContent}
-        </div>
-      </section>
+          <section class="wizard-container">
+            <div class="wizard-progress">
+              <div class="progress-step ${form.step >= 1 ? 'active' : ''}">
+                <span class="step-num">1</span>
+                <span class="step-label">Datos Alumno</span>
+              </div>
+              <div class="progress-line ${form.step >= 2 ? 'filled' : ''}"></div>
+              <div class="progress-step ${form.step >= 2 ? 'active' : ''}">
+                <span class="step-num">2</span>
+                <span class="step-label">Selección Libros</span>
+              </div>
+              <div class="progress-line ${form.step >= 3 ? 'filled' : ''}"></div>
+              <div class="progress-step ${form.step >= 3 ? 'active' : ''}">
+                <span class="step-num">3</span>
+                <span class="step-label">Confirmación</span>
+              </div>
+            </div>
+
+            <div class="wizard-card card-shadow">
+              ${stepContent}
+            </div>
+          </section>
+        `
+        : renderLookupTab()
+      }
     </main>
   `;
 }
@@ -1394,17 +1426,17 @@ function renderAdminDashboard() {
       </div>
     </div>
 
-    <!-- Fila de Gráficos y Tablas -->
+    <!-- Fila de Gráficos y Tablas: Fila 1 -->
     <div class="dashboard-grid">
-      <!-- Distribución por Nivel -->
+      <!-- Evolución Temporal (Line Chart) -->
       <div class="dashboard-chart-card card-shadow">
-        <h3>Reservas por Nivel Educativo</h3>
-        <div class="chart-container">
-          ${renderSvgChart(gradeLevels, totalCount)}
+        <h3>Evolución Temporal de Reservas</h3>
+        <div class="chart-container-js">
+          <canvas id="chartTrend"></canvas>
         </div>
       </div>
 
-      <!-- Ranking de Libros -->
+      <!-- Ranking de Libros (Mantenido) -->
       <div class="dashboard-chart-card card-shadow">
         <h3>Libros Más Reservados</h3>
         <div class="ranking-list">
@@ -1421,6 +1453,25 @@ function renderAdminDashboard() {
                 </div>
               `).join('')
           }
+        </div>
+      </div>
+    </div>
+
+    <!-- Fila de Gráficos: Fila 2 -->
+    <div class="dashboard-grid" style="margin-top: 24px;">
+      <!-- Estado de Lotes por Nivel (Stacked Bar Chart) -->
+      <div class="dashboard-chart-card card-shadow">
+        <h3>Estado de Lotes por Nivel</h3>
+        <div class="chart-container-js">
+          <canvas id="chartStatus"></canvas>
+        </div>
+      </div>
+
+      <!-- Distribución Económica por Editorial (Donut Chart) -->
+      <div class="dashboard-chart-card card-shadow">
+        <h3>Distribución Económica por Editorial</h3>
+        <div class="chart-container-js">
+          <canvas id="chartPublishers"></canvas>
         </div>
       </div>
     </div>
@@ -2797,7 +2848,584 @@ function render() {
       ${footerHtml}
     </div>
   `;
+
+  if (state.view === "admin" && state.adminTab === "dashboard") {
+    setTimeout(() => {
+      if (typeof initInteractiveCharts === "function") {
+        initInteractiveCharts();
+      }
+    }, 0);
+  }
 }
+
+// ==========================================
+// FUNCIONES DEL PORTAL DE AUTOCONSULTA
+// ==========================================
+window.renderLookupTab = function() {
+  const form = state.lookupForm;
+  if (!form.searchResult) {
+    return `
+      <section class="wizard-container" style="max-width: 500px; margin: 0 auto;">
+        <div class="wizard-card card-shadow" style="padding: 24px;">
+          <h3 style="font-family: var(--font-title); color: var(--primary); font-size: 18px; margin-bottom: 8px; text-align: center;">Consultar Estado de Reserva</h3>
+          <p style="font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 20px;">
+            Introduzca los datos de su reserva para comprobar el estado de preparación de sus libros.
+          </p>
+
+          <form onsubmit="handleLookupSubmit(event)">
+            <div class="form-group">
+              <label for="lookupResId">Código de Reserva *</label>
+              <input type="text" id="lookupResId" required placeholder="Ej. RES-2026-001" value="${form.resId}" style="width: 100%;" oninput="state.lookupForm.resId = this.value.toUpperCase()">
+            </div>
+
+            <div class="form-group">
+              <label for="lookupEmail">Correo electrónico del Tutor *</label>
+              <input type="email" id="lookupEmail" required placeholder="Ej. tutor@correo.com" value="${form.email}" style="width: 100%;" oninput="state.lookupForm.email = this.value">
+            </div>
+
+            ${form.errorMsg ? `<p style="color:var(--danger); font-size: 13px; font-weight:600; margin-bottom: 16px; text-align:center;">${form.errorMsg}</p>` : ''}
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; gap: 8px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              Buscar Reserva
+            </button>
+          </form>
+        </div>
+      </section>
+    `;
+  }
+
+  const res = form.searchResult;
+  const settings = DB.getSettings();
+  let statusVal = 1;
+  let progressWidth = "0%";
+  
+  if (res.status === "Pendiente") {
+    statusVal = 1;
+    progressWidth = "0%";
+  } else if (res.status === "Confirmado") {
+    statusVal = 2;
+    progressWidth = "33%";
+  } else if (res.status === "Preparado") {
+    statusVal = 3;
+    progressWidth = "66%";
+  } else if (res.status === "Entregado") {
+    statusVal = 4;
+    progressWidth = "100%";
+  }
+
+  const studentsDetails = res.students || [{
+    studentName: res.studentName,
+    studentGrade: res.studentGrade,
+    subtotal: res.total,
+    books: res.books
+  }];
+
+  return `
+    <section class="wizard-container" style="max-width: 650px; margin: 0 auto;">
+      <div class="wizard-card card-shadow" style="padding: 28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+          <h3 style="font-family: var(--font-title); color: var(--primary); font-size: 18px; margin: 0;">Estado de la Reserva</h3>
+          <button class="btn btn-outline btn-sm" onclick="closeLookupResult()">Volver a Buscar</button>
+        </div>
+
+        <div class="receipt-header" style="margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+          <span>Código: <strong style="color:var(--primary);">${res.id}</strong></span>
+          <span class="badge" style="background-color: var(--primary-light); color:#fff;">${res.status}</span>
+        </div>
+
+        <!-- Timeline del Estado -->
+        <div class="status-timeline">
+          <div class="timeline-progress-bar" style="width: ${progressWidth};"></div>
+          <div class="timeline-step ${statusVal >= 1 ? (statusVal > 1 ? 'completed' : 'active') : ''}">
+            <div class="timeline-node">1</div>
+            <div class="timeline-label">Recibido</div>
+          </div>
+          <div class="timeline-step ${statusVal >= 2 ? (statusVal > 2 ? 'completed' : 'active') : ''}">
+            <div class="timeline-node">2</div>
+            <div class="timeline-label">Confirmado</div>
+          </div>
+          <div class="timeline-step ${statusVal >= 3 ? (statusVal > 3 ? 'completed' : 'active') : ''}">
+            <div class="timeline-node">3</div>
+            <div class="timeline-label">Preparado</div>
+          </div>
+          <div class="timeline-step ${statusVal >= 4 ? (statusVal > 4 ? 'completed' : 'active') : ''}">
+            <div class="timeline-node">4</div>
+            <div class="timeline-label">Entregado</div>
+          </div>
+        </div>
+
+        ${res.status === 'Preparado' ? `
+          <div class="receipt-info-alert" style="margin-top: 24px; margin-bottom: 24px; background-color:#ecfdf5; border-color:#10b981; color:#065f46; display:flex; gap:10px; align-items:center; border-radius: var(--radius-sm); border:1px solid #10b981; padding: 14px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <p style="margin:0; font-size:13px; font-weight:600; text-align:left;">
+              ¡Tu lote de libros ya está preparado! Puedes pasar a recogerlo por la secretaría del centro en horario de 9:00 a 14:00.
+            </p>
+          </div>
+        ` : ''}
+
+        <!-- Caja del Recibo -->
+        <div class="receipt-box" style="margin-top: 20px;">
+          <div class="receipt-header">
+            <h3>Copia de su Reserva</h3>
+            <span class="receipt-id">${res.id}</span>
+          </div>
+          <div class="receipt-body">
+            <p><strong>Tutor:</strong> ${res.parentName}</p>
+            <p><strong>Contacto:</strong> ${res.parentEmail} | Tel: ${res.parentPhone}</p>
+            <p><strong>Fecha:</strong> ${new Date(res.createdAt).toLocaleString("es-ES")}</p>
+            <hr style="margin: 10px 0; border: 0; border-top: 1px dashed var(--border);">
+            
+            ${studentsDetails.map((student, idx) => `
+              <p style="margin-bottom:4px;">
+                <strong>Alumno #${idx + 1}:</strong> ${student.studentName} (${student.studentGrade})<br>
+                <small style="color:var(--text-muted);">${student.books.length} libros reservados - Subtotal: ${student.subtotal.toFixed(2)} €</small>
+              </p>
+            `).join('')}
+            
+            <hr style="margin: 10px 0; border: 0; border-top: 1px dashed var(--border);">
+            <p class="receipt-total">Importe Total Estimado: ${res.total.toFixed(2)} €</p>
+          </div>
+        </div>
+
+        <!-- Compartir y PDF -->
+        <div style="display:flex; gap:12px; margin-top:24px;" class="success-actions">
+          <button class="btn btn-outline" onclick="window.print();" style="flex:1;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="margin-right:8px; vertical-align:middle;">
+              <polyline points="6 9 6 2 18 2 18 9"/>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>Guardar PDF / Imprimir
+          </button>
+          
+          <button class="btn btn-success" onclick="shareReservationWhatsApp('${res.id}')" style="flex:1; background-color:#25d366; border-color:#25d366; color:white; gap:8px;">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="vertical-align:middle;">
+              <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.96 9.96 0 001.33 4.982L2 22l5.164-1.354a9.938 9.938 0 004.846 1.254h.004c5.507 0 9.99-4.478 9.99-9.984 0-2.67-1.04-5.18-2.93-7.071A9.925 9.925 0 0012.012 2zm5.72 14.123c-.313.882-1.815 1.636-2.5 1.7-1.74.16-3.858-.55-5.918-2.613-2.062-2.062-2.772-4.18-2.612-5.92.064-.684.818-2.186 1.7-2.5.38-.135.534-.1.685.22.152.32.748 1.82.812 1.95.064.13.064.28 0 .412-.064.13-.13.25-.216.35-.084.102-.182.203-.264.3-.095.1-.19.21-.085.39.105.18.47 1.213 1.01 1.696.696.62 1.277.81 1.458.892.18.083.284.067.39-.05.105-.12.457-.532.583-.715.127-.183.254-.15.422-.085.168.065 1.066.502 1.25.594.184.092.3.138.344.218.045.08.045.47-.268 1.354z"/>
+            </svg>Compartir por WhatsApp
+          </button>
+        </div>
+
+        <!-- Acordeón de Solicitud de Cambio -->
+        <div style="margin-top:28px; border-top:1.5px solid var(--border); padding-top:16px; text-align:center;">
+          ${form.changeSent ? `
+            <div style="background-color: var(--accent-light); padding:10px; border-radius: var(--radius-sm); border: 1px solid var(--accent); color: var(--accent-hover); font-size:13px; font-weight:600;">
+              ✓ Su solicitud de cambio ha sido enviada al personal de administración del centro.
+            </div>
+          ` : `
+            <button class="change-request-btn" onclick="document.getElementById('change-request-box').style.display='block'; this.style.display='none';">
+              ¿Desea solicitar un cambio o cancelación de su reserva?
+            </button>
+            <div id="change-request-box" style="display:none; text-align:left; margin-top:10px; animation: slideUp 0.25s ease-out;">
+              <label for="changeRequestMsg" style="font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px;">Detalle los cambios que necesita solicitar *</label>
+              <textarea id="changeRequestMsg" rows="3" required style="width:100%; font-family:var(--font-body); font-size:13px; padding:8px; border:1.5px solid var(--border); border-radius:var(--radius-sm); resize:none;" placeholder="Ej. Deseo cancelar el libro de Religión de 1º Primaria de Lucas."></textarea>
+              <div style="display:flex; gap:8px; margin-top:10px; justify-content:flex-end;">
+                <button class="btn btn-outline btn-sm" onclick="document.getElementById('change-request-box').style.display='none'; document.querySelector('.change-request-btn').style.display='inline-block';">Cancelar</button>
+                <button class="btn btn-primary btn-sm" onclick="requestReservationChange()">Enviar Solicitud</button>
+              </div>
+            </div>
+          `}
+        </div>
+      </div>
+    </section>
+  `;
+};
+
+window.handleLookupSubmit = function(e) {
+  e.preventDefault();
+  const resId = document.getElementById("lookupResId").value.trim().toUpperCase();
+  const email = document.getElementById("lookupEmail").value.trim().toLowerCase();
+  
+  state.lookupForm.resId = resId;
+  state.lookupForm.email = email;
+  state.lookupForm.errorMsg = "";
+  
+  const reservations = DB.getReservations();
+  const found = reservations.find(r => r.id === resId && r.parentEmail.trim().toLowerCase() === email);
+  
+  if (found) {
+    state.lookupForm.searchResult = found;
+  } else {
+    state.lookupForm.searchResult = null;
+    state.lookupForm.errorMsg = "No se ha encontrado ninguna reserva activa con ese Código e Email de tutor.";
+  }
+  render();
+};
+
+window.closeLookupResult = function() {
+  state.lookupForm.searchResult = null;
+  state.lookupForm.changeSent = false;
+  render();
+};
+
+window.shareReservationWhatsApp = function(id) {
+  const res = state.lookupForm.searchResult;
+  if (!res) return;
+  
+  const allNames = res.studentName;
+  const statusLabel = res.status === 'Preparado' ? 'LISTO PARA RECOGER' : res.status.toUpperCase();
+  const text = `Hola, te comparto los detalles de mi reserva de libros en el Colegio San Buenaventura:\n\n*Código de Reserva:* ${res.id}\n*Estado:* ${statusLabel}\n*Alumnos:* ${allNames}\n*Importe Total:* ${res.total.toFixed(2)} €\n\nConsulta más detalles en el portal oficial del centro.`;
+  
+  const encodedText = encodeURIComponent(text);
+  window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
+};
+
+window.requestReservationChange = function() {
+  const res = state.lookupForm.searchResult;
+  if (!res) return;
+  
+  const textarea = document.getElementById("changeRequestMsg");
+  if (!textarea || !textarea.value.trim()) {
+    alert("Por favor, describa los cambios que solicita.");
+    return;
+  }
+  
+  const message = textarea.value.trim();
+  
+  // Registrar email virtual dirigido a administración
+  const emailSubject = `[SOLICITUD DE CAMBIO] Reserva ${res.id} - Tutor: ${res.parentName}`;
+  const emailBody = `Se ha recibido una solicitud de modificación o cancelación de reserva a través del portal de autoconsulta:\n\n*Código de Reserva:* ${res.id}\n*Tutor:* ${res.parentName}\n*Contacto:* ${res.parentEmail} | Tel: ${res.parentPhone}\n\n*MENSAJE DE LA FAMILIA:*\n"${message}"\n\n---\nPor favor, tramite esta solicitud editando la reserva en el panel de administración correspondiente.`;
+  
+  sendSimulatedEmail("administracion@sanbuenaventura.org", emailSubject, emailBody);
+  
+  state.lookupForm.changeSent = true;
+  render();
+// Inicialización de Gráficos Interactivos con Chart.js
+window.initInteractiveCharts = function() {
+  if (!window.myCharts) {
+    window.myCharts = {};
+  }
+
+  // 1. Destruir instancias previas para evitar conflictos de canvas
+  if (window.myCharts.chartTrend) {
+    window.myCharts.chartTrend.destroy();
+    window.myCharts.chartTrend = null;
+  }
+  if (window.myCharts.chartStatus) {
+    window.myCharts.chartStatus.destroy();
+    window.myCharts.chartStatus = null;
+  }
+  if (window.myCharts.chartPublishers) {
+    window.myCharts.chartPublishers.destroy();
+    window.myCharts.chartPublishers = null;
+  }
+
+  const canvasTrend = document.getElementById("chartTrend");
+  const canvasStatus = document.getElementById("chartStatus");
+  const canvasPublishers = document.getElementById("chartPublishers");
+
+  if (!canvasTrend || !canvasStatus || !canvasPublishers) {
+    return;
+  }
+
+  // Leer estilos computados del tema activo
+  const computedStyle = getComputedStyle(document.body);
+  const textColor = computedStyle.getPropertyValue('--text').trim() || '#1e293b';
+  const mutedColor = computedStyle.getPropertyValue('--text-muted').trim() || '#64748b';
+  const borderColor = computedStyle.getPropertyValue('--border').trim() || '#e2e8f0';
+  const fontFamily = computedStyle.getPropertyValue('--font-body').trim() || 'sans-serif';
+  const cardBgColor = computedStyle.getPropertyValue('--card-bg').trim() || '#ffffff';
+
+  const reservations = DB.getReservations();
+  const books = DB.getBooks();
+  const isDark = document.documentElement.getAttribute("data-theme") === 'dark';
+
+  // --- 1. Gráfico de Línea: Evolución Temporal ---
+  const trendData = {};
+  reservations.forEach(r => {
+    if (!r.createdAt) return;
+    const dateStr = r.createdAt.substring(0, 10);
+    trendData[dateStr] = (trendData[dateStr] || 0) + 1;
+  });
+
+  const sortedDates = Object.keys(trendData).sort();
+  const labelsTrend = sortedDates.map(d => {
+    const [year, month, day] = d.split('-');
+    return `${day}/${month}`;
+  });
+  const valuesTrend = sortedDates.map(d => trendData[d]);
+
+  const finalLabelsTrend = labelsTrend.length ? labelsTrend : ["Sin datos"];
+  const finalValuesTrend = valuesTrend.length ? valuesTrend : [0];
+
+  const trendLineColor = isDark ? '#38bdf8' : '#112a46';
+  const trendFillColor = isDark ? 'rgba(56, 189, 248, 0.12)' : 'rgba(17, 42, 70, 0.08)';
+
+  window.myCharts.chartTrend = new Chart(canvasTrend, {
+    type: 'line',
+    data: {
+      labels: finalLabelsTrend,
+      datasets: [{
+        label: 'Reservas',
+        data: finalValuesTrend,
+        borderColor: trendLineColor,
+        backgroundColor: trendFillColor,
+        borderWidth: 3,
+        tension: 0.3,
+        fill: true,
+        pointBackgroundColor: '#c59b27',
+        pointBorderColor: trendLineColor,
+        pointHoverBackgroundColor: trendLineColor,
+        pointHoverBorderColor: '#c59b27',
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: '#112a46',
+          titleFont: { family: fontFamily, size: 13, weight: 'bold' },
+          bodyFont: { family: fontFamily, size: 12 },
+          padding: 10,
+          cornerRadius: 6,
+          displayColors: false,
+          callbacks: {
+            label: function(context) {
+              return `${context.parsed.y} ${context.parsed.y === 1 ? 'reserva' : 'reservas'}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            color: borderColor,
+            drawBorder: false
+          },
+          ticks: {
+            color: mutedColor,
+            font: { family: fontFamily, size: 11 }
+          }
+        },
+        y: {
+          grid: {
+            color: borderColor,
+            drawBorder: false
+          },
+          ticks: {
+            color: mutedColor,
+            font: { family: fontFamily, size: 11 },
+            stepSize: 1,
+            precision: 0
+          },
+          min: 0
+        }
+      }
+    }
+  });
+
+  // --- 2. Gráfico de Barras Apiladas: Estado de Lotes por Nivel ---
+  const levels = ["Infantil", "Primaria", "ESO", "Bachillerato"];
+  const statusByLevel = {
+    "Infantil": { "Pendiente": 0, "Confirmado": 0, "Preparado": 0, "Entregado": 0 },
+    "Primaria": { "Pendiente": 0, "Confirmado": 0, "Preparado": 0, "Entregado": 0 },
+    "ESO":      { "Pendiente": 0, "Confirmado": 0, "Preparado": 0, "Entregado": 0 },
+    "Bachillerato": { "Pendiente": 0, "Confirmado": 0, "Preparado": 0, "Entregado": 0 }
+  };
+
+  function getLevelFromGrade(grade) {
+    if (!grade) return null;
+    if (grade.includes("Infantil")) return "Infantil";
+    if (grade.includes("Primaria")) return "Primaria";
+    if (grade.includes("ESO")) return "ESO";
+    if (grade.includes("Bachillerato")) return "Bachillerato";
+    return null;
+  }
+
+  reservations.forEach(r => {
+    const status = r.status || "Pendiente";
+    const levelsInReservation = new Set();
+    
+    if (r.students && Array.isArray(r.students) && r.students.length > 0) {
+      r.students.forEach(s => {
+        const lvl = getLevelFromGrade(s.studentGrade);
+        if (lvl) levelsInReservation.add(lvl);
+      });
+    } else {
+      const grades = (r.studentGrade || "").split(", ");
+      grades.forEach(g => {
+        const lvl = getLevelFromGrade(g);
+        if (lvl) levelsInReservation.add(lvl);
+      });
+    }
+    
+    levelsInReservation.forEach(lvl => {
+      if (statusByLevel[lvl] && statusByLevel[lvl][status] !== undefined) {
+        statusByLevel[lvl][status]++;
+      }
+    });
+  });
+
+  const datasetPendiente = levels.map(l => statusByLevel[l]["Pendiente"]);
+  const datasetConfirmado = levels.map(l => statusByLevel[l]["Confirmado"]);
+  const datasetPreparado = levels.map(l => statusByLevel[l]["Preparado"]);
+  const datasetEntregado = levels.map(l => statusByLevel[l]["Entregado"]);
+
+  window.myCharts.chartStatus = new Chart(canvasStatus, {
+    type: 'bar',
+    data: {
+      labels: levels,
+      datasets: [
+        {
+          label: 'Pendiente',
+          data: datasetPendiente,
+          backgroundColor: '#ef4444',
+          borderRadius: 4
+        },
+        {
+          label: 'Confirmado',
+          data: datasetConfirmado,
+          backgroundColor: isDark ? '#3b82f6' : '#1e3e62',
+          borderRadius: 4
+        },
+        {
+          label: 'Preparado',
+          data: datasetPreparado,
+          backgroundColor: '#c59b27',
+          borderRadius: 4
+        },
+        {
+          label: 'Entregado',
+          data: datasetEntregado,
+          backgroundColor: '#059669',
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: textColor,
+            font: { family: fontFamily, size: 11 },
+            boxWidth: 12
+          }
+        },
+        tooltip: {
+          backgroundColor: '#112a46',
+          titleFont: { family: fontFamily, size: 13, weight: 'bold' },
+          bodyFont: { family: fontFamily, size: 12 },
+          padding: 10,
+          cornerRadius: 6
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          grid: {
+            display: false
+          },
+          ticks: {
+            color: mutedColor,
+            font: { family: fontFamily, size: 11 }
+          }
+        },
+        y: {
+          stacked: true,
+          grid: {
+            color: borderColor,
+            drawBorder: false
+          },
+          ticks: {
+            color: mutedColor,
+            font: { family: fontFamily, size: 11 },
+            stepSize: 1,
+            precision: 0
+          },
+          min: 0
+        }
+      }
+    }
+  });
+
+  // --- 3. Gráfico Donut: Distribución de Costes por Editorial ---
+  const publisherRevenue = {};
+  reservations.forEach(r => {
+    if (r.status === "Cancelado") return;
+    r.books.forEach(bId => {
+      const book = books.find(b => b.id === bId);
+      if (book) {
+        const pub = book.publisher || "Otros";
+        const price = book.price || 0;
+        publisherRevenue[pub] = (publisherRevenue[pub] || 0) + price;
+      }
+    });
+  });
+
+  const sortedPubs = Object.entries(publisherRevenue)
+    .sort((a, b) => b[1] - a[1]);
+  const labelsPublishers = sortedPubs.map(p => p[0]);
+  const valuesPublishers = sortedPubs.map(p => p[1]);
+
+  const finalLabelsPubs = labelsPublishers.length ? labelsPublishers : ["Sin datos"];
+  const finalValuesPubs = valuesPublishers.length ? valuesPublishers : [0];
+
+  const publisherColors = [
+    '#112a46',
+    '#c59b27',
+    '#059669',
+    '#3b82f6',
+    '#8b5cf6',
+    '#f59e0b',
+    '#ec4899',
+    '#06b6d4',
+    '#64748b'
+  ];
+
+  window.myCharts.chartPublishers = new Chart(canvasPublishers, {
+    type: 'doughnut',
+    data: {
+      labels: finalLabelsPubs,
+      datasets: [{
+        data: finalValuesPubs,
+        backgroundColor: publisherColors.slice(0, finalLabelsPubs.length),
+        borderWidth: 2,
+        borderColor: cardBgColor
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: {
+            color: textColor,
+            font: { family: fontFamily, size: 10 },
+            boxWidth: 10,
+            padding: 8
+          }
+        },
+        tooltip: {
+          backgroundColor: '#112a46',
+          titleFont: { family: fontFamily, size: 12, weight: 'bold' },
+          bodyFont: { family: fontFamily, size: 12 },
+          padding: 10,
+          cornerRadius: 6,
+          callbacks: {
+            label: function(context) {
+              const val = context.parsed;
+              return ` Importe: ${val.toFixed(2)} €`;
+            }
+          }
+        }
+      },
+      cutout: '60%'
+    }
+  });
+};
 
 async function syncFromSupabase() {
   if (!supabaseClient) return;
