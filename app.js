@@ -39,19 +39,26 @@ const DEFAULT_SETTINGS = {
 
 const DEFAULT_BOOKS = [
   // Infantil 3 años
-  { id: "inf3-1", title: "Lectoescritura: Molalaletra Nivel 1", subject: "Lectoescritura", grade: "Infantil 3 años", price: 22.95, publisher: "Edelvives", required: true },
-  { id: "inf3-2", title: "Inglés: Daisy, Robin and Me! A", subject: "Inglés", grade: "Infantil 3 años", price: 19.80, publisher: "Oxford", required: true },
-  { id: "inf3-3", title: "Cuaderno de Grafomotricidad 1", subject: "Grafomotricidad", grade: "Infantil 3 años", price: 9.50, publisher: "Santillana", required: false },
+  { id: "9788426391834", title: "Caballitos de mar ¿Lo ves? (Animales Letra Mayúscula)", subject: "Proyectos", grade: "Infantil 3 años", price: 36.80, publisher: "EDELVIVES", required: true },
+  { id: "9788426391858", title: "Prehistoria ¿Lo ves? (Historia/Cultura Letra Mayúscula) con WQ", subject: "Proyectos", grade: "Infantil 3 años", price: 36.80, publisher: "EDELVIVES", required: true },
+  { id: "entusiasmat-3", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 3 años", price: 66.30, publisher: "TEKMAN BOOK", required: true },
+  { id: "glp-3", title: "Great Little People. (Solo de venta en el centro) Material de aula + licencia y libro para la familia.", subject: "Inglés", grade: "Infantil 3 años", price: 0.00, publisher: "MACMILLAN", required: true },
 
   // Infantil 4 años
-  { id: "inf4-1", title: "Lectoescritura: Molalaletra Nivel 2", subject: "Lectoescritura", grade: "Infantil 4 años", price: 22.95, publisher: "Edelvives", required: true },
-  { id: "inf4-2", title: "Inglés: Daisy, Robin and Me! B", subject: "Inglés", grade: "Infantil 4 años", price: 19.80, publisher: "Oxford", required: true },
-  { id: "inf4-3", title: "Pensamiento Matemático: Numicon 1", subject: "Matemáticas", grade: "Infantil 4 años", price: 14.20, publisher: "Oxford", required: false },
+  { id: "9788426395634", title: "Calzadas romanas ¿Lo ves? (Historia/Cultura Letra Mayúscula)", subject: "Proyectos", grade: "Infantil 4 años", price: 36.80, publisher: "EDELVIVES", required: true },
+  { id: "9788414007440", title: "Dragones ¿Lo ves? por ciclo 4 años", subject: "Proyectos", grade: "Infantil 4 años", price: 36.80, publisher: "EDELVIVES", required: true },
+  { id: "9788414006658", title: "Agua ¿Lo ves? por ciclo 4 años", subject: "Proyectos", grade: "Infantil 4 años", price: 36.80, publisher: "EDELVIVES", required: true },
+  { id: "entusiasmat-4", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 4 años", price: 39.80, publisher: "TEKMAN BOOK", required: true },
+  { id: "glp-4", title: "Great Little People. (Solo de venta en el centro) Material de aula + licencia y libro para la familia.", subject: "Inglés", grade: "Infantil 4 años", price: 0.00, publisher: "MACMILLAN", required: true },
+  { id: "9788414007730", title: "Molalaletra Nivel 2 (Pauta) Alumno", subject: "Lectoescritura", grade: "Infantil 4 años", price: 55.00, publisher: "EDELVIVES", required: true },
 
   // Infantil 5 años
-  { id: "inf5-1", title: "Lectoescritura: Molalaletra Nivel 3", subject: "Lectoescritura", grade: "Infantil 5 años", price: 23.50, publisher: "Edelvives", required: true },
-  { id: "inf5-2", title: "Inglés: Daisy, Robin and Me! C", subject: "Inglés", grade: "Infantil 5 años", price: 19.80, publisher: "Oxford", required: true },
-  { id: "inf5-3", title: "Cuaderno de Robótica y Lógica", subject: "Informática", grade: "Infantil 5 años", price: 12.00, publisher: "Anaya", required: false },
+  { id: "9788414011676", title: "Egipto Alumno", subject: "Proyectos", grade: "Infantil 5 años", price: 36.80, publisher: "EDELVIVES", required: true },
+  { id: "9788414020760", title: "Vuelta al mundo 5 años. 2020", subject: "Proyectos", grade: "Infantil 5 años", price: 36.80, publisher: "EDELVIVES", required: true },
+  { id: "9788414006696", title: "El cerebro. ¿Lo ves? 5 años", subject: "Proyectos", grade: "Infantil 5 años", price: 36.80, publisher: "EDELVIVES", required: true },
+  { id: "9788414007761", title: "Molalaletra Nivel 3 (Pauta) Alumno", subject: "Lectoescritura", grade: "Infantil 5 años", price: 56.60, publisher: "EDELVIVES", required: true },
+  { id: "entusiasmat-5", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 5 años", price: 39.80, publisher: "TEKMAN BOOK", required: true },
+  { id: "glp-5", title: "Great Little People. (Solo de venta en el centro) Material de aula + licencia y libro para la familia.", subject: "Inglés", grade: "Infantil 5 años", price: 0.00, publisher: "MACMILLAN", required: true },
 
   // 1º Primaria
   { id: "9788414068274", title: "Lengua Castellana y Lit. 1º Primaria (Ligada pauta + imprenta)", subject: "Lengua", grade: "1º Primaria", price: 52.30, publisher: "EDELVIVES", required: true },
@@ -218,8 +225,16 @@ const DEFAULT_RESERVATIONS = [
     parentName: "Javier Rodríguez Cid",
     parentEmail: "javier.rodriguez@example.com",
     parentPhone: "600778899",
-    books: ["inf3-1", "inf3-2", "inf3-3"],
-    total: 52.25,
+    books: ["9788426391834", "9788426391858", "entusiasmat-3", "glp-3"],
+    students: [
+      {
+        studentName: "Emma Rodríguez Ortiz",
+        studentGrade: "Infantil 3 años",
+        books: ["9788426391834", "9788426391858", "entusiasmat-3", "glp-3"],
+        subtotal: 139.90
+      }
+    ],
+    total: 139.90,
     status: "Pendiente",
     createdAt: "2026-06-04T12:00:00Z"
   }
