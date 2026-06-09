@@ -3093,6 +3093,8 @@ window.requestReservationChange = function() {
   
   state.lookupForm.changeSent = true;
   render();
+};
+
 // Inicialización de Gráficos Interactivos con Chart.js
 window.initInteractiveCharts = function() {
   if (!window.myCharts) {
