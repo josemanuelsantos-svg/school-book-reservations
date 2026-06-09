@@ -449,7 +449,7 @@ function setView(view) {
 }
 
 function setAdminTab(tab) {
-  if (state.adminRole === "lotes" && tab !== "reservations") {
+  if (state.adminRole === "lotes" && tab !== "reservations" && tab !== "help") {
     state.adminTab = "reservations";
   } else {
     state.adminTab = tab;
@@ -1179,6 +1179,14 @@ function renderAdminPortal() {
             </svg>Configuración Colegio
           </button>
           `}
+          <button class="nav-item ${state.adminTab === 'help' ? 'active' : ''}" onclick="setAdminTab('help')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            Ayuda / Manuales
+          </button>
         </nav>
         <div style="margin-top:auto; padding: 16px;">
           <button class="btn btn-outline" style="width:100%; border-color: rgba(255,255,255,0.2); color: #fff;" onclick="handleLogout()">
@@ -1263,10 +1271,171 @@ function renderAdminTabContent() {
       return renderAdminComms();
     case "settings":
       return renderAdminSettings();
+    case "help":
+      return renderAdminHelp();
     default:
       return "";
   }
 }
+
+// Pestaña Admin: Ayuda y Documentación
+function renderAdminHelp() {
+  const isLotes = state.adminRole === "lotes";
+  
+  if (isLotes) {
+    return `
+      <div class="admin-section-header">
+        <h2>Manual del Gestor de Lotes / Almacén</h2>
+        <p>Instrucciones de trabajo logístico para la preparación de pedidos</p>
+      </div>
+      
+      <div class="dashboard-chart-card card-shadow" style="padding: 24px; line-height: 1.6; max-width: 800px; background-color: var(--card-bg); border-radius: var(--radius-md); border: 1.5px solid var(--border); margin-top: 20px;">
+        <div style="margin-bottom: 20px; border-bottom: 1.5px solid var(--border); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="margin: 0; color: var(--primary); font-family: var(--font-title);">Guía de Operación en Almacén</h3>
+          <a href="https://github.com/josemanuelsantos-svg/school-book-reservations/blob/main/docs/manual_gestor_lotes.md" target="_blank" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 6px 12px;">Ver en GitHub</a>
+        </div>
+        
+        <h4 style="color: var(--primary); font-family: var(--font-title); margin-top: 16px; margin-bottom: 6px; font-size: 15px;">1. Acceso y Restricciones</h4>
+        <p style="margin-bottom: 14px; font-size: 13px; color: var(--text);">Como preparador de lotes, su panel está simplificado para facilitar la preparación rápida de cajas físicas. No tiene acceso a datos financieros, configuración global ni edición de libros.</p>
+        
+        <h4 style="color: var(--primary); font-family: var(--font-title); margin-top: 16px; margin-bottom: 6px; font-size: 15px;">2. Paso a Paso para la Preparación</h4>
+        <ol style="margin-left: 20px; margin-bottom: 14px; font-size: 13px; color: var(--text); display: flex; flex-direction: column; gap: 8px;">
+          <li>Vaya a la pestaña <strong>"Reservas / Pedidos"</strong> en la barra lateral.</li>
+          <li>Use el buscador para encontrar un pedido por nombre de alumno o tutor, o filtre por un curso específico.</li>
+          <li>Haga clic en la reserva en la lista para ver los libros solicitados.</li>
+          <li>Recoja físicamente los libros de las estanterías del almacén del colegio y colóquelos dentro de la caja física etiquetada con el Código de Reserva (ej: <code>RES-2026-003</code>).</li>
+          <li>Si desea pegar la lista detallada en la tapa de la caja, pulse el botón <strong>"Imprimir Recibo"</strong>.</li>
+        </ol>
+        
+        <h4 style="color: var(--primary); font-family: var(--font-title); margin-top: 16px; margin-bottom: 6px; font-size: 15px;">3. Notificación de Lote Preparado</h4>
+        <p style="margin-bottom: 14px; font-size: 13px; color: var(--text);">Cuando todos los libros estén en la caja, pulse el botón verde <strong>"Avisar Recogida"</strong>. El sistema cambiará automáticamente el estado del lote a <strong>"Preparado"</strong> y registrará la notificación de correo para que secretaría avise a los padres.</p>
+        
+        <h4 style="color: var(--primary); font-family: var(--font-title); margin-top: 16px; margin-bottom: 6px; font-size: 15px;">4. Entrega al Tutor</h4>
+        <p style="margin-bottom: 14px; font-size: 13px; color: var(--text);">Cuando vengan a retirar los libros en el inicio de curso, localice su caja física en el almacén y marque el estado de la reserva como <strong>"Entregado"</strong> en este sistema para finalizar.</p>
+      </div>
+    `;
+  }
+  
+  if (!state.helpTab) {
+    state.helpTab = "admin";
+  }
+  
+  let helpContent = "";
+  if (state.helpTab === "admin") {
+    helpContent = `
+      <div style="margin-bottom: 16px; border-bottom: 1.5px solid var(--border); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; color: var(--primary); font-family: var(--font-title); font-size: 16px;">Manual del Administrador General</h3>
+        <a href="https://github.com/josemanuelsantos-svg/school-book-reservations/blob/main/docs/manual_administrador.md" target="_blank" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 6px 12px;">Ver en GitHub</a>
+      </div>
+      <div style="font-size: 13px; display: flex; flex-direction: column; gap: 14px; color: var(--text); line-height: 1.6;">
+        <p>Este panel le permite gestionar todo el proceso de reserva, catálogo y comunicaciones del Colegio San Buenaventura.</p>
+        
+        <h4 style="color: var(--primary); font-family: var(--font-title); margin-bottom: 4px; font-size: 14px;">Dashboard y Analíticas</h4>
+        <p>El panel de control muestra en tiempo real las métricas globales e interactúa con gráficos dinámicos de Chart.js:</p>
+        <ul style="margin-left: 20px; display: flex; flex-direction: column; gap: 4px;">
+          <li><strong>Evolución Temporal</strong>: Gráfico de líneas con el ritmo de reservas diarias.</li>
+          <li><strong>Estado de Lotes por Nivel</strong>: Gráfico de barras apiladas que clasifica el progreso por niveles.</li>
+          <li><strong>Editorial Donut</strong>: Desglose del coste acumulado que corresponde a cada proveedor de libros.</li>
+          <li><strong>Exportar Previsión (CSV)</strong>: Descarga el consolidado de libros requeridos para realizar el pedido de compra global a las editoriales.</li>
+        </ul>
+        
+        <h4 style="color: var(--primary); font-family: var(--font-title); margin-top: 10px; margin-bottom: 4px; font-size: 14px;">Gestión de Catálogo y Ajustes</h4>
+        <p>En la pestaña <strong>Configuración Colegio</strong> puede fijar la fecha límite de reserva y correos de contacto de ayuda. En <strong>Catálogo de Libros</strong> puede dar de alta nuevos ejemplares, cambiar precios e ISBN.</p>
+        
+        <h4 style="color: var(--primary); font-family: var(--font-title); margin-top: 10px; margin-bottom: 4px; font-size: 14px;">Comunicaciones y Plantillas</h4>
+        <p>Configure las plantillas de correo para avisar la recepción o la recogida. Use las variables automáticas <code>{tutor}</code>, <code>{alumno(s)}</code>, <code>{total}</code>, <code>{codigo}</code> y <code>{curso(s)}</code> para personalizar los emails de forma automática.</p>
+      </div>
+    `;
+  } else if (state.helpTab === "parents") {
+    helpContent = `
+      <div style="margin-bottom: 16px; border-bottom: 1.5px solid var(--border); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; color: var(--primary); font-family: var(--font-title); font-size: 16px;">Manual del Portal de Familias</h3>
+        <a href="https://github.com/josemanuelsantos-svg/school-book-reservations/blob/main/docs/manual_padres.md" target="_blank" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 6px 12px;">Ver en GitHub</a>
+      </div>
+      <div style="font-size: 13px; display: flex; flex-direction: column; gap: 14px; color: var(--text); line-height: 1.6;">
+        <p>Instrucciones de cara a los padres de alumnos para rellenar la reserva y consultar su estado.</p>
+        
+        <h4 style="color: var(--primary); font-family: var(--font-title); margin-bottom: 4px; font-size: 14px;">El Asistente Público</h4>
+        <p>Permite añadir varios alumnos a la vez y seleccionar asignaturas opcionales en tiempo real sin pagos por adelantado (el importe total se carga en el recibo de Septiembre).</p>
+        
+        <h4 style="color: var(--primary); font-family: var(--font-title); margin-top: 10px; margin-bottom: 4px; font-size: 14px;">Portal de Autoconsulta</h4>
+        <p>Los tutores pueden entrar a la sección de consulta con su Código de Reserva e Email para ver la preparación de sus libros, imprimir el recibo en PDF, compartir por WhatsApp o solicitar cambios directamente desde el formulario controlado.</p>
+      </div>
+    `;
+  } else if (state.helpTab === "lotes") {
+    helpContent = `
+      <div style="margin-bottom: 16px; border-bottom: 1.5px solid var(--border); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; color: var(--primary); font-family: var(--font-title); font-size: 16px;">Manual de Operario de Lotes / Almacén</h3>
+        <a href="https://github.com/josemanuelsantos-svg/school-book-reservations/blob/main/docs/manual_gestor_lotes.md" target="_blank" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 6px 12px;">Ver en GitHub</a>
+      </div>
+      <div style="font-size: 13px; display: flex; flex-direction: column; gap: 14px; color: var(--text); line-height: 1.6;">
+        <p>Instrucciones de trabajo para el personal que empaqueta físicamente los libros en las cajas.</p>
+        <p>Detalla el flujo de localización del lote en almacén, la ordenación física de los libros de texto, el uso del botón <strong>"Avisar Recogida"</strong> para notificar por email que ya pueden recoger la caja, y el marcaje final como <strong>"Entregado"</strong> al entregarlo a los padres.</p>
+      </div>
+    `;
+  } else if (state.helpTab === "technical") {
+    helpContent = `
+      <div style="margin-bottom: 16px; border-bottom: 1.5px solid var(--border); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; color: var(--primary); font-family: var(--font-title); font-size: 16px;">Documentación de Arquitectura Técnica</h3>
+        <a href="https://github.com/josemanuelsantos-svg/school-book-reservations/blob/main/docs/manual_tecnico_completo.md" target="_blank" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 6px 12px;">Ver en GitHub</a>
+      </div>
+      <div style="font-size: 13px; display: flex; flex-direction: column; gap: 14px; color: var(--text); line-height: 1.6;">
+        <p>Guía técnica exhaustiva que cubre la arquitectura interna SPA del portal, la base de datos Supabase, la persistencia local, el renderizado de Chart.js y la compilación unificada.</p>
+        
+        <h4 style="color: var(--primary); font-family: var(--font-title); margin-bottom: 4px; font-size: 14px;">Esquema de Tablas (Supabase)</h4>
+        <ul style="margin-left: 20px; display: flex; flex-direction: column; gap: 4px;">
+          <li><code>settings</code>: ID 1. Guarda año escolar, fecha límite y contacto.</li>
+          <li><code>books</code>: Catálogo oficial de libros ofertados.</li>
+          <li><code>reservations</code>: Pedidos de familias con desglose JSON.</li>
+          <li><code>emails</code>: Historial simulado de notificaciones de salida.</li>
+        </ul>
+        
+        <h4 style="color: var(--primary); font-family: var(--font-title); margin-top: 10px; margin-bottom: 4px; font-size: 14px;">Compilación unificada (sync.py)</h4>
+        <p>Combina <code>styles.css</code> y <code>app.js</code> en el archivo autoejecutable <code>previsualizacion-san-buenaventura.html</code> para despliegues portátiles rápidos.</p>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="admin-section-header">
+      <h2>Ayuda y Documentación</h2>
+      <p>Manuales de uso y documentación técnica del sistema de reserva de libros</p>
+    </div>
+    
+    <div style="display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap;">
+      <!-- Menú de pestañas de manuales -->
+      <div class="dashboard-chart-card card-shadow" style="flex: 1; min-width: 200px; padding: 16px; max-width: 250px; background-color: var(--card-bg); border-radius: var(--radius-md); border: 1.5px solid var(--border); display: flex; flex-direction: column; height: fit-content;">
+        <h4 style="margin-bottom: 12px; color: var(--text-muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Manuales de Usuario</h4>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="btn ${state.helpTab === 'admin' ? 'btn-primary' : 'btn-outline'}" onclick="setHelpTab('admin')" style="justify-content: flex-start; text-align: left; font-size: 12.5px; padding: 8px 12px; height: auto; width: 100%;">
+            Administrador
+          </button>
+          <button class="btn ${state.helpTab === 'parents' ? 'btn-primary' : 'btn-outline'}" onclick="setHelpTab('parents')" style="justify-content: flex-start; text-align: left; font-size: 12.5px; padding: 8px 12px; height: auto; width: 100%;">
+            Portal de Padres
+          </button>
+          <button class="btn ${state.helpTab === 'lotes' ? 'btn-primary' : 'btn-outline'}" onclick="setHelpTab('lotes')" style="justify-content: flex-start; text-align: left; font-size: 12.5px; padding: 8px 12px; height: auto; width: 100%;">
+            Gestor de Lotes
+          </button>
+          <hr style="border: 0; border-top: 1px solid var(--border); margin: 8px 0; width: 100%;">
+          <h4 style="margin-bottom: 6px; color: var(--text-muted); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Mantenimiento</h4>
+          <button class="btn ${state.helpTab === 'technical' ? 'btn-primary' : 'btn-outline'}" onclick="setHelpTab('technical')" style="justify-content: flex-start; text-align: left; font-size: 12.5px; padding: 8px 12px; height: auto; width: 100%;">
+            Guía Técnica
+          </button>
+        </div>
+      </div>
+      
+      <!-- Contenido del manual activo -->
+      <div class="dashboard-chart-card card-shadow" style="flex: 3; min-width: 300px; padding: 24px; line-height: 1.6; background-color: var(--card-bg); border-radius: var(--radius-md); border: 1.5px solid var(--border);">
+        ${helpContent}
+      </div>
+    </div>
+  `;
+}
+
+window.setHelpTab = function(tab) {
+  state.helpTab = tab;
+  render();
+};
 
 // Pestaña Admin 1: Dashboard
 function renderAdminDashboard() {
