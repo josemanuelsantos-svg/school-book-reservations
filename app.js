@@ -102,7 +102,7 @@ const DEFAULT_BOOKS = [
   { id: "9788419716545", title: "Bookroom Bites 3º Imagine! Blue Primaria con Read&Play", subject: "Inglés", grade: "3º Primaria", price: 39.95, publisher: "MILTON", required: true },
   { id: "9788414015391", title: "Lectura: Por fin vacaciones (El colegio de los animales mágicos)", subject: "Lectura", grade: "3º Primaria", price: 18.00, publisher: "EDELVIVES LITERATURA", required: true },
   { id: "9788414005453", title: "Lectura: El minotauro y el laberinto (Mitos Clásicos)", subject: "Lectura", grade: "3º Primaria", price: 14.75, publisher: "EDELVIVES LITERATURA", required: true },
-  { id: "9788414006542", title: "Lectura: Combate en el castillo (Aprendíz de caballero)", subject: "Lectura", grade: "3º Primaria", price: 12.60, publisher: "EDELVIVES LITERATURA", required: true },
+  { id: "9788414006542", title: "Lectura: Combate en el castillo (Aprendiz de caballero)", subject: "Lectura", grade: "3º Primaria", price: 12.60, publisher: "EDELVIVES LITERATURA", required: true },
   { id: "9788467577020", title: "Lectura: ¡Que vienen los dinosaurios!", subject: "Lectura", grade: "3º Primaria", price: 9.50, publisher: "SM", required: true },
   { id: "9788413390338", title: "Lectura: El club del fuego secreto (El museo de los cuentos)", subject: "Lectura", grade: "3º Primaria", price: 12.00, publisher: "ENCUENTRO", required: true },
 
@@ -128,11 +128,11 @@ const DEFAULT_BOOKS = [
   { id: "9788414073049", title: "Religión 5º Primaria", subject: "Religión", grade: "5º Primaria", price: 36.80, publisher: "EDELVIVES", required: false },
   { id: "9791388230059", title: "Time Travellers 2nd Ed Student's Book 5 Red Series", subject: "Inglés", grade: "5º Primaria", price: 36.95, publisher: "MILTON", required: true },
   { id: "9788419716569", title: "Bookroom Bites 5º Discover! Blue Primaria", subject: "Inglés", grade: "5º Primaria", price: 39.95, publisher: "MILTON", required: true },
-  { id: "5ep-biblia", title: "Biblia CEE", subject: "Religión", grade: "5º Primaria", price: 15.00, publisher: "CEE", required: true },
+  { id: "5ep-biblia", title: "Biblia CEE", subject: "Religión", grade: "5º Primaria", price: 15.00, publisher: "CEE", required: false },
   { id: "9788467582673", title: "Lectura: Detectives en chanclas (Proyecto Loran)", subject: "Lectura", grade: "5º Primaria", price: 10.95, publisher: "SM LITERATURA", required: true },
   { id: "9788491826729", title: "Lectura: Los escribidores de cartas", subject: "Lectura", grade: "5º Primaria", price: 10.95, publisher: "SM LITERATURA", required: true },
   { id: "9788467579208", title: "Lectura: Corazón de metal", subject: "Lectura", grade: "5º Primaria", price: 10.95, publisher: "SM LITERATURA", required: true },
-  { id: "9788467594409", title: "Lectura: El diablo de las aguas frías", subject: "Lectura", grade: "5º Primaria", price: 10.95, publisher: "SM LITERATURA", required: true },
+  { id: "9788467594355", title: "Lectura: La revolución de los balones", subject: "Lectura", grade: "5º Primaria", price: 10.95, publisher: "SM LITERATURA", required: true },
   { id: "9788491072706", title: "Lectura: Un día en el museo", subject: "Lectura", grade: "5º Primaria", price: 10.95, publisher: "SM LITERATURA", required: true },
 
   // 6º Primaria
