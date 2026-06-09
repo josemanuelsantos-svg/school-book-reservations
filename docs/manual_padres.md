@@ -60,6 +60,5 @@ Desde la ficha de consulta de su reserva activa, dispone de tres herramientas ú
 ---
 
 ## 5. Contacto y Ayuda
-Para cualquier aclaración o modificación sobre sus reservas, puede escribir a:
-* **Consultas Generales**: [libros@sanbuenaventura.org](mailto:libros@sanbuenaventura.org)
-* **Incidencias de Facturación**: [administracion@sanbuenaventura.org](mailto:administracion@sanbuenaventura.org)
+Para cualquier aclaración, cambio o consulta sobre sus reservas de libros de texto, póngase en contacto con el personal de administración en:
+* **Email de contacto**: [administracion@sanbuenaventura.org](mailto:administracion@sanbuenaventura.org)
