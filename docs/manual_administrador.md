@@ -1,95 +1,150 @@
-# Manual de Administración General · Portal de Gestión de Libros
+# Manual Completo de Administración General · Gestión Escolar
 ## Colegio San Buenaventura
 
-Este documento describe la funcionalidad completa del perfil de **Administrador General** en el sistema de gestión de reserva de libros del Colegio San Buenaventura.
+Este manual técnico y operativo está destinado al personal directivo y administrativo del **Colegio San Buenaventura** encargado de gestionar el proceso anual de reserva, compra, facturación y distribución de los libros de texto para el curso **2026/2027**.
 
 ---
 
-## 1. Acceso al Panel Administrativo
-1. Acceda a la plataforma web principal.
-2. En la parte superior derecha de la cabecera (Header), pulse sobre el botón **"Acceso Colegio"** (icono de candado).
-3. Introduzca la contraseña de administración configurada. Por defecto: **`admin`** o **`admin123`**.
-4. Pulse **"Entrar al Panel"**. Su sesión permanecerá activa hasta que pulse "Cerrar Sesión" en la barra lateral izquierda.
+## Índice
+1. **Acceso y Roles de Seguridad**
+2. **Dashboard de Analíticas y Control Logístico (Chart.js)**
+   * *Métricas Generales en Tiempo Real*
+   * *Gráficos de Analítica Avanzada*
+   * *Consolidación de Stock y Exportación a Proveedores*
+3. **Gestión de Reservas y Pedidos**
+   * *Búsqueda, Filtros y Fichas de Control*
+   * *Edición Manual de Datos de Alumnos y Libros*
+   * *Flujo de Cambios de Estado y Avisos Automáticos*
+4. **Mantenimiento del Catálogo de Libros**
+5. **Configuración del Módulo de Comunicaciones por Email**
+   * *Edición de Plantillas y Uso de Variables Dinámicas*
+   * *Simulaciones de Envío de Correos*
+   * *Bandeja de Salida Virtual e Inspección de Auditoría*
+6. **Ajustes y Configuración Global del Centro**
 
 ---
 
-## 2. Dashboard General (Métricas y Analíticas)
-El Dashboard es el panel principal de control y ofrece una visión consolidada en tiempo real:
+## 1. Acceso y Roles de Seguridad
+La plataforma escolar cuenta con un acceso protegido en el extremo derecho de la barra de navegación del Header (representado por el botón **"Acceso Colegio"** con un icono de candado). Al pulsarlo, se desplegará el cuadro de inicio de sesión:
 
-### Tarjetas de Métricas Clave
-* **Reservas Totales**: Número acumulado de reservas completadas por las familias.
-* **Importe Total Solicitado**: Suma total en euros (€) de todos los libros solicitados y pendientes de facturación.
-* **Confirmadas / Listas**: Reservas en estado *Confirmado*, *Preparado* o *Entregado*.
-* **Pendientes de Confirmar**: Pedidos que acaban de llegar de las familias y están a la espera de validación administrativa.
+* **Administrador General**:
+  * **Contraseña**: **`admin`** o **`admin123`**.
+  * **Permisos**: Acceso completo y sin restricciones a todas las secciones (Dashboard, Reservas, Catálogo, Comunicaciones, Configuración, Ayuda).
+* **Gestor de Lotes / Almacén**:
+  * **Contraseña**: **`lotes`** o **`lotes123`**.
+  * **Permisos**: Acceso restringido exclusivamente al listado de reservas y preparación de cajas (sección de logística). Tiene bloqueada la visualización de datos de ingresos, catálogo, plantillas y ajustes globales.
+* **Cierre de Sesión**: Para proteger la seguridad de los datos de las familias, pulse el botón **"Cerrar Sesión"** en la parte inferior de la barra lateral izquierda al terminar su jornada de trabajo.
 
-### Gráficos Interactivos (Chart.js)
-El panel cuenta con tres analíticas de datos interactivas para facilitar la toma de decisiones logísticas:
-1. **Evolución Temporal de Reservas**: Gráfico lineal que monitoriza cronológicamente la llegada de reservas diarias. Ayuda a identificar las semanas con mayor tráfico y cuellos de botella.
-2. **Estado de Lotes por Nivel**: Gráfico de barras apiladas que clasifica el estado de preparación (`Pendiente`, `Confirmado`, `Preparado`, `Entregado`) desglosado por nivel educativo: Infantil, Primaria, ESO y Bachillerato.
-3. **Distribución Económica por Editorial**: Gráfico circular de tipo Donut que calcula los costes consolidados de todos los libros reservados para mostrar qué porcentaje de facturación corresponde a cada editorial (SM, Edelvives, Oxford, Burlington, etc.).
+---
 
-### Previsión de Compra y Exportación a CSV
-Al final de la página se encuentra la tabla de **"Previsiones de Compra y Stock Requerido"**. Consolida todas las reservas activas para indicar cuántas unidades físicas de cada ISBN deben adquirirse al distribuidor:
-* Muestra el Curso, Asignatura, Título, Editorial, Precio unitario, Unidades reservadas e Importe total consolidado por ejemplar.
-* Para descargar este informe en formato Excel/CSV, haga clic en el botón superior derecho **"Exportar Previsión (CSV)"**. Podrá abrirlo directamente en Microsoft Excel para enviarlo al proveedor oficial de libros.
-* **Alumnos Reservados por Curso**: Cuadrícula de información compacta que desglosa el número exacto de alumnos con reserva realizada en cada uno de los niveles educativos.
+## 2. Dashboard de Analíticas y Control Logístico (Chart.js)
+El Dashboard general es la pantalla de bienvenida para el perfil Administrador y ofrece un resumen estadístico consolidado y animado:
+
+### Métricas Generales en Tiempo Real
+* **Reservas Totales**: El volumen acumulado de solicitudes completadas por las familias.
+* **Importe Total Solicitado**: Sumatorio en euros (€) de todos los libros reservados. Representa el volumen económico global que el colegio facturará a través de los recibos de Septiembre.
+* **Reservas Confirmadas/Listas**: Total de solicitudes en estado *Confirmado*, *Preparado* o *Entregado* (lotes validados y en proceso logístico).
+* **Pendientes de Confirmar**: Reservas recién enviadas por la web pública que requieren validación de datos antes de unirse al proceso de compra global.
+
+### Gráficos de Analítica Avanzada
+Los gráficos dinámicos (desarrollados con Chart.js) reaccionan con animaciones suaves al cargar la pantalla y ofrecen información detallada al pasar el cursor (tooltips inteligentes):
+
+1. **Evolución Temporal de Reservas (Línea)**: Muestra el número de reservas registradas cada día en el tiempo. Permite evaluar picos de afluencia de las familias para planificar los recursos del personal administrativo.
+2. **Estado de Lotes por Nivel (Barras Apiladas)**: Clasifica las reservas según su nivel educativo (Infantil, Primaria, ESO, Bachillerato) y apila visualmente la proporción de pedidos según su estado de preparación (`Pendiente` en rojo, `Confirmado` en azul, `Preparado` en oro y `Entregado` en verde).
+3. **Distribución Económica por Editorial (Donut)**: Analiza el coste acumulado de todos los libros reservados y agrupa los importes económicos según la editorial proveedora (SM, Edelvives, Oxford, Burlington, etc.). Esencial para conocer el volumen de compra exacto que se debe negociar con cada editorial.
+* *Nota de Accesibilidad*: Si activa el modo oscuro, los gráficos se redibujan de forma transparente leyendo los nuevos estilos computados de CSS para que los ejes y etiquetas sigan siendo perfectamente legibles.
+
+### Consolidación de Stock y Exportación a Proveedores
+Al final del Dashboard se encuentra la tabla de **Previsiones de Compra y Stock Requerido**:
+* Esta tabla recorre todas las reservas activas del sistema, desglosa los libros individuales que componen cada una, y los agrupa por ISBN/Título.
+* Indica la cantidad exacta de unidades físicas que el colegio debe comprar a los distribuidores de cada ejemplar, mostrando el coste consolidado por título.
+* **Exportación a CSV**: Pulse el botón **"Exportar Previsión (CSV)"** para descargar esta lista en un archivo compatible con Microsoft Excel. Puede enviar este archivo directamente al proveedor de libros para realizar el pedido de compra mayorista sin necesidad de contar libros a mano.
+* **Alumnos Reservados por Curso**: Cuadrícula compacta que muestra cuántos alumnos con reserva registrada pertenecen a cada uno de los 15 cursos oficiales disponibles (ej: *3 alumnos en Infantil 3 años, 40 alumnos en 1º Primaria*).
 
 ---
 
 ## 3. Gestión de Reservas y Pedidos
-Desde la pestaña **"Reservas / Pedidos"** de la barra lateral se realiza la operativa diaria:
+Ubicada en la pestaña **"Reservas / Pedidos"**, es el núcleo operativo de la aplicación.
 
-### Herramientas de Búsqueda y Filtrado
-* **Buscador global**: Introduzca el código de reserva, el nombre del alumno, el nombre del tutor o el teléfono para buscar coincidencias exactas.
-* **Filtros rápidos**: Seleccione un curso escolar o un estado de reserva específico para acotar la búsqueda en pantalla.
+### Búsqueda, Filtros y Fichas de Control
+* **Buscador**: Permite filtrar instantáneamente la lista escribiendo parte del código de reserva (ej: `RES-2026-001`), el nombre del alumno, el nombre del tutor, el correo o el teléfono.
+* **Filtros por Curso y Estado**: Dos menús desplegables para acotar la visualización (ej: ver solo pedidos en estado *"Preparado"* de *"1º ESO"*).
+* **Exportar Listado**: Permite descargar la lista de reservas filtrada en pantalla en un archivo CSV para control en papel o importación externa.
 
-### Operaciones con una Reserva
-Haga clic en cualquier reserva del listado para abrir su ficha y realizar acciones avanzadas:
-1. **Modificar el Estado**: Cambie el flujo del lote de manera ordenada (`Pendiente` ➔ `Confirmado` ➔ `Preparado` ➔ `Entregado`).
-2. **Avisar Recogida**: Cuando el lote está preparado, pulse este botón. El sistema actualizará el estado de la reserva a "Preparado" de forma automática y registrará una plantilla de email preconfigurada notificando al tutor que ya puede recogerlo.
-3. **Imprimir / Guardar Recibo**: Permite abrir el menú de impresión de su navegador para guardar la ficha familiar o imprimirla para pegarla físicamente en la caja del lote.
-4. **Editar libros / alumnos**: Puede quitar asignaturas opcionales o corregir nombres de alumnos a petición del tutor pulsando sobre el botón de edición.
+### Edición Manual de Datos de Alumnos y Libros
+Si un tutor solicita corregir un error en los datos de la reserva:
+1. Haga clic en la reserva correspondiente para abrir su ficha detallada.
+2. Pulse el botón **"Editar Reserva"** en la esquina superior derecha.
+3. Podrá corregir de forma directa los nombres de los alumnos, sus cursos asignados y los datos de contacto del tutor legal.
+4. Para modificar los libros del lote, active o desactive los checkboxes del listado de libros de cada alumno. El sistema recalculará de forma automática el subtotal por alumno y el Importe Total consolidado de la reserva.
+5. Pulse **"Guardar Cambios"** para actualizar la reserva en local y sincronizarla en Supabase Cloud.
+
+### Flujo de Cambios de Estado y Avisos Automáticos
+La gestión de los pedidos sigue un flujo de estados estricto:
+1. **Validación**: Al revisar un pedido entrante (`Pendiente`), cámbielo a `Confirmado` en la ficha de la reserva para indicar que el colegio acepta la reserva.
+2. **Aviso de Recogida**: Una vez que el lote de libros físico está empaquetado en el almacén del centro, abra la reserva y haga clic en el botón verde **"Avisar Recogida"**.
+   * El sistema cambiará el estado de la reserva a **"Preparado"**.
+   * Registrará y enviará de manera automática la plantilla de email de aviso de recogida al correo del tutor, detallando las instrucciones y el horario de retirada.
+3. **Entrega final**: Al entregar la caja física al padre o madre al inicio del curso, marque el estado de la reserva como **"Entregado"** para cerrar definitivamente el flujo del pedido.
 
 ---
 
-## 4. Gestión del Catálogo de Libros
-Desde la sección **"Catálogo de Libros"** puede mantener actualizado el inventario de asignaturas del colegio:
-* **Editar un libro**: Pulse en el botón de edición para corregir el Título, Asignatura, Editorial, ISBN o precio.
-* **Añadir un nuevo libro**: Pulse el botón **"+ Añadir Libro"** en la esquina superior derecha, rellene los campos solicitados y pulse "Guardar Libro". Los cambios se replicarán al instante en el catálogo público que visualizan las familias al hacer la matrícula de libros.
-* **Eliminar libro**: Borra el libro del catálogo del centro escolar.
+## 4. Mantenimiento del Catálogo de Libros
+Desde la sección **"Catálogo de Libros"** de la barra lateral, la administración tiene el control total sobre los títulos ofertados a las familias:
+
+* **Añadir un Nuevo Libro**:
+  1. Pulse el botón **"+ Añadir Libro"** en la parte superior derecha.
+  2. Introduzca el ID único/ISBN del libro.
+  3. Introduzca el Título, Asignatura (ej: *Lengua*, *Matemáticas*, *Inglés*), Editorial, Curso escolar al que se aplica y el Precio con IVA incluido.
+  4. Marque si el libro es **Obligatorio** (se preseleccionará y bloqueará en el wizard de familias) o si es **Opcional** (las familias eligen libremente si reservarlo o no).
+  5. Pulse **"Guardar Libro"**.
+* **Editar un Libro Existente**: Haga clic en el botón de edición (icono de lápiz) en la fila del libro en la tabla, modifique los datos necesarios (ej. actualizar el precio) y guarde.
+* **Eliminar un Libro**: Pulse el botón de borrado (icono de papelera) para dar de baja el libro del catálogo del centro.
+* *Nota*: Cualquier cambio realizado en el catálogo se aplica al instante en el formulario público de reservas.
 
 ---
 
-## 5. Comunicaciones y Plantillas de Correo
-El módulo de **"Comunicaciones"** gestiona los mensajes que se envían a las familias desde la plataforma:
+## 5. Configuración del Módulo de Comunicaciones por Email
+El sistema cuenta con un simulador completo de envío de notificaciones por correo electrónico a las familias.
 
-### Edición de Plantillas
-Puede definir el asunto y el cuerpo del mensaje para tres tipos de notificaciones automáticas seleccionando la pestaña correspondiente:
-* **Confirmación de Reserva**: Se envía automáticamente al tutor cuando finaliza el asistente público.
-* **Aviso de Lote Preparado**: Se envía cuando el personal marca un pedido como "Listo para recoger".
-* **Reenvío manual / Recordatorio**: Permite enviar notificaciones puntuales o avisos adicionales.
+### Edición de Plantillas y Uso de Variables Dinámicas
+En la pestaña **"Comunicaciones"**, usted puede redactar y guardar el asunto y cuerpo de tres notificaciones críticas:
+* **Confirmación de Pedido**: Correo de bienvenida enviado al registrar una reserva.
+* **Aviso de Recogida (Listo)**: Correo enviado al pulsar "Avisar Recogida" en un lote preparado.
+* **Aviso Plazo Límite**: Correo recordatorio general sobre la fecha de cierre de las reservas.
 
-### Variables Dinámicas Disponibles
-Puede utilizar etiquetas especiales encerradas entre llaves en el texto del asunto o cuerpo. El sistema las reemplazará automáticamente con la información real de la reserva al enviar el correo:
-* `{tutor}`: Nombre completo del tutor/padre.
-* `{alumno(s)}`: Nombre(s) del alumno o de los alumnos incluidos en el pedido.
+Para redactar mensajes personalizados masivos, use las siguientes variables encerradas entre llaves `{}`. El sistema las sustituirá por los datos reales del alumno y tutor en el momento de realizar el envío:
+* `{tutor}`: Nombre completo del padre/madre.
+* `{alumno(s)}`: Listado de nombres de los hijos incluidos en la reserva.
 * `{curso(s)}`: Los cursos de los niños (ej: *1º Primaria, 3º Primaria*).
-* `{total}`: El importe consolidado total estimado del pedido (ej: *120.50 €*).
-* `{codigo}`: ID único de reserva (ej: *RES-2026-001*).
+* `{codigo}`: ID único de la reserva (ej: *RES-2026-001*).
+* `{total}`: Importe total consolidado del pedido (ej: *139.90 €*).
 
-### Historial de Correos Simulado (Bandeja de Salida)
-Al final de la pestaña se encuentra el registro de todos los correos virtuales enviados:
-* Permite verificar la fecha y hora exacta del envío y a qué destinatario iba dirigido.
-* Pulse **"Ver Detalle"** para abrir una ventana modal con el cuerpo completo del email tal y como lo redactó el sistema tras reemplazar las variables.
-* Si el tutor afirma no haber recibido la notificación, pulse **"Reenviar Correo"** para enviar la copia digital de inmediato.
+### Simulaciones de Envío de Correos
+Debajo de la redacción de la plantilla, puede elegir a quién enviar el mensaje en el menú desplegable **"Destinatarios"**:
+* *Todos los Tutores*: Envío masivo a toda la base de datos de reservas activas.
+* *Tutores con Pedidos "Pendientes"*: Para enviar recordatorios o alertas de validación.
+* *Tutores con Pedidos "Preparados"*: Para realizar reenvíos masivos de aviso de recogida.
+* *Pedido Individual*: Seleccione una reserva específica para enviarle el correo de forma aislada.
+* Pulse el botón **"Simular Envío Masivo / Individual"** para ejecutar la simulación.
+
+### Bandeja de Salida Virtual e Inspección de Auditoría
+En la columna derecha de la sección de comunicaciones se muestra el historial de todos los correos simulados por la plataforma:
+* Cada elemento muestra el destinatario, la fecha y hora de envío, y el asunto.
+* Pulse **"Ver Detalle"** en cualquier correo para abrir una ventana modal que muestra el cuerpo del mensaje tal y como lo recibió la familia, permitiéndole verificar que la sustitución de variables dinámicas ha funcionado correctamente.
+* **Remitente y Destinatario de Auditoría**:
+  * Los correos salientes del colegio hacia las familias se registran con el remitente **`libros@sanbuenaventura.org`**.
+  * Las solicitudes de cambio entrantes de los padres se registran con el destinatario **`administracion@sanbuenaventura.org`** y el remitente "Tutor (Familia)".
+* **Reenviar Correo**: Si un padre indica que no le ha llegado la notificación, abra el detalle del correo y pulse **"Reenviar Correo"** para forzar un reenvío inmediato de la copia digital.
 
 ---
 
-## 6. Configuración del Colegio (Ajustes Globales)
-Ajustes principales del proceso de reservas accesibles desde la sección **"Configuración Colegio"**:
-* **Nombre de la Institución**: Nombre oficial reflejado en recibos y correos (ej. *Colegio San Buenaventura*).
-* **Año Académico**: Período escolar de aplicación (ej. *2026/2027*).
-* **Fecha Límite de Reserva**: Permite definir la fecha máxima en la que el formulario público estará abierto para recibir reservas de las familias. *Al superarse esta fecha, la app bloqueará automáticamente las nuevas solicitudes.*
-* **Email y Teléfono de Contacto**: Dirección y teléfono que aparecen por defecto en el pie de página de la web de cara al soporte familiar.
-* **Mensaje de Pie de Recibo**: Información legal o instrucciones generales adicionales que se imprimen al pie de la copia del ticket en formato PDF.
-* Pulse **"Guardar Configuración"** para confirmar y sincronizar los ajustes globales en la nube de Supabase.
+## 6. Ajustes y Configuración Global del Centro
+En la pestaña **"Configuración Colegio"**, la administración puede definir los parámetros de negocio de la plataforma:
+
+* **Nombre de la Institución**: El nombre comercial reflejado en las cabeceras (por defecto: *Colegio San Buenaventura*).
+* **Año Académico**: Período escolar activo (ej. *2026/2027*).
+* **Fecha Límite de Reserva**: Fecha en formato calendario (`AAAA-MM-DD`). Al superarse este día, el portal público desactivará el flujo de "Nueva Reserva" y mostrará un mensaje indicando a las familias que el plazo ha finalizado, manteniéndose activo únicamente el portal de autoconsulta de estados.
+* **Datos de Contacto de Ayuda**: Teléfono y correo electrónico que se muestran en el pie de página de la web pública (ej: **`administracion@sanbuenaventura.org`** y `+34 915 267 161`).
+* **Mensaje de Pie de Recibo**: Texto legal o explicativo que se imprimirá al final de los tickets en formato PDF guardados por los padres (ej. políticas de devolución, plazos de recogida o recordatorios de facturación).
+* Pulse el botón **"Guardar Configuración"** para confirmar y sincronizar los ajustes en Supabase.
