@@ -9,7 +9,7 @@ Este manual detallado tiene como objetivo guiar paso a paso a las familias y tut
 1. **Modelo de Funcionamiento y Facturación**
 2. **Guía Paso a Paso: Realizar una Nueva Reserva**
    * *Paso 1: Datos del Alumno y del Tutor (Soporte Multi-alumno)*
-   * *Paso 2: Selección del Catálogo de Libros (Obligatorios y Opcionales)*
+   * *Paso 2: Selección del Catálogo de Libros*
    * *Paso 3: Revisión, Aceptación de Términos y Confirmación*
 3. **Guía Paso a Paso: Portal de Autoconsulta Familiar**
    * *Acceso al Portal*
@@ -52,17 +52,17 @@ En esta primera sección se definen quiénes son los alumnos que cursarán estud
 
 ---
 
-### Paso 2: Selección del Catálogo de Libros (Obligatorios y Opcionales)
+### Paso 2: Selección del Catálogo de Libros
 La plataforma cargará de forma automática el catálogo de libros oficial que corresponde a los cursos escolares de los alumnos que haya añadido en el paso anterior.
 
 1. **Desglose por Alumno**:
    * Verá la pantalla dividida en bloques por cada hijo (ej: *"Libros para Lucas"* y *"Libros para Sofía"*).
-2. **Tipos de Libros**:
-   * **Libros Obligatorios (Marcados y Bloqueados)**: Son los libros troncales del plan de estudios aprobado por la dirección pedagógica del colegio. Están preseleccionados de forma obligatoria y no se pueden desmarcar, garantizando que el alumno disponga del material mínimo para seguir las clases.
-   * **Libros Opcionales (Casillas Seleccionables)**: Corresponden a asignaturas opcionales, lecturas recomendadas, cuadernillos de ejercicios complementarios o la materia de Religión/Atención Educativa. Puede marcar o desmarcar la casilla de verificación según la matrícula de su hijo.
+2. **Selección del Lote de Libros**:
+   * Por defecto, el sistema viene con **todos** los libros del curso preseleccionados.
+   * El tutor legal tiene total libertad para marcar o desmarcar cualquiera de los libros de la lista (por ejemplo, si ya dispone de algún libro de lectura de un año anterior o desea adquirir alguna materia por otra vía).
 3. **Panel de Presupuesto en Tiempo Real**:
    * En el lateral de la pantalla (o en la parte inferior si realiza la reserva desde su teléfono móvil), verá un cuadro de resumen con el desglose del importe de cada alumno y el **Importe Total Estimado** consolidado con el IVA incluido.
-4. Cuando haya revisado la selección de asignaturas opcionales para todos sus hijos, pulse el botón **"Siguiente Paso: Confirmar"**.
+4. Cuando haya revisado la selección de libros para todos sus hijos, pulse el botón **"Siguiente Paso: Confirmar"**.
 
 ---
 

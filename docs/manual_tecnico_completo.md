@@ -55,7 +55,7 @@ Almacena el catálogo ofertado.
 * `grade` (text): Curso aplicable.
 * `price` (numeric): Importe económico del libro.
 * `publisher` (text): Editorial de publicación.
-* `required` (bool): Define si es obligatorio en el curso (`true` = obligatorio, `false` = opcional).
+* `required` (bool): Campo heredado para compatibilidad de base de datos (siempre guardado como `true`).
 
 ### 3.3. Tabla `reservations` (Historial de Reservas)
 Almacena los pedidos realizados por las familias.

@@ -96,8 +96,7 @@ Desde la sección **"Catálogo de Libros"** de la barra lateral, la administraci
   1. Pulse el botón **"+ Añadir Libro"** en la parte superior derecha.
   2. Introduzca el ID único/ISBN del libro.
   3. Introduzca el Título, Asignatura (ej: *Lengua*, *Matemáticas*, *Inglés*), Editorial, Curso escolar al que se aplica y el Precio con IVA incluido.
-  4. Marque si el libro es **Obligatorio** (se preseleccionará y bloqueará en el wizard de familias) o si es **Opcional** (las familias eligen libremente si reservarlo o no).
-  5. Pulse **"Guardar Libro"**.
+  4. Pulse **"Guardar Libro"** (todos los libros del curso escolar se preseleccionarán por defecto en el asistente de las familias, y éstas podrán desmarcarlos libremente si no los necesitan).
 * **Editar un Libro Existente**: Haga clic en el botón de edición (icono de lápiz) en la fila del libro en la tabla, modifique los datos necesarios (ej. actualizar el precio) y guarde.
 * **Eliminar un Libro**: Pulse el botón de borrado (icono de papelera) para dar de baja el libro del catálogo del centro.
 * *Nota*: Cualquier cambio realizado en el catálogo se aplica al instante en el formulario público de reservas.

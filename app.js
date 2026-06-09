@@ -348,6 +348,30 @@ const DB = {
     }
     if (!localStorage.getItem("sb_books")) {
       this.saveBooks(DEFAULT_BOOKS);
+    } else {
+      try {
+        const currentBooks = JSON.parse(localStorage.getItem("sb_books")) || [];
+        let modified = false;
+        DEFAULT_BOOKS.forEach(defaultBook => {
+          const exists = currentBooks.some(b => b.id === defaultBook.id);
+          if (!exists) {
+            currentBooks.push(defaultBook);
+            modified = true;
+          }
+        });
+        // Asegurar que todos los libros tengan `required: true` para que todo sea seleccionable/requerido por defecto internamente
+        currentBooks.forEach(b => {
+          if (b.required !== true) {
+            b.required = true;
+            modified = true;
+          }
+        });
+        if (modified) {
+          this.saveBooks(currentBooks);
+        }
+      } catch (e) {
+        console.error("Error syncing default catalog books:", e);
+      }
     }
     if (!localStorage.getItem("sb_reservations")) {
       this.saveReservations(DEFAULT_RESERVATIONS);
@@ -443,7 +467,7 @@ function updateDefaultSelectedBooks() {
   const books = DB.getBooks();
   state.bookingForm.students.forEach(student => {
     if (student.selectedBooks.length === 0) {
-      const filtered = books.filter(b => b.grade === student.studentGrade && b.required);
+      const filtered = books.filter(b => b.grade === student.studentGrade);
       student.selectedBooks = filtered.map(b => b.id);
     }
   });
@@ -738,7 +762,7 @@ function renderStep2() {
             ${courseBooks.map(book => {
               const isChecked = student.selectedBooks.includes(book.id);
               return `
-                <div class="book-item-card ${isChecked ? 'selected' : ''} ${!book.required ? 'is-optional' : ''}" onclick="toggleBookSelection(${studentIdx}, '${book.id}')">
+                <div class="book-item-card ${isChecked ? 'selected' : ''}" onclick="toggleBookSelection(${studentIdx}, '${book.id}')">
                   <div class="book-check">
                     <input type="checkbox" id="chk-${studentIdx}-${book.id}" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation(); toggleBookSelection(${studentIdx}, '${book.id}')">
                   </div>
@@ -767,7 +791,7 @@ function renderStep2() {
 
   return `
     <h3 class="form-title">Paso 2: Selección de libros</h3>
-    <p class="form-subtitle">Por defecto vienen seleccionados todos los libros obligatorios. Marque o desmarque según las necesidades de cada alumno.</p>
+    <p class="form-subtitle">Por defecto vienen seleccionados todos los libros del curso. Marque o desmarque según las necesidades de cada alumno.</p>
 
     <div class="students-books-wrapper">
       ${sectionsHtml}
@@ -809,11 +833,6 @@ function renderStep3() {
     const studentTotal = selectedBooksDetails.reduce((sum, b) => sum + b.price, 0);
     finalTotal += studentTotal;
 
-    // Verificar si hay alguna asignatura opcional disponible en este curso
-    if (courseBooks.some(b => !b.required)) {
-      hasOptionalBooksInvolved = true;
-    }
-
     return `
       <div style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px dashed var(--border);">
         <h5 style="font-size:14px; color:var(--primary); margin-bottom:8px;">${student.studentName || 'Alumno ' + (studentIdx + 1)} (${student.studentGrade})</h5>
@@ -822,7 +841,7 @@ function renderStep3() {
             ? `<p class="no-books-msg" style="font-size:12px; color:var(--text-muted);">No ha seleccionado ningún libro para este alumno.</p>`
             : selectedBooksDetails.map(b => `
                 <div class="summary-book-item">
-                  <span>${b.title} (${b.subject}) ${!b.required ? '<small style="color:#b45309; font-weight:bold;">[Optativa]</small>' : ''}</span>
+                  <span>${b.title} (${b.subject})</span>
                   <strong>${b.price.toFixed(2)} €</strong>
                 </div>
               `).join('')
@@ -838,20 +857,6 @@ function renderStep3() {
   return `
     <h3 class="form-title">Paso 3: Revise su solicitud</h3>
     <p class="form-subtitle">Por favor, verifique que toda la información es correcta antes de confirmar la reserva.</p>
-
-    ${hasOptionalBooksInvolved ? `
-      <div class="optional-alert">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/>
-          <line x1="12" y1="17" x2="12.01" y2="17"/>
-        </svg>
-        <div>
-          <strong>¡Aviso de Asignaturas Opcionales/Optativas!</strong><br>
-          Ha seleccionado o dejado sin seleccionar asignaturas que pueden ser optativas (por ejemplo, Religión, Valores, Francés u otras opcionales). Por favor, asegúrese de que las materias seleccionadas coinciden exactamente con la matrícula formal del alumno en el centro.
-        </div>
-      </div>
-    ` : ''}
 
     <div class="summary-grid">
       <div class="summary-section">
@@ -984,7 +989,7 @@ window.handleStudentGradeChange = function(index, e) {
   state.bookingForm.students[index].studentGrade = e.target.value;
   // Cargar libros por defecto de ese curso
   const books = DB.getBooks();
-  const gradeBooks = books.filter(b => b.grade === e.target.value && b.required);
+  const gradeBooks = books.filter(b => b.grade === e.target.value);
   state.bookingForm.students[index].selectedBooks = gradeBooks.map(b => b.id);
   render();
 };
@@ -998,7 +1003,7 @@ window.addStudentCard = function() {
   });
   // Cargar libros por defecto del nuevo estudiante
   const books = DB.getBooks();
-  const gradeBooks = books.filter(b => b.grade === "1º Primaria" && b.required);
+  const gradeBooks = books.filter(b => b.grade === "1º Primaria");
   state.bookingForm.students[state.bookingForm.students.length - 1].selectedBooks = gradeBooks.map(b => b.id);
   render();
 };
@@ -2132,13 +2137,12 @@ function renderAdminCatalog() {
             <th>Título del Libro</th>
             <th>Editorial</th>
             <th>Precio</th>
-            <th>Tipo</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           ${filteredBooks.length === 0 
-            ? `<tr><td colspan="7" class="empty-table-cell">No hay libros registrados en este curso.</td></tr>`
+            ? `<tr><td colspan="6" class="empty-table-cell">No hay libros registrados en este curso.</td></tr>`
             : filteredBooks.map(b => `
                 <tr>
                   <td><span class="badge badge-outline">${b.grade}</span></td>
@@ -2146,7 +2150,6 @@ function renderAdminCatalog() {
                   <td>${b.title}</td>
                   <td>${b.publisher}</td>
                   <td><strong>${b.price.toFixed(2)} €</strong></td>
-                  <td>${b.required ? '<span class="badge badge-required">Obligatorio</span>' : '<span class="badge badge-optional">Opcional</span>'}</td>
                   <td>
                     <div style="display:flex; gap: 4px;">
                       <button class="btn btn-icon-only" onclick="openBookModal('${b.id}')" title="Editar">
@@ -2223,7 +2226,7 @@ window.saveBook = function(e) {
   const grade = document.getElementById("edit-book-grade").value;
   const publisher = document.getElementById("edit-book-publisher").value.trim();
   const price = parseFloat(document.getElementById("edit-book-price").value);
-  const required = document.getElementById("edit-book-required").checked;
+  const required = true;
 
   const books = DB.getBooks();
 
@@ -2288,9 +2291,9 @@ window.handleEditResStudentGradeChange = function(studentIdx, e) {
   const student = state.admin.editingRes.students[studentIdx];
   student.studentGrade = newGrade;
   
-  // Recargar libros por defecto obligatorios
+  // Recargar libros por defecto
   const books = DB.getBooks();
-  const gradeBooks = books.filter(b => b.grade === newGrade && b.required);
+  const gradeBooks = books.filter(b => b.grade === newGrade);
   student.books = gradeBooks.map(b => b.id);
   render();
 };
@@ -2313,7 +2316,7 @@ window.addEditResStudent = function() {
     books: []
   });
   const books = DB.getBooks();
-  const gradeBooks = books.filter(b => b.grade === "1º Primaria" && b.required);
+  const gradeBooks = books.filter(b => b.grade === "1º Primaria");
   state.admin.editingRes.students[state.admin.editingRes.students.length - 1].books = gradeBooks.map(b => b.id);
   render();
 };
@@ -2712,7 +2715,7 @@ function renderAdminModals() {
               <div class="modal-book-item" style="padding-left:12px; margin-bottom:4px;">
                 <div>
                   <strong>[${b.subject}]</strong> ${b.title}
-                  <small style="display:block; color:#64748b;">Editorial: ${b.publisher} ${!b.required ? '<span style="color:#b45309; font-weight:bold;">[Optativa]</span>' : ''}</small>
+                  <small style="display:block; color:#64748b;">Editorial: ${b.publisher}</small>
                 </div>
                 <strong>${b.price.toFixed(2)} €</strong>
               </div>
@@ -2829,13 +2832,6 @@ function renderAdminModals() {
                   <label for="edit-book-price">Precio (€) *</label>
                   <input type="number" id="edit-book-price" required step="0.01" min="0" value="${book.price || 0}">
                 </div>
-              </div>
-
-              <div class="form-group" style="margin-top: 8px;">
-                <label class="checkbox-label" style="display:flex; align-items:center; gap:8px;">
-                  <input type="checkbox" id="edit-book-required" ${book.required ? 'checked' : ''}>
-                  <span>¿Es un libro obligatorio para el curso escolar?</span>
-                </label>
               </div>
             </div>
             <div class="modal-footer">
