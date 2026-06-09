@@ -31,7 +31,7 @@ window.toggleTheme = function() {
 const DEFAULT_SETTINGS = {
   schoolName: "Colegio San Buenaventura",
   schoolYear: "2026/2027",
-  contactEmail: "libros@sanbuenaventura.org",
+  contactEmail: "administracion@sanbuenaventura.org",
   contactPhone: "+34 915 267 161",
   deadlineDate: "2026-07-20",
   customReceiptMessage: "Gracias por realizar la reserva de libros. Recuerde que el cobro no se realiza por esta plataforma. Se cargará en el recibo escolar habitual del mes de Septiembre."
@@ -323,8 +323,8 @@ const DB = {
     } else {
       try {
         const current = JSON.parse(localStorage.getItem("sb_settings"));
-        if (current && (current.contactEmail === "administracion@sanbuenaventura.org" || current.contactEmail === "reservas@sanbuenaventura.org")) {
-          current.contactEmail = "libros@sanbuenaventura.org";
+        if (current && current.contactEmail === "libros@sanbuenaventura.org") {
+          current.contactEmail = "administracion@sanbuenaventura.org";
           this.saveSettings(current);
         }
       } catch (e) {
@@ -2966,6 +2966,7 @@ function renderAdminModals() {
             <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
               <div style="font-size: 13px; line-height: 1.6; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">
                 <p style="margin: 4px 0;"><strong>Fecha de Envío:</strong> ${new Date(email.sentAt).toLocaleString("es-ES")}</p>
+                <p style="margin: 4px 0;"><strong>Remitente (Email):</strong> ${email.to === "administracion@sanbuenaventura.org" ? "Tutor (Familia)" : "libros@sanbuenaventura.org"}</p>
                 <p style="margin: 4px 0;"><strong>Destinatario (Email):</strong> <a href="mailto:${email.to}">${email.to}</a></p>
                 <p style="margin: 4px 0;"><strong>Asunto:</strong> ${email.subject}</p>
               </div>
