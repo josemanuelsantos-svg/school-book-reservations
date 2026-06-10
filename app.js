@@ -353,10 +353,15 @@ const DB = {
         const currentBooks = JSON.parse(localStorage.getItem("sb_books")) || [];
         let modified = false;
         DEFAULT_BOOKS.forEach(defaultBook => {
-          const exists = currentBooks.some(b => b.id === defaultBook.id);
-          if (!exists) {
+          const idx = currentBooks.findIndex(b => b.id === defaultBook.id);
+          if (idx === -1) {
             currentBooks.push(defaultBook);
             modified = true;
+          } else {
+            if (currentBooks[idx].price !== defaultBook.price) {
+              currentBooks[idx].price = defaultBook.price;
+              modified = true;
+            }
           }
         });
         // Asegurar que todos los libros tengan `required: true` para que todo sea seleccionable/requerido por defecto internamente
