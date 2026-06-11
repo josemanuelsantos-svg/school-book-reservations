@@ -422,6 +422,7 @@ const state = {
     parentEmail: "",
     parentPhone: "",
     termsAccepted: false,
+    privacyAccepted: false,
     successReservation: null // Objeto de la reserva finalizada
   },
 
@@ -463,6 +464,7 @@ function resetBookingForm() {
     parentEmail: "",
     parentPhone: "",
     termsAccepted: false,
+    privacyAccepted: false,
     successReservation: null
   };
   updateDefaultSelectedBooks();
@@ -886,16 +888,20 @@ function renderStep3() {
       </div>
     </div>
 
-    <div class="terms-area">
-      <label class="checkbox-label">
-        <input type="checkbox" id="termsCheck" ${form.termsAccepted ? 'checked' : ''} onchange="handleTermsToggle(event)">
+    <div class="terms-area" style="display:flex; flex-direction:column; gap:12px;">
+      <label class="checkbox-label" style="display:flex; align-items:flex-start; gap:8px; font-size:13px;">
+        <input type="checkbox" id="termsCheck" ${form.termsAccepted ? 'checked' : ''} onchange="handleTermsToggle(event)" style="margin-top: 3px;">
         <span>Acepto las condiciones de la reserva. Entiendo que los libros se entregarán en Septiembre y que el cobro se cargará a través del recibo mensual bancario habitual del colegio.</span>
+      </label>
+      <label class="checkbox-label" style="display:flex; align-items:flex-start; gap:8px; font-size:13px; margin-top: 6px;">
+        <input type="checkbox" id="privacyCheck" ${form.privacyAccepted ? 'checked' : ''} onchange="handlePrivacyToggle(event)" style="margin-top: 3px;">
+        <span>He leído y acepto la <a href="https://drive.google.com/file/d/1LARo4uZu19J6sDcrCofKq_fjkdmz6FHd/view?usp=sharing" target="_blank" style="color:var(--primary); font-weight:600; text-decoration:underline;">Información Detallada sobre Protección de Datos y Privacidad</a> del Colegio San Buenaventura.</span>
       </label>
     </div>
 
     <div class="wizard-actions">
       <button type="button" class="btn btn-outline" onclick="goToStep(2)">Atrás</button>
-      <button type="button" class="btn btn-primary btn-success" id="btn-submit-booking" onclick="submitBookingReservation()" ${!form.termsAccepted ? 'disabled' : ''}>
+      <button type="button" class="btn btn-primary btn-success" id="btn-submit-booking" onclick="submitBookingReservation()" ${!(form.termsAccepted && form.privacyAccepted) ? 'disabled' : ''}>
         Confirmar y Finalizar Reserva
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 8px;">
           <polyline points="20 6 9 17 4 12"/>
@@ -1057,7 +1063,15 @@ window.handleTermsToggle = function(e) {
   state.bookingForm.termsAccepted = e.target.checked;
   const btn = document.getElementById("btn-submit-booking");
   if (btn) {
-    btn.disabled = !e.target.checked;
+    btn.disabled = !(state.bookingForm.termsAccepted && state.bookingForm.privacyAccepted);
+  }
+};
+
+window.handlePrivacyToggle = function(e) {
+  state.bookingForm.privacyAccepted = e.target.checked;
+  const btn = document.getElementById("btn-submit-booking");
+  if (btn) {
+    btn.disabled = !(state.bookingForm.termsAccepted && state.bookingForm.privacyAccepted);
   }
 };
 
@@ -1078,7 +1092,7 @@ function sendSimulatedEmail(to, subject, body) {
 
 window.submitBookingReservation = function() {
   const form = state.bookingForm;
-  if (!form.termsAccepted) return;
+  if (!form.termsAccepted || !form.privacyAccepted) return;
 
   const allBooks = DB.getBooks();
 
