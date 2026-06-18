@@ -39,25 +39,25 @@ const DEFAULT_SETTINGS = {
 
 const DEFAULT_BOOKS = [
   // Infantil 3 años
-  { id: "9788426391834", title: "Caballitos de mar ¿Lo ves? (Animales Letra Mayúscula)", subject: "Proyectos", grade: "Infantil 3 años", price: 34.52, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788426391858", title: "Prehistoria ¿Lo ves? (Historia/Cultura Letra Mayúscula) con WQ", subject: "Proyectos", grade: "Infantil 3 años", price: 34.52, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "entusiasmat-3", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 3 años", price: 95.00, retailPrice: 66.30, publisher: "TEKMAN BOOK", required: true },
+  { id: "9788426391834", title: "Caballitos de mar ¿Lo ves? (Animales Letra Mayúscula)", subject: "Proyectos", grade: "Infantil 3 años", price: 34.52, publisher: "EDELVIVES", required: true },
+  { id: "9788426391858", title: "Prehistoria ¿Lo ves? (Historia/Cultura Letra Mayúscula) con WQ", subject: "Proyectos", grade: "Infantil 3 años", price: 34.52, publisher: "EDELVIVES", required: true },
+  { id: "entusiasmat-3", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 3 años", price: 95.00, publisher: "TEKMAN BOOK", required: true },
   { id: "glp-3", title: "Great Little People. (Solo de venta en el centro) Material de aula + licencia y libro para la familia.", subject: "Inglés", grade: "Infantil 3 años", price: 42.75, publisher: "MACMILLAN", required: true },
 
   // Infantil 4 años
-  { id: "9788426395634", title: "Calzadas romanas ¿Lo ves? (Historia/Cultura Letra Mayúscula)", subject: "Proyectos", grade: "Infantil 4 años", price: 34.52, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414007440", title: "Dragones ¿Lo ves? por ciclo 4 años", subject: "Proyectos", grade: "Infantil 4 años", price: 34.52, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414006658", title: "Agua ¿Lo ves? por ciclo 4 años", subject: "Proyectos", grade: "Infantil 4 años", price: 34.52, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "entusiasmat-4", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 4 años", price: 65.00, retailPrice: 39.80, publisher: "TEKMAN BOOK", required: true },
+  { id: "9788426395634", title: "Calzadas romanas ¿Lo ves? (Historia/Cultura Letra Mayúscula)", subject: "Proyectos", grade: "Infantil 4 años", price: 34.52, publisher: "EDELVIVES", required: true },
+  { id: "9788414007440", title: "Dragones ¿Lo ves? por ciclo 4 años", subject: "Proyectos", grade: "Infantil 4 años", price: 34.52, publisher: "EDELVIVES", required: true },
+  { id: "9788414006658", title: "Agua ¿Lo ves? por ciclo 4 años", subject: "Proyectos", grade: "Infantil 4 años", price: 34.52, publisher: "EDELVIVES", required: true },
+  { id: "entusiasmat-4", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 4 años", price: 65.00, publisher: "TEKMAN BOOK", required: true },
   { id: "glp-4", title: "Great Little People. (Solo de venta en el centro) Material de aula + licencia y libro para la familia.", subject: "Inglés", grade: "Infantil 4 años", price: 42.75, publisher: "MACMILLAN", required: true },
-  { id: "9788414007730", title: "Molalaletra Nivel 2 (Pauta) Alumno", subject: "Lectoescritura", grade: "Infantil 4 años", price: 51.57, retailPrice: 55.00, publisher: "EDELVIVES", required: true },
+  { id: "9788414007730", title: "Molalaletra Nivel 2 (Pauta) Alumno", subject: "Lectoescritura", grade: "Infantil 4 años", price: 51.57, publisher: "EDELVIVES", required: true },
 
   // Infantil 5 años
-  { id: "9788414011676", title: "Egipto Alumno", subject: "Proyectos", grade: "Infantil 5 años", price: 34.52, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414020760", title: "Vuelta al mundo 5 años. 2020", subject: "Proyectos", grade: "Infantil 5 años", price: 34.52, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414006696", title: "El cerebro. ¿Lo ves? 5 años", subject: "Proyectos", grade: "Infantil 5 años", price: 34.52, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414007761", title: "Molalaletra Nivel 3 (Pauta) Alumno", subject: "Lectoescritura", grade: "Infantil 5 años", price: 52.45, retailPrice: 56.60, publisher: "EDELVIVES", required: true },
-  { id: "entusiasmat-5", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 5 años", price: 65.00, retailPrice: 39.80, publisher: "TEKMAN BOOK", required: true },
+  { id: "9788414011676", title: "Egipto Alumno", subject: "Proyectos", grade: "Infantil 5 años", price: 34.52, publisher: "EDELVIVES", required: true },
+  { id: "9788414020760", title: "Vuelta al mundo 5 años. 2020", subject: "Proyectos", grade: "Infantil 5 años", price: 34.52, publisher: "EDELVIVES", required: true },
+  { id: "9788414006696", title: "El cerebro. ¿Lo ves? 5 años", subject: "Proyectos", grade: "Infantil 5 años", price: 34.52, publisher: "EDELVIVES", required: true },
+  { id: "9788414007761", title: "Molalaletra Nivel 3 (Pauta) Alumno", subject: "Lectoescritura", grade: "Infantil 5 años", price: 52.45, publisher: "EDELVIVES", required: true },
+  { id: "entusiasmat-5", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 5 años", price: 65.00, publisher: "TEKMAN BOOK", required: true },
   { id: "glp-5", title: "Great Little People. (Solo de venta en el centro) Material de aula + licencia y libro para la familia.", subject: "Inglés", grade: "Infantil 5 años", price: 42.75, publisher: "MACMILLAN", required: true },
 
   // 1º Primaria
