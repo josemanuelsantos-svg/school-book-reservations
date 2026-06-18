@@ -51,6 +51,10 @@ for m in pattern.finditer(array_content):
     price_m = re.search(r'price:\s*([\d.]+)', obj_str)
     if price_m: book["price"] = float(price_m.group(1))
     
+    # retailPrice
+    retailPrice_m = re.search(r'retailPrice:\s*([\d.]+)', obj_str)
+    if retailPrice_m: book["retailPrice"] = float(retailPrice_m.group(1))
+    
     # publisher
     publisher_m = re.search(r'publisher:\s*["\'](.*?)["\']', obj_str)
     if publisher_m: book["publisher"] = publisher_m.group(1)
@@ -67,6 +71,7 @@ for m in pattern.finditer(array_content):
             "subject": book.get("subject"),
             "grade": book.get("grade"),
             "price": book.get("price"),
+            "retail_price": book.get("retailPrice") if "retailPrice" in book else None,
             "publisher": book.get("publisher"),
             "required": book.get("required", True)
         }
