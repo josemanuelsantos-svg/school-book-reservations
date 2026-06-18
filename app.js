@@ -61,93 +61,93 @@ const DEFAULT_BOOKS = [
   { id: "glp-5", title: "Great Little People. (Solo de venta en el centro) Material de aula + licencia y libro para la familia.", subject: "Inglés", grade: "Infantil 5 años", price: 42.75, publisher: "MACMILLAN", required: true },
 
   // 1º Primaria
-  { id: "9788414068274", title: "Lengua Castellana y Lit. 1º Primaria (Ligada pauta + imprenta)", subject: "Lengua", grade: "1º Primaria", price: 43.98, retailPrice: 52.30, publisher: "EDELVIVES", required: true },
-  { id: "9788414068397", title: "Matemáticas 1º Primaria (Pauta)", subject: "Matemáticas", grade: "1º Primaria", price: 43.98, retailPrice: 52.30, publisher: "EDELVIVES", required: true },
-  { id: "9788414068601", title: "Ciencias Sociales 1º Primaria (Pauta)", subject: "Sociales", grade: "1º Primaria", price: 31.29, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414073001", title: "Religión 1º Primaria", subject: "Religión", grade: "1º Primaria", price: 32.09, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788410147478", title: "Natural Science 1 Roots (Outside the Box)", subject: "Naturales", grade: "1º Primaria", price: 33.66, retailPrice: 39.95, publisher: "Mcmillan", required: true },
-  { id: "9791388230011", title: "Time Travellers 2nd Ed Student's Book 1 Red Series (print)", subject: "Inglés", grade: "1º Primaria", price: 30.88, retailPrice: 36.95, publisher: "MILTON", required: true },
-  { id: "1ep-milton-rp", title: "Read&Play Milton 1º EP", subject: "Inglés", grade: "1º Primaria", price: 24.10, retailPrice: 39.95, publisher: "MILTON", required: true },
-  { id: "9788434894082", title: "Lectura: Para dormir a un Rey", subject: "Lectura", grade: "1º Primaria", price: 24.02, retailPrice: 25.90, publisher: "SM", required: true },
-  { id: "9788413923826", title: "Lectura: El desastre de Troti", subject: "Lectura", grade: "1º Primaria", price: 9.03, retailPrice: 9.50, publisher: "SM", required: true },
-  { id: "9788413923833", title: "Lectura: Los Mug, atrapados en el móvil", subject: "Lectura", grade: "1º Primaria", price: 9.03, retailPrice: 9.50, publisher: "SM", required: true },
-  { id: "9788467579192", title: "Lectura: Osita Coco está triste", subject: "Lectura", grade: "1º Primaria", price: 9.03, retailPrice: 9.50, publisher: "SM", required: true },
-  { id: "9788467585919", title: "Lectura: Cinco ovejitas y Azul", subject: "Lectura", grade: "1º Primaria", price: 9.03, retailPrice: 9.50, publisher: "SM", required: true },
-  { id: "9788491825425", title: "Lectura: Las pulgas que cambiaron el mundo", subject: "Lectura", grade: "1º Primaria", price: 9.03, retailPrice: 9.50, publisher: "Ala Delta", required: true },
+  { id: "9788414068274", title: "Lengua Castellana y Lit. 1º Primaria (Ligada pauta + imprenta)", subject: "Lengua", grade: "1º Primaria", price: 43.98, publisher: "EDELVIVES", required: true },
+  { id: "9788414068397", title: "Matemáticas 1º Primaria (Pauta)", subject: "Matemáticas", grade: "1º Primaria", price: 43.98, publisher: "EDELVIVES", required: true },
+  { id: "9788414068601", title: "Ciencias Sociales 1º Primaria (Pauta)", subject: "Sociales", grade: "1º Primaria", price: 31.29, publisher: "EDELVIVES", required: true },
+  { id: "9788414073001", title: "Religión 1º Primaria", subject: "Religión", grade: "1º Primaria", price: 32.09, publisher: "EDELVIVES", required: true },
+  { id: "9788410147478", title: "Natural Science 1 Roots (Outside the Box)", subject: "Naturales", grade: "1º Primaria", price: 33.66, publisher: "Mcmillan", required: true },
+  { id: "9791388230011", title: "Time Travellers 2nd Ed Student's Book 1 Red Series (print)", subject: "Inglés", grade: "1º Primaria", price: 30.88, publisher: "MILTON", required: true },
+  { id: "1ep-milton-rp", title: "Read&Play Milton 1º EP", subject: "Inglés", grade: "1º Primaria", price: 24.10, publisher: "MILTON", required: true },
+  { id: "9788434894082", title: "Lectura: Para dormir a un Rey", subject: "Lectura", grade: "1º Primaria", price: 24.02, publisher: "SM", required: true },
+  { id: "9788413923826", title: "Lectura: El desastre de Troti", subject: "Lectura", grade: "1º Primaria", price: 9.03, publisher: "SM", required: true },
+  { id: "9788413923833", title: "Lectura: Los Mug, atrapados en el móvil", subject: "Lectura", grade: "1º Primaria", price: 9.03, publisher: "SM", required: true },
+  { id: "9788467579192", title: "Lectura: Osita Coco está triste", subject: "Lectura", grade: "1º Primaria", price: 9.03, publisher: "SM", required: true },
+  { id: "9788467585919", title: "Lectura: Cinco ovejitas y Azul", subject: "Lectura", grade: "1º Primaria", price: 9.03, publisher: "SM", required: true },
+  { id: "9788491825425", title: "Lectura: Las pulgas que cambiaron el mundo", subject: "Lectura", grade: "1º Primaria", price: 0, publisher: "Ala Delta", required: false, notSoldInSchool: true },
 
   // 2º Primaria
-  { id: "9788414068779", title: "Lengua Castellana y Literatura 2º Primaria", subject: "Lengua", grade: "2º Primaria", price: 43.98, retailPrice: 52.30, publisher: "EDELVIVES", required: true },
-  { id: "9788414068823", title: "Matemáticas 2º Primaria", subject: "Matemáticas", grade: "2º Primaria", price: 43.98, retailPrice: 52.30, publisher: "EDELVIVES", required: true },
-  { id: "9788414068991", title: "Ciencias Sociales 2º Primaria", subject: "Sociales", grade: "2º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414073018", title: "Religión 2º Primaria", subject: "Religión", grade: "2º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788419417466", title: "Natural Science 2 Outside the Box Sb Pk", subject: "Naturales", grade: "2º Primaria", price: 33.66, retailPrice: 39.95, publisher: "Mcmillan", required: true },
-  { id: "9791388230028", title: "Time Travellers 2nd Ed Student's Book 2 Red Series", subject: "Inglés", grade: "2º Primaria", price: 30.88, retailPrice: 36.95, publisher: "MILTON", required: true },
-  { id: "2ep-milton-rp", title: "Read&Play Milton 2º EP", subject: "Inglés", grade: "2º Primaria", price: 24.10, retailPrice: 39.95, publisher: "MILTON", required: true },
-  { id: "9788467552423", title: "Diccionario Avanzado Primaria. Lengua Española", subject: "Lengua", grade: "2º Primaria", price: 21.38, retailPrice: 22.50, publisher: "SM", required: true },
-  { id: "9788434895959", title: "Lecturas: Para dormir a una princesa", subject: "Lectura", grade: "2º Primaria", price: 24.02, retailPrice: 25.90, publisher: "SM LITERATURA", required: true },
-  { id: "9788467513578", title: "Lecturas: El regalo de cumpleaños", subject: "Lectura", grade: "2º Primaria", price: 24.02, retailPrice: 25.90, publisher: "SM LITERATURA", required: true },
-  { id: "9788467591644", title: "Lectura: Simón miedoso", subject: "Lectura", grade: "2º Primaria", price: 9.03, retailPrice: 9.50, publisher: "SM LITERATURA", required: true },
-  { id: "9788467579949", title: "Lectura: La lista de cumpleaños", subject: "Lectura", grade: "2º Primaria", price: 9.03, retailPrice: 9.50, publisher: "SM LITERATURA", required: true },
-  { id: "9788467579864", title: "Lectura: Morris, regálame un amigo", subject: "Lectura", grade: "2º Primaria", price: 9.03, retailPrice: 9.50, publisher: "SM LITERATURA", required: true },
-  { id: "9788467585568", title: "Lectura: Ojos negros", subject: "Lectura", grade: "2º Primaria", price: 9.03, retailPrice: 9.50, publisher: "SM LITERATURA", required: true },
-  { id: "9788467590470", title: "Lectura: Narices!", subject: "Lectura", grade: "2º Primaria", price: 9.03, retailPrice: 9.50, publisher: "SM LITERATURA", required: true },
+  { id: "9788414068779", title: "Lengua Castellana y Literatura 2º Primaria", subject: "Lengua", grade: "2º Primaria", price: 43.98, publisher: "EDELVIVES", required: true },
+  { id: "9788414068823", title: "Matemáticas 2º Primaria", subject: "Matemáticas", grade: "2º Primaria", price: 43.98, publisher: "EDELVIVES", required: true },
+  { id: "9788414068991", title: "Ciencias Sociales 2º Primaria", subject: "Sociales", grade: "2º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9788414073018", title: "Religión 2º Primaria", subject: "Religión", grade: "2º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9788419417466", title: "Natural Science 2 Outside the Box Sb Pk", subject: "Naturales", grade: "2º Primaria", price: 33.66, publisher: "Mcmillan", required: true },
+  { id: "9791388230028", title: "Time Travellers 2nd Ed Student's Book 2 Red Series", subject: "Inglés", grade: "2º Primaria", price: 30.88, publisher: "MILTON", required: true },
+  { id: "2ep-milton-rp", title: "Read&Play Milton 2º EP", subject: "Inglés", grade: "2º Primaria", price: 24.10, publisher: "MILTON", required: true },
+  { id: "9788467552423", title: "Diccionario Avanzado Primaria. Lengua Española", subject: "Lengua", grade: "2º Primaria", price: 21.38, publisher: "SM", required: true },
+  { id: "9788434895959", title: "Lecturas: Para dormir a una princesa", subject: "Lectura", grade: "2º Primaria", price: 24.02, publisher: "SM LITERATURA", required: true },
+  { id: "9788467513578", title: "Lecturas: El regalo de cumpleaños", subject: "Lectura", grade: "2º Primaria", price: 24.02, publisher: "SM LITERATURA", required: true },
+  { id: "9788467591644", title: "Lectura: Simón miedoso", subject: "Lectura", grade: "2º Primaria", price: 9.03, publisher: "SM LITERATURA", required: true },
+  { id: "9788467579949", title: "Lectura: La lista de cumpleaños", subject: "Lectura", grade: "2º Primaria", price: 9.03, publisher: "SM LITERATURA", required: true },
+  { id: "9788467579864", title: "Lectura: Morris, regálame un amigo", subject: "Lectura", grade: "2º Primaria", price: 9.03, publisher: "SM LITERATURA", required: true },
+  { id: "9788467585568", title: "Lectura: Ojos negros", subject: "Lectura", grade: "2º Primaria", price: 9.03, publisher: "SM LITERATURA", required: true },
+  { id: "9788467590470", title: "Lectura: Narices!", subject: "Lectura", grade: "2º Primaria", price: 9.03, publisher: "SM LITERATURA", required: true },
 
   // 3º Primaria
-  { id: "9788414069158", title: "Lengua Castellana y Literatura 3º Primaria", subject: "Lengua", grade: "3º Primaria", price: 43.98, retailPrice: 52.30, publisher: "EDELVIVES", required: true },
-  { id: "9788414069257", title: "Matemáticas 3º Primaria (Madrid, Can, LRj, Val)", subject: "Matemáticas", grade: "3º Primaria", price: 43.98, retailPrice: 52.30, publisher: "EDELVIVES", required: true },
-  { id: "9788414069349", title: "Ciencias de la Naturaleza 3º Primaria", subject: "Naturales", grade: "3º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414045770", title: "Ciencias Sociales 3º Primaria", subject: "Sociales", grade: "3º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414073025", title: "Religión 3º Primaria", subject: "Religión", grade: "3º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9791388230035", title: "Time Travellers 2nd Ed Student's Book 3 Red Series", subject: "Inglés", grade: "3º Primaria", price: 33.38, retailPrice: 36.95, publisher: "MILTON", required: true },
-  { id: "9788419716545", title: "Bookroom Bites 3º Imagine! Blue Primaria con Read&Play", subject: "Inglés", grade: "3º Primaria", price: 25.65, retailPrice: 39.95, publisher: "MILTON", required: true },
-  { id: "9788414015391", title: "Lectura: Por fin vacaciones (El colegio de los animales mágicos)", subject: "Lectura", grade: "3º Primaria", price: 17.10, retailPrice: 18.00, publisher: "EDELVIVES LITERATURA", required: true },
-  { id: "9788414005453", title: "Lectura: El minotauro y el laberinto (Mitos Clásicos)", subject: "Lectura", grade: "3º Primaria", price: 14.01, retailPrice: 14.75, publisher: "EDELVIVES LITERATURA", required: true },
-  { id: "9788414006542", title: "Lectura: Combate en el castillo (Aprendiz de caballero)", subject: "Lectura", grade: "3º Primaria", price: 11.97, retailPrice: 12.60, publisher: "EDELVIVES LITERATURA", required: true },
-  { id: "9788467577020", title: "Lectura: ¡Que vienen los dinosaurios!", subject: "Lectura", grade: "3º Primaria", price: 9.03, retailPrice: 9.50, publisher: "SM", required: true },
-  { id: "9788413390338", title: "Lectura: El club del fuego secreto (El museo de los cuentos)", subject: "Lectura", grade: "3º Primaria", price: 12.00, retailPrice: 12.60, publisher: "ENCUENTRO", required: true },
+  { id: "9788414069158", title: "Lengua Castellana y Literatura 3º Primaria", subject: "Lengua", grade: "3º Primaria", price: 43.98, publisher: "EDELVIVES", required: true },
+  { id: "9788414069257", title: "Matemáticas 3º Primaria (Madrid, Can, LRj, Val)", subject: "Matemáticas", grade: "3º Primaria", price: 43.98, publisher: "EDELVIVES", required: true },
+  { id: "9788414069349", title: "Ciencias de la Naturaleza 3º Primaria", subject: "Naturales", grade: "3º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9788414045770", title: "Ciencias Sociales 3º Primaria", subject: "Sociales", grade: "3º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9788414073025", title: "Religión 3º Primaria", subject: "Religión", grade: "3º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9791388230035", title: "Time Travellers 2nd Ed Student's Book 3 Red Series", subject: "Inglés", grade: "3º Primaria", price: 33.38, publisher: "MILTON", required: true },
+  { id: "9788419716545", title: "Bookroom Bites 3º Imagine! Blue Primaria con Read&Play", subject: "Inglés", grade: "3º Primaria", price: 25.65, publisher: "MILTON", required: true },
+  { id: "9788414015391", title: "Lectura: Por fin vacaciones (El colegio de los animales mágicos)", subject: "Lectura", grade: "3º Primaria", price: 17.10, publisher: "EDELVIVES LITERATURA", required: true },
+  { id: "9788414005453", title: "Lectura: El minotauro y el laberinto (Mitos Clásicos)", subject: "Lectura", grade: "3º Primaria", price: 14.01, publisher: "EDELVIVES LITERATURA", required: true },
+  { id: "9788414006542", title: "Lectura: Combate en el castillo (Aprendiz de caballero)", subject: "Lectura", grade: "3º Primaria", price: 11.97, publisher: "EDELVIVES LITERATURA", required: true },
+  { id: "9788467577020", title: "Lectura: ¡Que vienen los dinosaurios!", subject: "Lectura", grade: "3º Primaria", price: 9.03, publisher: "SM", required: true },
+  { id: "9788413390338", title: "Lectura: El club del fuego secreto (El museo de los cuentos)", subject: "Lectura", grade: "3º Primaria", price: 12.00, publisher: "ENCUENTRO", required: true },
 
   // 4º Primaria
-  { id: "9788414069547", title: "Lengua Castellana y Literatura 4º Primaria", subject: "Lengua", grade: "4º Primaria", price: 43.98, retailPrice: 52.30, publisher: "EDELVIVES", required: true },
-  { id: "9788414069646", title: "Matemáticas 4º Primaria (Madrid, Can, LRj, Val)", subject: "Matemáticas", grade: "4º Primaria", price: 43.98, retailPrice: 52.30, publisher: "EDELVIVES", required: true },
-  { id: "9788414069738", title: "Ciencias de la Naturaleza 4º Primaria", subject: "Naturales", grade: "4º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414069813", title: "Ciencias Sociales 4º Primaria", subject: "Sociales", grade: "4º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414073032", title: "Religión 4º Primaria", subject: "Religión", grade: "4º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9791388230042", title: "Time Travellers 2nd Ed Student's Book 4 Red Series", subject: "Inglés", grade: "4º Primaria", price: 33.38, retailPrice: 36.95, publisher: "MILTON", required: true },
-  { id: "9788419716552", title: "Bookroom Bites 4º Explore! Blue Primaria con Read&Play", subject: "Inglés", grade: "4º Primaria", price: 25.65, retailPrice: 39.95, publisher: "MILTON", required: true },
-  { id: "9788413189741", title: "Lectura: Cuando juegan las palabras", subject: "Lectura", grade: "4º Primaria", price: 9.45, retailPrice: 9.95, publisher: "SM", required: true },
-  { id: "9788491077794", title: "Lectura: Hermanos hasta en la sopa", subject: "Lectura", grade: "4º Primaria", price: 10.40, retailPrice: 10.95, publisher: "SM", required: true },
-  { id: "9788426362117", title: "Lectura: El bosque de los desaparecidos", subject: "Lectura", grade: "4º Primaria", price: 11.59, retailPrice: 12.20, publisher: "EDELVIVES", required: true },
-  { id: "9788467594409", title: "Lectura: El diablo de las aguas frías", subject: "Lectura", grade: "4º Primaria", price: 10.40, retailPrice: 10.95, publisher: "SM", required: true },
-  { id: "9788491825340", title: "La foto de los diez mil me gusta", subject: "Lectura", grade: "4º Primaria", price: 10.40, retailPrice: 10.95, publisher: "SM", required: true },
+  { id: "9788414069547", title: "Lengua Castellana y Literatura 4º Primaria", subject: "Lengua", grade: "4º Primaria", price: 43.98, publisher: "EDELVIVES", required: true },
+  { id: "9788414069646", title: "Matemáticas 4º Primaria (Madrid, Can, LRj, Val)", subject: "Matemáticas", grade: "4º Primaria", price: 43.98, publisher: "EDELVIVES", required: true },
+  { id: "9788414069738", title: "Ciencias de la Naturaleza 4º Primaria", subject: "Naturales", grade: "4º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9788414069813", title: "Ciencias Sociales 4º Primaria", subject: "Sociales", grade: "4º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9788414073032", title: "Religión 4º Primaria", subject: "Religión", grade: "4º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9791388230042", title: "Time Travellers 2nd Ed Student's Book 4 Red Series", subject: "Inglés", grade: "4º Primaria", price: 33.38, publisher: "MILTON", required: true },
+  { id: "9788419716552", title: "Bookroom Bites 4º Explore! Blue Primaria con Read&Play", subject: "Inglés", grade: "4º Primaria", price: 25.65, publisher: "MILTON", required: true },
+  { id: "9788413189741", title: "Lectura: Cuando juegan las palabras", subject: "Lectura", grade: "4º Primaria", price: 9.45, publisher: "SM", required: true },
+  { id: "9788491077794", title: "Lectura: Hermanos hasta en la sopa", subject: "Lectura", grade: "4º Primaria", price: 10.40, publisher: "SM", required: true },
+  { id: "9788426362117", title: "Lectura: El bosque de los desaparecidos", subject: "Lectura", grade: "4º Primaria", price: 11.59, publisher: "EDELVIVES", required: true },
+  { id: "9788467594409", title: "Lectura: El diablo de las aguas frías", subject: "Lectura", grade: "4º Primaria", price: 10.40, publisher: "SM", required: true },
+  { id: "9788491825340", title: "La foto de los diez mil me gusta", subject: "Lectura", grade: "4º Primaria", price: 10.40, publisher: "SM", required: true },
 
   // 5º Primaria
-  { id: "9788414069974", title: "Lengua Castellana y Literatura 5º Primaria VCC", subject: "Lengua", grade: "5º Primaria", price: 43.98, retailPrice: 52.30, publisher: "EDELVIVES", required: true },
-  { id: "9788414070079", title: "Matemáticas 5º Primaria (Madrid, Can, LRj, Val)", subject: "Matemáticas", grade: "5º Primaria", price: 43.98, retailPrice: 52.30, publisher: "EDELVIVES", required: true },
-  { id: "9788414070208", title: "Ciencias de la Naturaleza 5º Primaria", subject: "Naturales", grade: "5º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414070284", title: "Ciencias Sociales 5º Primaria", subject: "Sociales", grade: "5º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414073049", title: "Religión 5º Primaria", subject: "Religión", grade: "5º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9791388230059", title: "Time Travellers 2nd Ed Student's Book 5 Red Series", subject: "Inglés", grade: "5º Primaria", price: 33.38, retailPrice: 36.95, publisher: "MILTON", required: true },
-  { id: "9788419716569", title: "Bookroom Bites 5º Discover! Blue Primaria", subject: "Inglés", grade: "5º Primaria", price: 25.65, retailPrice: 39.95, publisher: "MILTON", required: true },
+  { id: "9788414069974", title: "Lengua Castellana y Literatura 5º Primaria VCC", subject: "Lengua", grade: "5º Primaria", price: 43.98, publisher: "EDELVIVES", required: true },
+  { id: "9788414070079", title: "Matemáticas 5º Primaria (Madrid, Can, LRj, Val)", subject: "Matemáticas", grade: "5º Primaria", price: 43.98, publisher: "EDELVIVES", required: true },
+  { id: "9788414070208", title: "Ciencias de la Naturaleza 5º Primaria", subject: "Naturales", grade: "5º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9788414070284", title: "Ciencias Sociales 5º Primaria", subject: "Sociales", grade: "5º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9788414073049", title: "Religión 5º Primaria", subject: "Religión", grade: "5º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9791388230059", title: "Time Travellers 2nd Ed Student's Book 5 Red Series", subject: "Inglés", grade: "5º Primaria", price: 33.38, publisher: "MILTON", required: true },
+  { id: "9788419716569", title: "Bookroom Bites 5º Discover! Blue Primaria", subject: "Inglés", grade: "5º Primaria", price: 25.65, publisher: "MILTON", required: true },
   { id: "5ep-biblia", title: "Biblia CEE", subject: "Religión", grade: "5º Primaria", price: 9.03, publisher: "CEE", required: true },
-  { id: "9788467582673", title: "Lectura: Detectives en chanclas (Proyecto Loran)", subject: "Lectura", grade: "5º Primaria", price: 10.40, retailPrice: 10.95, publisher: "SM LITERATURA", required: true },
-  { id: "9788491826729", title: "Lectura: Los escribidores de cartas", subject: "Lectura", grade: "5º Primaria", price: 10.40, retailPrice: 10.95, publisher: "SM LITERATURA", required: true },
-  { id: "9788467579208", title: "Lectura: Corazón de metal", subject: "Lectura", grade: "5º Primaria", price: 10.40, retailPrice: 10.95, publisher: "SM LITERATURA", required: true },
-  { id: "9788467594355", title: "Lectura: La revolución de los balones", subject: "Lectura", grade: "5º Primaria", price: 10.40, retailPrice: 10.95, publisher: "SM LITERATURA", required: true },
-  { id: "9788491072706", title: "Lectura: Un día en el museo", subject: "Lectura", grade: "5º Primaria", price: 10.40, retailPrice: 10.95, publisher: "SM LITERATURA", required: true },
+  { id: "9788467582673", title: "Lectura: Detectives en chanclas (Proyecto Loran)", subject: "Lectura", grade: "5º Primaria", price: 10.40, publisher: "SM LITERATURA", required: true },
+  { id: "9788491826729", title: "Lectura: Los escribidores de cartas", subject: "Lectura", grade: "5º Primaria", price: 10.40, publisher: "SM LITERATURA", required: true },
+  { id: "9788467579208", title: "Lectura: Corazón de metal", subject: "Lectura", grade: "5º Primaria", price: 10.40, publisher: "SM LITERATURA", required: true },
+  { id: "9788467594355", title: "Lectura: La revolución de los balones", subject: "Lectura", grade: "5º Primaria", price: 10.40, publisher: "SM LITERATURA", required: true },
+  { id: "9788491072706", title: "Lectura: Un día en el museo", subject: "Lectura", grade: "5º Primaria", price: 10.40, publisher: "SM LITERATURA", required: true },
 
   // 6º Primaria
-  { id: "9788414070444", title: "Lengua Castellana y Literatura 6º Primaria", subject: "Lengua", grade: "6º Primaria", price: 43.98, retailPrice: 52.30, publisher: "EDELVIVES", required: true },
-  { id: "9788414070499", title: "Matemáticas 6º Primaria", subject: "Matemáticas", grade: "6º Primaria", price: 43.98, retailPrice: 52.30, publisher: "EDELVIVES", required: true },
-  { id: "9788414070581", title: "Ciencias de la Naturaleza 6º Primaria", subject: "Naturales", grade: "6º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414070703", title: "Ciencias Sociales 6º Primaria", subject: "Sociales", grade: "6º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9788414073056", title: "Religión 6º Primaria", subject: "Religión", grade: "6º Primaria", price: 31.40, retailPrice: 36.80, publisher: "EDELVIVES", required: true },
-  { id: "9791388230066", title: "Time Travellers 2nd Ed Student's Book 6 Red Series", subject: "Inglés", grade: "6º Primaria", price: 33.38, retailPrice: 36.95, publisher: "MILTON", required: true },
-  { id: "9788419716576", title: "Bookroom Bites 6º Investigate! Blue Primaria con Read&Play incluida", subject: "Inglés", grade: "6º Primaria", price: 25.65, retailPrice: 39.95, publisher: "MILTON", required: true },
-  { id: "9788467591354", title: "Lectura: El Conde Lucanor", subject: "Lectura", grade: "6º Primaria", price: 12.30, retailPrice: 12.95, publisher: "SM LITERATURA", required: true },
-  { id: "9788478887194", title: "Lectura: El Principito (Edición Acuarelas)", subject: "Lectura", grade: "6º Primaria", price: 12.30, retailPrice: 12.95, publisher: "SALAMANDRA", required: true },
-  { id: "9788467585995", title: "Lectura: El Quijote (Versión adaptada)", subject: "Lectura", grade: "6º Primaria", price: 12.30, retailPrice: 12.95, publisher: "SM LITERATURA", required: true },
-  { id: "9788411822046", title: "Lectura: Lazarillo de Tormes", subject: "Lectura", grade: "6º Primaria", price: 12.30, retailPrice: 12.95, publisher: "SM LITERATURA", required: true },
-  { id: "9788411822800", title: "Lectura: El increíble viaje de William Parri", subject: "Lectura", grade: "6º Primaria", price: 10.40, retailPrice: 10.95, publisher: "SM LITERATURA", required: true },
+  { id: "9788414070444", title: "Lengua Castellana y Literatura 6º Primaria", subject: "Lengua", grade: "6º Primaria", price: 43.98, publisher: "EDELVIVES", required: true },
+  { id: "9788414070499", title: "Matemáticas 6º Primaria", subject: "Matemáticas", grade: "6º Primaria", price: 43.98, publisher: "EDELVIVES", required: true },
+  { id: "9788414070581", title: "Ciencias de la Naturaleza 6º Primaria", subject: "Naturales", grade: "6º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9788414070703", title: "Ciencias Sociales 6º Primaria", subject: "Sociales", grade: "6º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9788414073056", title: "Religión 6º Primaria", subject: "Religión", grade: "6º Primaria", price: 31.40, publisher: "EDELVIVES", required: true },
+  { id: "9791388230066", title: "Time Travellers 2nd Ed Student's Book 6 Red Series", subject: "Inglés", grade: "6º Primaria", price: 33.38, publisher: "MILTON", required: true },
+  { id: "9788419716576", title: "Bookroom Bites 6º Investigate! Blue Primaria con Read&Play incluida", subject: "Inglés", grade: "6º Primaria", price: 25.65, publisher: "MILTON", required: true },
+  { id: "9788467591354", title: "Lectura: El Conde Lucanor", subject: "Lectura", grade: "6º Primaria", price: 12.30, publisher: "SM LITERATURA", required: true },
+  { id: "9788478887194", title: "Lectura: El Principito (Edición Acuarelas)", subject: "Lectura", grade: "6º Primaria", price: 12.30, publisher: "SALAMANDRA", required: true },
+  { id: "9788467585995", title: "Lectura: El Quijote (Versión adaptada)", subject: "Lectura", grade: "6º Primaria", price: 12.30, publisher: "SM LITERATURA", required: true },
+  { id: "9788411822046", title: "Lectura: Lazarillo de Tormes", subject: "Lectura", grade: "6º Primaria", price: 12.30, publisher: "SM LITERATURA", required: true },
+  { id: "9788411822800", title: "Lectura: El increíble viaje de William Parri", subject: "Lectura", grade: "6º Primaria", price: 10.40, publisher: "SM LITERATURA", required: true },
 
   // 1º ESO
   { id: "eso1-1", title: "Geografía e Historia: Construyendo Mundos", subject: "Sociales", grade: "1º ESO", price: 42.90, publisher: "Santillana", required: true },
@@ -368,14 +368,18 @@ const DB = {
               currentBooks[idx].retailPrice = defaultBook.retailPrice;
               itemModified = true;
             }
+            if (currentBooks[idx].notSoldInSchool !== defaultBook.notSoldInSchool) {
+              currentBooks[idx].notSoldInSchool = defaultBook.notSoldInSchool;
+              itemModified = true;
+            }
             if (itemModified) {
               modified = true;
             }
           }
         });
-        // Asegurar que todos los libros tengan `required: true` para que todo sea seleccionable/requerido por defecto internamente
+        // Asegurar que todos los libros tengan `required: true` para que todo sea seleccionable/requerido por defecto internamente, excepto los que no se venden en el colegio
         currentBooks.forEach(b => {
-          if (b.required !== true) {
+          if (!b.notSoldInSchool && b.required !== true) {
             b.required = true;
             modified = true;
           }
@@ -483,7 +487,7 @@ function updateDefaultSelectedBooks() {
   const books = DB.getBooks();
   state.bookingForm.students.forEach(student => {
     if (student.selectedBooks.length === 0) {
-      const filtered = books.filter(b => b.grade === student.studentGrade);
+      const filtered = books.filter(b => b.grade === student.studentGrade && !b.notSoldInSchool);
       student.selectedBooks = filtered.map(b => b.id);
     }
   });
@@ -777,10 +781,24 @@ function renderStep2() {
           <div class="book-selection-list" style="margin-top: 8px;">
             ${courseBooks.map(book => {
               const isChecked = student.selectedBooks.includes(book.id);
+              const cardStyle = book.notSoldInSchool 
+                ? 'style="background-color: var(--bg-light); border-color: var(--border); cursor: default; opacity: 0.85;"' 
+                : '';
+              const clickHandler = book.notSoldInSchool 
+                ? '' 
+                : `onclick="toggleBookSelection(${studentIdx}, '${book.id}')"`;
+                
               return `
-                <div class="book-item-card ${isChecked ? 'selected' : ''}" onclick="toggleBookSelection(${studentIdx}, '${book.id}')">
+                <div class="book-item-card ${isChecked && !book.notSoldInSchool ? 'selected' : ''}" ${cardStyle} ${clickHandler}>
                   <div class="book-check">
-                    <input type="checkbox" id="chk-${studentIdx}-${book.id}" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation(); toggleBookSelection(${studentIdx}, '${book.id}')">
+                    ${book.notSoldInSchool 
+                      ? `
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="color: var(--text-muted); display: block;">
+                          <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                      `
+                      : `<input type="checkbox" id="chk-${studentIdx}-${book.id}" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation(); toggleBookSelection(${studentIdx}, '${book.id}')">`
+                    }
                   </div>
                   <div class="book-details">
                     <div class="book-header-line">
@@ -789,9 +807,11 @@ function renderStep2() {
                     <h4 class="book-title">${book.title}</h4>
                     <p class="book-publisher">Editorial: ${book.publisher}</p>
                   </div>
-                  <div class="book-price" style="display:flex; flex-direction:column; align-items:flex-end; gap:2px; justify-content:center;">
-                    <span style="font-weight:700; color:var(--primary);">${book.price.toFixed(2)} €</span>
-                    ${book.retailPrice ? `<span style="font-size:10px; text-decoration:line-through; color:var(--text-muted); font-weight:normal; display:block;">Fuera del cole: ${book.retailPrice.toFixed(2)} €</span>` : ''}
+                  <div class="book-price" style="display:flex; flex-direction:column; align-items:flex-end; gap:2px; justify-content:center; text-align:right;">
+                    ${book.notSoldInSchool 
+                      ? `<span style="font-weight:600; color:var(--text-muted); font-size:12px;">No se vende en el colegio</span>`
+                      : `<span style="font-weight:700; color:var(--primary);">${book.price.toFixed(2)} €</span>${book.retailPrice ? `<span style="font-size:10px; text-decoration:line-through; color:var(--text-muted); font-weight:normal; display:block;">Fuera del cole: ${book.retailPrice.toFixed(2)} €</span>` : ''}`
+                    }
                   </div>
                 </div>
               `;
@@ -1010,7 +1030,7 @@ window.handleStudentGradeChange = function(index, e) {
   state.bookingForm.students[index].studentGrade = e.target.value;
   // Cargar libros por defecto de ese curso
   const books = DB.getBooks();
-  const gradeBooks = books.filter(b => b.grade === e.target.value);
+  const gradeBooks = books.filter(b => b.grade === e.target.value && !b.notSoldInSchool);
   state.bookingForm.students[index].selectedBooks = gradeBooks.map(b => b.id);
   render();
 };
@@ -1024,7 +1044,7 @@ window.addStudentCard = function() {
   });
   // Cargar libros por defecto del nuevo estudiante
   const books = DB.getBooks();
-  const gradeBooks = books.filter(b => b.grade === "1º Primaria");
+  const gradeBooks = books.filter(b => b.grade === "1º Primaria" && !b.notSoldInSchool);
   state.bookingForm.students[state.bookingForm.students.length - 1].selectedBooks = gradeBooks.map(b => b.id);
   render();
 };
@@ -1059,6 +1079,10 @@ window.goToStep = function(step) {
 };
 
 window.toggleBookSelection = function(studentIdx, bookId) {
+  const books = DB.getBooks();
+  const book = books.find(b => b.id === bookId);
+  if (book && book.notSoldInSchool) return;
+
   const student = state.bookingForm.students[studentIdx];
   const index = student.selectedBooks.indexOf(bookId);
   if (index > -1) {
@@ -2179,8 +2203,10 @@ function renderAdminCatalog() {
                   <td>${b.title}</td>
                   <td>${b.publisher}</td>
                   <td>
-                    <strong>${b.price.toFixed(2)} €</strong>
-                    ${b.retailPrice ? `<br><small style="color:var(--text-muted); text-decoration:line-through; white-space:nowrap;">Fuera: ${b.retailPrice.toFixed(2)} €</small>` : ''}
+                    ${b.notSoldInSchool 
+                      ? `<span style="color:var(--text-muted); font-size:12px; font-weight:600; white-space:nowrap;">No se vende en el cole</span>`
+                      : `<strong>${b.price.toFixed(2)} €</strong>${b.retailPrice ? `<br><small style="color:var(--text-muted); text-decoration:line-through; white-space:nowrap;">Fuera: ${b.retailPrice.toFixed(2)} €</small>` : ''}`
+                    }
                   </td>
                   <td>
                     <div style="display:flex; gap: 4px;">
@@ -2220,7 +2246,7 @@ window.openBookModal = function(bookId) {
     return;
   }
   if (bookId === "new") {
-    state.admin.editingBook = { id: "", title: "", subject: "", grade: COURSES[0], price: 0, retailPrice: null, publisher: "", required: true };
+    state.admin.editingBook = { id: "", title: "", subject: "", grade: COURSES[0], price: 0, retailPrice: null, publisher: "", required: true, notSoldInSchool: false };
   } else {
     const books = DB.getBooks();
     state.admin.editingBook = { ...books.find(b => b.id === bookId) };
@@ -2257,9 +2283,10 @@ window.saveBook = function(e) {
   const subject = document.getElementById("edit-book-subject").value.trim();
   const grade = document.getElementById("edit-book-grade").value;
   const publisher = document.getElementById("edit-book-publisher").value.trim();
-  const price = parseFloat(document.getElementById("edit-book-price").value);
+  const notSoldInSchool = document.getElementById("edit-book-not-sold").checked;
+  const price = notSoldInSchool ? 0 : parseFloat(document.getElementById("edit-book-price").value);
   const retailPriceInput = document.getElementById("edit-book-retail-price").value;
-  const retailPrice = retailPriceInput !== "" ? parseFloat(retailPriceInput) : null;
+  const retailPrice = notSoldInSchool ? null : (retailPriceInput !== "" ? parseFloat(retailPriceInput) : null);
   const required = true;
 
   const books = DB.getBooks();
@@ -2267,13 +2294,13 @@ window.saveBook = function(e) {
   if (idInput === "") {
     // Es nuevo libro
     const newId = "book-" + Date.now();
-    const newBook = { id: newId, title, subject, grade, publisher, price, retailPrice, required };
+    const newBook = { id: newId, title, subject, grade, publisher, price, retailPrice, notSoldInSchool, required };
     books.push(newBook);
   } else {
     // Editar existente
     const idx = books.findIndex(b => b.id === idInput);
     if (idx > -1) {
-      books[idx] = { id: idInput, title, subject, grade, publisher, price, retailPrice, required };
+      books[idx] = { id: idInput, title, subject, grade, publisher, price, retailPrice, notSoldInSchool, required };
     }
   }
 
@@ -2327,7 +2354,7 @@ window.handleEditResStudentGradeChange = function(studentIdx, e) {
   
   // Recargar libros por defecto
   const books = DB.getBooks();
-  const gradeBooks = books.filter(b => b.grade === newGrade);
+  const gradeBooks = books.filter(b => b.grade === newGrade && !b.notSoldInSchool);
   student.books = gradeBooks.map(b => b.id);
   render();
 };
@@ -2350,7 +2377,7 @@ window.addEditResStudent = function() {
     books: []
   });
   const books = DB.getBooks();
-  const gradeBooks = books.filter(b => b.grade === "1º Primaria");
+  const gradeBooks = books.filter(b => b.grade === "1º Primaria" && !b.notSoldInSchool);
   state.admin.editingRes.students[state.admin.editingRes.students.length - 1].books = gradeBooks.map(b => b.id);
   render();
 };
@@ -2872,6 +2899,13 @@ function renderAdminModals() {
                 <div class="form-group col-12">
                   <label for="edit-book-retail-price">Precio fuera del colegio (con IVA) (€) <small style="color:var(--text-muted); font-weight:normal;">(Opcional)</small></label>
                   <input type="number" id="edit-book-retail-price" step="0.01" min="0" value="${book.retailPrice !== undefined && book.retailPrice !== null ? book.retailPrice : ''}" placeholder="Ej. 36.80">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-12" style="display:flex; align-items:center; gap:8px;">
+                  <input type="checkbox" id="edit-book-not-sold" ${book.notSoldInSchool ? 'checked' : ''} style="width:auto; margin-bottom:0;">
+                  <label for="edit-book-not-sold" style="margin-bottom:0; font-weight:normal; cursor:pointer;">Este libro no se vende en el colegio (informativo, sin opción de compra)</label>
                 </div>
               </div>
             </div>
@@ -3679,7 +3713,8 @@ async function syncFromSupabase() {
         price: (b.price !== null && b.price !== undefined) ? (typeof b.price === 'number' ? b.price : parseFloat(b.price)) : 0,
         retailPrice: (b.retail_price !== null && b.retail_price !== undefined) ? (typeof b.retail_price === 'number' ? b.retail_price : parseFloat(b.retail_price)) : null,
         publisher: b.publisher,
-        required: b.required
+        required: b.required,
+        notSoldInSchool: (b.price === 0 || b.price === 0.0)
       }));
       localStorage.setItem("sb_books", JSON.stringify(mappedBooks));
     }

@@ -71,10 +71,11 @@ for m in pattern.finditer(array_content):
             "subject": book.get("subject"),
             "grade": book.get("grade"),
             "price": book.get("price"),
-            "retail_price": book.get("retailPrice") if "retailPrice" in book else None,
             "publisher": book.get("publisher"),
             "required": book.get("required", True)
         }
+        if "retailPrice" in book and book["retailPrice"] is not None:
+            book_db["retail_price"] = book["retailPrice"]
         book_objects.append(book_db)
 
 print(f"Se han extraído {len(book_objects)} libros de app.js")
