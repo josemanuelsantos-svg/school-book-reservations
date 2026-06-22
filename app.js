@@ -276,16 +276,21 @@ const DB = {
   saveBooks(books) {
     localStorage.setItem("sb_books", JSON.stringify(books));
     if (supabaseClient) {
-      supabaseClient.from('books').upsert(books.map(b => ({
-        id: b.id,
-        title: b.title,
-        subject: b.subject,
-        grade: b.grade,
-        price: b.price,
-        retail_price: (b.retailPrice !== undefined && b.retailPrice !== null) ? b.retailPrice : null,
-        publisher: b.publisher,
-        required: b.required
-      }))).then(({ error }) => { if (error) console.error("Error upserting books:", error); });
+      supabaseClient.from('books').upsert(books.map(b => {
+        const payload = {
+          id: b.id,
+          title: b.title,
+          subject: b.subject,
+          grade: b.grade,
+          price: b.price,
+          publisher: b.publisher,
+          required: b.required
+        };
+        if (b.retailPrice !== undefined && b.retailPrice !== null) {
+          payload.retail_price = b.retailPrice;
+        }
+        return payload;
+      })).then(({ error }) => { if (error) console.error("Error upserting books:", error); });
     }
   },
   getReservations() {
