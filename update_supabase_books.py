@@ -72,7 +72,7 @@ for m in pattern.finditer(array_content):
             "grade": book.get("grade"),
             "price": book.get("price"),
             "publisher": book.get("publisher"),
-            "required": book.get("required", True)
+            "required": book.get("required", False)
         }
         if "retailPrice" in book and book["retailPrice"] is not None:
             book_db["retail_price"] = book["retailPrice"]
