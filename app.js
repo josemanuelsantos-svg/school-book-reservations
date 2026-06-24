@@ -1218,7 +1218,7 @@ function renderAdminLogin() {
         <form onsubmit="handleLoginSubmit(event)">
           <div class="form-group">
             <label for="adminPass">Contraseña de Acceso</label>
-            <input type="password" id="adminPass" required placeholder="Clave (Admin: admin123, Lotes: lotes123)">
+            <input type="password" id="adminPass" required placeholder="Introduzca su clave de acceso">
             <p id="login-error" class="error-text hide">Contraseña incorrecta. Inténtelo de nuevo.</p>
           </div>
           <button type="submit" class="btn btn-primary" style="width: 100%; margin-top:16px;">
