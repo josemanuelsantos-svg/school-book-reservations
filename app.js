@@ -42,7 +42,9 @@ const DEFAULT_BOOKS = [
   { id: "9788426391834", title: "Caballitos de mar ¿Lo ves? (Animales Letra Mayúscula)", subject: "Proyectos", grade: "Infantil 3 años", price: 34.52, publisher: "EDELVIVES", required: false },
   { id: "9788426391858", title: "Prehistoria ¿Lo ves? (Historia/Cultura Letra Mayúscula) con WQ", subject: "Proyectos", grade: "Infantil 3 años", price: 34.52, publisher: "EDELVIVES", required: false },
   { id: "entusiasmat-3", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 3 años", price: 95.00, publisher: "TEKMAN BOOK", required: false },
-  { id: "glp-3", title: "Great Little People. (Solo de venta en el centro) Material de aula + licencia y libro para la familia.", subject: "Inglés", grade: "Infantil 3 años", price: 42.75, publisher: "MACMILLAN", required: false },
+  { id: "9781107476677", title: "Great Little People. (Solo de venta en el centro) Material de aula + licencia y libro para la familia.", subject: "Inglés", grade: "Infantil 3 años", price: 42.75, publisher: "MACMILLAN", required: false },
+  { id: "religion-3ei", title: "Religión Católica. 3 años. Método propio.", subject: "Religión", grade: "Infantil 3 años", price: 18.00, publisher: "Colegio", required: false },
+  { id: "978-84-617-9261-0-3ei", title: "Mi amigo san Buenaventura", subject: "Religión", grade: "Infantil 3 años", price: 12.00, publisher: "Colegio", required: false },
 
   // Infantil 4 años
   { id: "9788426395634", title: "Calzadas romanas ¿Lo ves? (Historia/Cultura Letra Mayúscula)", subject: "Proyectos", grade: "Infantil 4 años", price: 34.52, publisher: "EDELVIVES", required: false },
@@ -51,6 +53,8 @@ const DEFAULT_BOOKS = [
   { id: "entusiasmat-4", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 4 años", price: 65.00, publisher: "TEKMAN BOOK", required: false },
   { id: "glp-4", title: "Great Little People. (Solo de venta en el centro) Material de aula + licencia y libro para la familia.", subject: "Inglés", grade: "Infantil 4 años", price: 42.75, publisher: "MACMILLAN", required: false },
   { id: "9788414007730", title: "Molalaletra Nivel 2 (Pauta) Alumno", subject: "Lectoescritura", grade: "Infantil 4 años", price: 51.57, publisher: "EDELVIVES", required: false },
+  { id: "religion-4ei", title: "Religión Católica. 4 años. Método propio.", subject: "Religión", grade: "Infantil 4 años", price: 18.00, publisher: "Colegio", required: false },
+  { id: "978-84-617-9261-0-4ei", title: "Mi amigo san Buenaventura", subject: "Religión", grade: "Infantil 4 años", price: 12.00, publisher: "Colegio", required: false },
 
   // Infantil 5 años
   { id: "9788414011676", title: "Egipto Alumno", subject: "Proyectos", grade: "Infantil 5 años", price: 34.52, publisher: "EDELVIVES", required: false },
@@ -59,6 +63,8 @@ const DEFAULT_BOOKS = [
   { id: "9788414007761", title: "Molalaletra Nivel 3 (Pauta) Alumno", subject: "Lectoescritura", grade: "Infantil 5 años", price: 52.45, publisher: "EDELVIVES", required: false },
   { id: "entusiasmat-5", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 5 años", price: 65.00, publisher: "TEKMAN BOOK", required: false },
   { id: "glp-5", title: "Great Little People. (Solo de venta en el centro) Material de aula + licencia y libro para la familia.", subject: "Inglés", grade: "Infantil 5 años", price: 42.75, publisher: "MACMILLAN", required: false },
+  { id: "religion-5ei", title: "Religión Católica. 5 años. Método propio.", subject: "Religión", grade: "Infantil 5 años", price: 18.00, publisher: "Colegio", required: false },
+  { id: "978-84-617-9261-0-5ei", title: "Mi amigo san Buenaventura", subject: "Religión", grade: "Infantil 5 años", price: 12.00, publisher: "Colegio", required: false },
 
   // 1º Primaria
   { id: "9788414068274", title: "Lengua Castellana y Lit. 1º Primaria (Ligada pauta + imprenta)", subject: "Lengua", grade: "1º Primaria", price: 43.98, publisher: "EDELVIVES", required: false },
@@ -66,14 +72,16 @@ const DEFAULT_BOOKS = [
   { id: "9788414068601", title: "Ciencias Sociales 1º Primaria (Pauta)", subject: "Sociales", grade: "1º Primaria", price: 31.29, publisher: "EDELVIVES", required: false },
   { id: "9788414073001", title: "Religión 1º Primaria", subject: "Religión", grade: "1º Primaria", price: 32.09, publisher: "EDELVIVES", required: false },
   { id: "9788410147478", title: "Natural Science 1 Roots (Outside the Box)", subject: "Naturales", grade: "1º Primaria", price: 33.66, publisher: "Mcmillan", required: false },
-  { id: "9791388230011", title: "Time Travellers 2nd Ed Student's Book 1 Red Series (print)", subject: "Inglés", grade: "1º Primaria", price: 30.88, publisher: "MILTON", required: false },
-  { id: "1ep-milton-rp", title: "Read&Play Milton 1º EP", subject: "Inglés", grade: "1º Primaria", price: 24.10, publisher: "MILTON", required: false },
+  { id: "9791388230011", title: "Time Travellers 2nd Ed Student", subject: "Inglés", grade: "1º Primaria", price: 30.88, publisher: "MILTON", required: false },
+  { id: "9788417911379", title: "Read&Play Milton 1º EP", subject: "Inglés", grade: "1º Primaria", price: 24.10, publisher: "MILTON", required: false },
   { id: "9788434894082", title: "Lectura: Para dormir a un Rey", subject: "Lectura", grade: "1º Primaria", price: 24.02, publisher: "SM", required: false },
   { id: "9788413923826", title: "Lectura: El desastre de Troti", subject: "Lectura", grade: "1º Primaria", price: 9.03, publisher: "SM", required: false },
   { id: "9788413923833", title: "Lectura: Los Mug, atrapados en el móvil", subject: "Lectura", grade: "1º Primaria", price: 9.03, publisher: "SM", required: false },
   { id: "9788467579192", title: "Lectura: Osita Coco está triste", subject: "Lectura", grade: "1º Primaria", price: 9.03, publisher: "SM", required: false },
   { id: "9788467585919", title: "Lectura: Cinco ovejitas y Azul", subject: "Lectura", grade: "1º Primaria", price: 9.03, publisher: "SM", required: false },
-  { id: "9788491825425", title: "Lectura: Las pulgas que cambiaron el mundo", subject: "Lectura", grade: "1º Primaria", price: 0, publisher: "Ala Delta", required: false, notSoldInSchool: true },
+  { id: "9788491825425", title: "Lectura: Las pulgas que cambiaron el mundo", subject: "Lectura", grade: "1º Primaria", price: 0.00, publisher: "Ala Delta", required: false, notSoldInSchool: true },
+  { id: "978-84-09-01803-1-1ep", title: "Mi hermano san Francisco de Asís", subject: "Religión", grade: "1º Primaria", price: 12.00, publisher: "Colegio", required: false },
+  { id: "978-84-617-9261-0-1ep", title: "Mi amigo san Buenaventura", subject: "Religión", grade: "1º Primaria", price: 12.00, publisher: "Colegio", required: false },
 
   // 2º Primaria
   { id: "9788414068779", title: "Lengua Castellana y Literatura 2º Primaria", subject: "Lengua", grade: "2º Primaria", price: 43.98, publisher: "EDELVIVES", required: false },
@@ -81,7 +89,7 @@ const DEFAULT_BOOKS = [
   { id: "9788414068991", title: "Ciencias Sociales 2º Primaria", subject: "Sociales", grade: "2º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
   { id: "9788414073018", title: "Religión 2º Primaria", subject: "Religión", grade: "2º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
   { id: "9788419417466", title: "Natural Science 2 Outside the Box Sb Pk", subject: "Naturales", grade: "2º Primaria", price: 33.66, publisher: "Mcmillan", required: false },
-  { id: "9791388230028", title: "Time Travellers 2nd Ed Student's Book 2 Red Series", subject: "Inglés", grade: "2º Primaria", price: 30.88, publisher: "MILTON", required: false },
+  { id: "9791388230028", title: "Time Travellers 2nd Ed Student", subject: "Inglés", grade: "2º Primaria", price: 30.88, publisher: "MILTON", required: false },
   { id: "2ep-milton-rp", title: "Read&Play Milton 2º EP", subject: "Inglés", grade: "2º Primaria", price: 24.10, publisher: "MILTON", required: false },
   { id: "9788467552423", title: "Diccionario Avanzado Primaria. Lengua Española", subject: "Lengua", grade: "2º Primaria", price: 21.38, publisher: "SM", required: false },
   { id: "9788434895959", title: "Lecturas: Para dormir a una princesa", subject: "Lectura", grade: "2º Primaria", price: 24.02, publisher: "SM LITERATURA", required: false },
@@ -91,20 +99,24 @@ const DEFAULT_BOOKS = [
   { id: "9788467579864", title: "Lectura: Morris, regálame un amigo", subject: "Lectura", grade: "2º Primaria", price: 9.03, publisher: "SM LITERATURA", required: false },
   { id: "9788467585568", title: "Lectura: Ojos negros", subject: "Lectura", grade: "2º Primaria", price: 9.03, publisher: "SM LITERATURA", required: false },
   { id: "9788467590470", title: "Lectura: Narices!", subject: "Lectura", grade: "2º Primaria", price: 9.03, publisher: "SM LITERATURA", required: false },
+  { id: "978-84-09-01803-1-2ep", title: "Mi hermano san Francisco de Asís", subject: "Religión", grade: "2º Primaria", price: 12.00, publisher: "Colegio", required: false },
+  { id: "978-84-617-9261-0-2ep", title: "Mi amigo san Buenaventura (solo para alumnos nuevos)", subject: "Religión", grade: "2º Primaria", price: 12.00, publisher: "Colegio", required: false },
 
   // 3º Primaria
   { id: "9788414069158", title: "Lengua Castellana y Literatura 3º Primaria", subject: "Lengua", grade: "3º Primaria", price: 43.98, publisher: "EDELVIVES", required: false },
   { id: "9788414069257", title: "Matemáticas 3º Primaria (Madrid, Can, LRj, Val)", subject: "Matemáticas", grade: "3º Primaria", price: 43.98, publisher: "EDELVIVES", required: false },
   { id: "9788414069349", title: "Ciencias de la Naturaleza 3º Primaria", subject: "Naturales", grade: "3º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
-  { id: "9788414045770", title: "Ciencias Sociales 3º Primaria", subject: "Sociales", grade: "3º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
+  { id: "9788414069387", title: "Ciencias Sociales 3º Primaria", subject: "Sociales", grade: "3º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
   { id: "9788414073025", title: "Religión 3º Primaria", subject: "Religión", grade: "3º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
-  { id: "9791388230035", title: "Time Travellers 2nd Ed Student's Book 3 Red Series", subject: "Inglés", grade: "3º Primaria", price: 33.38, publisher: "MILTON", required: false },
+  { id: "9791388230035", title: "Time Travellers 2nd Ed Student", subject: "Inglés", grade: "3º Primaria", price: 33.38, publisher: "MILTON", required: false },
   { id: "9788419716545", title: "Bookroom Bites 3º Imagine! Blue Primaria con Read&Play", subject: "Inglés", grade: "3º Primaria", price: 25.65, publisher: "MILTON", required: false },
   { id: "9788414015391", title: "Lectura: Por fin vacaciones (El colegio de los animales mágicos)", subject: "Lectura", grade: "3º Primaria", price: 17.10, publisher: "EDELVIVES LITERATURA", required: false },
   { id: "9788414005453", title: "Lectura: El minotauro y el laberinto (Mitos Clásicos)", subject: "Lectura", grade: "3º Primaria", price: 14.01, publisher: "EDELVIVES LITERATURA", required: false },
   { id: "9788414006542", title: "Lectura: Combate en el castillo (Aprendiz de caballero)", subject: "Lectura", grade: "3º Primaria", price: 11.97, publisher: "EDELVIVES LITERATURA", required: false },
   { id: "9788467577020", title: "Lectura: ¡Que vienen los dinosaurios!", subject: "Lectura", grade: "3º Primaria", price: 9.03, publisher: "SM", required: false },
-  { id: "9788413390338", title: "Lectura: El club del fuego secreto (El museo de los cuentos)", subject: "Lectura", grade: "3º Primaria", price: 12.00, publisher: "ENCUENTRO", required: false },
+  { id: "9788413390338", title: "Lectura: El club del fuego secreto (El museo de los cuentos)", subject: "Lectura", grade: "3º Primaria", price: 0.00, publisher: "ENCUENTRO", required: false, notSoldInSchool: true },
+  { id: "978-84-09-01803-1-3ep", title: "Mi hermano san Francisco de Asís", subject: "Religión", grade: "3º Primaria", price: 12.00, publisher: "Colegio", required: false },
+  { id: "978-84-617-9261-0-3ep", title: "Mi amigo san Buenaventura (solo para alumnos nuevos)", subject: "Religión", grade: "3º Primaria", price: 12.00, publisher: "Colegio", required: false },
 
   // 4º Primaria
   { id: "9788414069547", title: "Lengua Castellana y Literatura 4º Primaria", subject: "Lengua", grade: "4º Primaria", price: 43.98, publisher: "EDELVIVES", required: false },
@@ -112,7 +124,7 @@ const DEFAULT_BOOKS = [
   { id: "9788414069738", title: "Ciencias de la Naturaleza 4º Primaria", subject: "Naturales", grade: "4º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
   { id: "9788414069813", title: "Ciencias Sociales 4º Primaria", subject: "Sociales", grade: "4º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
   { id: "9788414073032", title: "Religión 4º Primaria", subject: "Religión", grade: "4º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
-  { id: "9791388230042", title: "Time Travellers 2nd Ed Student's Book 4 Red Series", subject: "Inglés", grade: "4º Primaria", price: 33.38, publisher: "MILTON", required: false },
+  { id: "9791388230042", title: "Time Travellers 2nd Ed Student", subject: "Inglés", grade: "4º Primaria", price: 33.38, publisher: "MILTON", required: false },
   { id: "9788419716552", title: "Bookroom Bites 4º Explore! Blue Primaria con Read&Play", subject: "Inglés", grade: "4º Primaria", price: 25.65, publisher: "MILTON", required: false },
   { id: "9788413189741", title: "Lectura: Cuando juegan las palabras", subject: "Lectura", grade: "4º Primaria", price: 9.45, publisher: "SM", required: false },
   { id: "9788491077794", title: "Lectura: Hermanos hasta en la sopa", subject: "Lectura", grade: "4º Primaria", price: 10.40, publisher: "SM", required: false },
@@ -126,7 +138,7 @@ const DEFAULT_BOOKS = [
   { id: "9788414070208", title: "Ciencias de la Naturaleza 5º Primaria", subject: "Naturales", grade: "5º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
   { id: "9788414070284", title: "Ciencias Sociales 5º Primaria", subject: "Sociales", grade: "5º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
   { id: "9788414073049", title: "Religión 5º Primaria", subject: "Religión", grade: "5º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
-  { id: "9791388230059", title: "Time Travellers 2nd Ed Student's Book 5 Red Series", subject: "Inglés", grade: "5º Primaria", price: 33.38, publisher: "MILTON", required: false },
+  { id: "9791388230059", title: "Time Travellers 2nd Ed Student", subject: "Inglés", grade: "5º Primaria", price: 33.38, publisher: "MILTON", required: false },
   { id: "9788419716569", title: "Bookroom Bites 5º Discover! Blue Primaria", subject: "Inglés", grade: "5º Primaria", price: 25.65, publisher: "MILTON", required: false },
   { id: "5ep-biblia", title: "Biblia CEE", subject: "Religión", grade: "5º Primaria", price: 9.03, publisher: "CEE", required: false },
   { id: "9788467582673", title: "Lectura: Detectives en chanclas (Proyecto Loran)", subject: "Lectura", grade: "5º Primaria", price: 10.40, publisher: "SM LITERATURA", required: false },
@@ -141,21 +153,155 @@ const DEFAULT_BOOKS = [
   { id: "9788414070581", title: "Ciencias de la Naturaleza 6º Primaria", subject: "Naturales", grade: "6º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
   { id: "9788414070703", title: "Ciencias Sociales 6º Primaria", subject: "Sociales", grade: "6º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
   { id: "9788414073056", title: "Religión 6º Primaria", subject: "Religión", grade: "6º Primaria", price: 31.40, publisher: "EDELVIVES", required: false },
-  { id: "9791388230066", title: "Time Travellers 2nd Ed Student's Book 6 Red Series", subject: "Inglés", grade: "6º Primaria", price: 33.38, publisher: "MILTON", required: false },
+  { id: "9791388230066", title: "Time Travellers 2nd Ed Student", subject: "Inglés", grade: "6º Primaria", price: 33.38, publisher: "MILTON", required: false },
   { id: "9788419716576", title: "Bookroom Bites 6º Investigate! Blue Primaria con Read&Play incluida", subject: "Inglés", grade: "6º Primaria", price: 25.65, publisher: "MILTON", required: false },
   { id: "9788467591354", title: "Lectura: El Conde Lucanor", subject: "Lectura", grade: "6º Primaria", price: 12.30, publisher: "SM LITERATURA", required: false },
   { id: "9788478887194", title: "Lectura: El Principito (Edición Acuarelas)", subject: "Lectura", grade: "6º Primaria", price: 12.30, publisher: "SALAMANDRA", required: false },
   { id: "9788467585995", title: "Lectura: El Quijote (Versión adaptada)", subject: "Lectura", grade: "6º Primaria", price: 12.30, publisher: "SM LITERATURA", required: false },
   { id: "9788411822046", title: "Lectura: Lazarillo de Tormes", subject: "Lectura", grade: "6º Primaria", price: 12.30, publisher: "SM LITERATURA", required: false },
   { id: "9788411822800", title: "Lectura: El increíble viaje de William Parri", subject: "Lectura", grade: "6º Primaria", price: 10.40, publisher: "SM LITERATURA", required: false },
-];
+
+  // 1º ESO
+  { id: "9788421877203", title: "LENGUA CASTELLANA Y LITERATURA 1 (versión tradicional)", subject: "Lengua", grade: "1º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "9789925309412", title: "INGLÉS: Weebbook. OPTIONS 1 (SB+WB)", subject: "Inglés", grade: "1º ESO", price: 42.47, retailPrice: 46.45, publisher: "Burlington Books", required: false },
+  { id: "9789963485468", title: "THE GHOST TEACHER", subject: "Inglés", grade: "1º ESO", price: 10.22, retailPrice: 10.85, publisher: "Burlington Books", required: false },
+  { id: "9789925309184", title: "ALL ABOUT FESTIVALS", subject: "Otros", grade: "1º ESO", price: 10.22, retailPrice: 10.85, publisher: "Burlington Books", required: false },
+  { id: "9788414038871", title: "MATEMATICAS", subject: "Matemáticas", grade: "1º ESO", price: 25.00, retailPrice: 54.50, publisher: "EDELVIVES", required: false },
+  { id: "9788414060322", title: "GEOGRAFÍA E HISTORIA 1º ESO- MADRID", subject: "Sociales", grade: "1º ESO", price: 25.00, retailPrice: 55.00, publisher: "EDELVIVES", required: false },
+  { id: "9788421876978", title: "BIOLOGIA Y GEOLOGIA 1 LOMLOE", subject: "Otros", grade: "1º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "9788411208369", title: "EDUCACIÓN PLÁSTICA, VISUALY AUDIOVISUAL I (MAD) 22", subject: "Artes", grade: "1º ESO", price: 28.10, retailPrice: 31.20, publisher: "SM", required: false },
+  { id: "9788421885109", title: "MUSICA I RADIX", subject: "Artes", grade: "1º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "9788414040171", title: "RELIGION 1ºESO", subject: "Otros", grade: "1º ESO", price: 25.00, retailPrice: 40.50, publisher: "EDELVIVES", required: false },
+  { id: "9788411577045", title: "FRANCÉS. LES BLOGUEURS 1 A1.1 Cahier", subject: "Francés", grade: "1º ESO", price: 22.75, retailPrice: 23.95, publisher: "MAC MILLAN", required: false },
+  { id: "9788470637469", title: "OP: CIENCIAS DE LA COMPUTACIÓN 1º ESO – PROYECTO STAR código escuela 4.0", subject: "Tecnología", grade: "1º ESO", price: 17.41, retailPrice: 18.75, publisher: "DONOSTIARRA", required: false },
+
+  // 2º ESO
+  { id: "9788421877210", title: "LENGUA CASTELLANA Y LITERATURA 2 (versión tradicional)", subject: "Lengua", grade: "2º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "9789925360543", title: "INGLÉS: Weebbook. OPTIONS 2 (SB+WB)", subject: "Inglés", grade: "2º ESO", price: 42.27, retailPrice: 46.45, publisher: "Burlington Books", required: false },
+  { id: "9789963487332", title: "JUMP TO FREEDOM", subject: "Otros", grade: "2º ESO", price: 10.22, retailPrice: 10.85, publisher: "Burlington Books", required: false },
+  { id: "9789925303441", title: "A DANGEROUS GAME", subject: "Otros", grade: "2º ESO", price: 10.22, retailPrice: 10.85, publisher: "Burlington Books", required: false },
+  { id: "9788414047101", title: "MATEMATICAS.", subject: "Matemáticas", grade: "2º ESO", price: 25.00, retailPrice: 54.50, publisher: "EDELVIVES", required: false },
+  { id: "9788414060353", title: "GEOGRAFÍA E HISTORIA. 2º ESO - MADRID", subject: "Sociales", grade: "2º ESO", price: 25.00, retailPrice: 55.00, publisher: "EDELVIVES", required: false },
+  { id: "9788421876930", title: "FÍSICA Y QUÍMICA 2 LOMLOE", subject: "Ciencias", grade: "2º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "173349", title: "PLATAFORMA ONLINE - ALUMNO (DIGITAL) + MATERIAL ROBÓTICA", subject: "Tecnología", grade: "2º ESO", price: 35.00, retailPrice: 47.15, publisher: "EDELVIVES", required: false },
+  { id: "9788411200349", title: "EDUCACIÓN PLÁSTICA, VISUAL Y AUDIOVISUAL II 22", subject: "Artes", grade: "2º ESO", price: 28.10, retailPrice: 31.20, publisher: "SM", required: false },
+  { id: "9788414047538", title: "RELIGIÓN. 2º ESO", subject: "Religión", grade: "2º ESO", price: 25.00, retailPrice: 40.50, publisher: "EDELVIVES", required: false },
+  { id: "9788418380532-2eso", title: "ASÍS (CÓMIC)", subject: "Religión", grade: "2º ESO", price: 22.00, retailPrice: 24.50, publisher: "Colegio", required: false },
+  { id: "9788414040256", title: "EDUCACIÓN EN VALORES CÍVICOS Y ÉTICOS", subject: "Otros", grade: "2º ESO", price: 25.00, retailPrice: 37.74, publisher: "EDELVIVES", required: false },
+  { id: "9788414057490", title: "QUÍMICA INORGÁNICA. Nomenclatura y formulación", subject: "Ciencias", grade: "2º ESO", price: 21.78, retailPrice: 25.10, publisher: "EDELVIVES", required: false },
+  { id: "9788411577106", title: "FRANCÉS. LES BLOGUEURS 2 A1.2 Cahier", subject: "Francés", grade: "2º ESO", price: 22.75, retailPrice: 23.95, publisher: "MAC MILLAN", required: false },
+  { id: "9788470636899", title: "OP: CIENCIAS DE LA COMPUTACIÓN 2º ESO – PROYECTO STAR", subject: "Tecnología", grade: "2º ESO", price: 17.58, retailPrice: 18.70, publisher: "DONOSTIARRA", required: false },
+
+  // 3º ESO
+  { id: "9788421877234", title: "LENGUA CASTELLANA Y LITERATURA", subject: "Lengua", grade: "3º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "9789963273065-3eso", title: "Weebbook. Advanced English in use ESO 3 PACK (SB+WB)", subject: "Inglés", grade: "3º ESO", price: 37.43, retailPrice: 40.25, publisher: "Burlington Books", required: false },
+  { id: "9789925303458-3eso", title: "SAVE THE TITANIC", subject: "Inglés", grade: "3º ESO", price: 10.76, retailPrice: 11.45, publisher: "Burlington Books", required: false },
+  { id: "9789963488810-3eso", title: "A SHERLOCK HOLMES COLLECTION", subject: "Inglés", grade: "3º ESO", price: 10.76, retailPrice: 11.45, publisher: "Burlington Books", required: false },
+  { id: "9789963475537-3eso", title: "THE GHOST OF FEATHERSTONE CASTLE", subject: "Inglés", grade: "3º ESO", price: 10.76, retailPrice: 11.45, publisher: "Burlington Books", required: false },
+  { id: "9788414038949", title: "MATEMATICAS 22", subject: "Matemáticas", grade: "3º ESO", price: 25.00, retailPrice: 57.70, publisher: "EDELVIVES", required: false },
+  { id: "9788414060384", title: "GEOGRAFÍA E HISTORIA. 3º ESO - MADRID", subject: "Sociales", grade: "3º ESO", price: 25.00, retailPrice: 55.00, publisher: "EDELVIVES", required: false },
+  { id: "9788421876992", title: "BIOLOGÍA Y GEOLOGÍA 3 LOMLOE", subject: "Ciencias", grade: "3º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "9788421876916", title: "FÍSICA Y QUÍMICA 3 LOMLOE", subject: "Ciencias", grade: "3º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "9788470637476", title: "TECNOLOGÍA Y DIGITALIZACIÓN PROYECTO STAR CÓDIGO ESCUELA 4.0", subject: "Tecnología", grade: "3º ESO", price: 20.48, retailPrice: 20.69, publisher: "DONOSTIARRA", required: false },
+  { id: "9788421876718-3eso", title: "MÚSICA II LOMLOE", subject: "Artes", grade: "3º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "9788414040195-3eso", title: "RELIGION 3º ESO", subject: "Otros", grade: "3º ESO", price: 25.00, retailPrice: 40.50, publisher: "EDELVIVES", required: false },
+  { id: "9788418380532-3eso", title: "ASÍS (CÓMIC) *Solo para alumnos nuevos", subject: "Religión", grade: "3º ESO", price: 22.00, retailPrice: 24.50, publisher: "Colegio", required: false },
+  { id: "9788411577151-3eso", title: "FRANCÉS. LES BLOGUEURS 3 A2.1 Cahier", subject: "Francés", grade: "3º ESO", price: 22.75, retailPrice: 23.95, publisher: "MAC MILLAN", required: false },
+  { id: "9788416009217-3eso", title: "OP: CULTURA CLÁSICA", subject: "Otros", grade: "3º ESO", price: 25.00, retailPrice: 48.80, publisher: "LABERINTO", required: false },
+
+  // 3º ESO (Diversificación)
+  { id: "9791387579906", title: "LENGUA CASTELLANA Y LITERATURA 3- DIVERSIFICACIÓN", subject: "Lengua", grade: "3º ESO (Diversificación)", price: 17.26, publisher: "Macmillan", required: false },
+  { id: "9791387579913", title: "GEOGRAFÍA E HISTORIA 3 - DIVERSIFICACIÓN", subject: "Sociales", grade: "3º ESO (Diversificación)", price: 17.26, publisher: "Macmillan", required: false },
+  { id: "9791387579944", title: "MATEMATICAS 3 - DIVERSIFICACIÓN", subject: "Matemáticas", grade: "3º ESO (Diversificación)", price: 17.26, publisher: "Macmillan", required: false },
+  { id: "9791387579937", title: "FÍSICA Y QUÍMICA 3 - DIVERSIFICACIÓN", subject: "Ciencias", grade: "3º ESO (Diversificación)", price: 17.26, publisher: "Macmillan", required: false },
+  { id: "9791387579920", title: "BIOLOGÍA Y GEOLOGÍA 3 - DIVERSIFICACIÓN", subject: "Ciencias", grade: "3º ESO (Diversificación)", price: 17.26, publisher: "Macmillan", required: false },
+  { id: "9789963273065-3esodiv", title: "Weebbook. Advanced English in use ESO 3 PACK (SB+WB)", subject: "Inglés", grade: "3º ESO (Diversificación)", price: 37.43, retailPrice: 40.25, publisher: "Burlington Books", required: false },
+  { id: "9789925303458-3esodiv", title: "SAVE THE TITANIC", subject: "Inglés", grade: "3º ESO (Diversificación)", price: 10.76, retailPrice: 11.45, publisher: "Burlington Books", required: false },
+  { id: "9789963488810-3esodiv", title: "A SHERLOCK HOLMES COLLECTION", subject: "Inglés", grade: "3º ESO (Diversificación)", price: 10.76, retailPrice: 11.45, publisher: "Burlington Books", required: false },
+  { id: "9789963475537-3esodiv", title: "THE GHOST OF FEATHERSTONE CASTLE", subject: "Inglés", grade: "3º ESO (Diversificación)", price: 10.76, retailPrice: 11.45, publisher: "Burlington Books", required: false },
+  { id: "9788421876718-3esodiv", title: "MÚSICA II LOMLOE", subject: "Artes", grade: "3º ESO (Diversificación)", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "9788414040195-3esodiv", title: "RELIGION 3º ESO", subject: "Otros", grade: "3º ESO (Diversificación)", price: 25.00, retailPrice: 40.50, publisher: "EDELVIVES", required: false },
+  { id: "9788418380532-3esodiv", title: "ASÍS (CÓMIC) *Solo para alumnos nuevos", subject: "Religión", grade: "3º ESO (Diversificación)", price: 22.00, retailPrice: 24.50, publisher: "Colegio", required: false },
+  { id: "9788411577151-3esodiv", title: "FRANCÉS. LES BLOGUEURS 3 A2.1 Cahier", subject: "Francés", grade: "3º ESO (Diversificación)", price: 22.75, retailPrice: 23.95, publisher: "MAC MILLAN", required: false },
+  { id: "9788416009217-3esodiv", title: "OP: CULTURA CLÁSICA", subject: "Otros", grade: "3º ESO (Diversificación)", price: 25.00, retailPrice: 48.80, publisher: "LABERINTO", required: false },
+
+  // 4º ESO
+  { id: "9788421877258", title: "LENGUA ESPAÑOLA Y LITERATURA 4", subject: "Lengua", grade: "4º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "9789963519965-4eso", title: "INGLÉS: Weebbook. Advanced English in use ESO 4 PACK (SB+WB)", subject: "Inglés", grade: "4º ESO", price: 42.27, retailPrice: 46.45, publisher: "Burlington Books", required: false },
+  { id: "9789963515042-4eso", title: "CLASSIC GHOST STORIES", subject: "Inglés", grade: "4º ESO", price: 10.76, retailPrice: 11.45, publisher: "Burlington Books", required: false },
+  { id: "9789963485734-4eso", title: "THE WAR OF THE WORLDS", subject: "Inglés", grade: "4º ESO", price: 10.76, retailPrice: 11.45, publisher: "Burlington Books", required: false },
+  { id: "9789963481866-4eso", title: "VILLANS!", subject: "Inglés", grade: "4º ESO", price: 10.76, retailPrice: 11.45, publisher: "Burlington Books", required: false },
+  { id: "9788414060414", title: "GEOGRAFÍA E HISTORIA 4º ESO MADRID", subject: "Sociales", grade: "4º ESO", price: 25.00, retailPrice: 55.00, publisher: "EDELVIVES", required: false },
+  { id: "9788414047552-4eso", title: "RELIGIÓN.", subject: "Religión", grade: "4º ESO", price: 25.00, retailPrice: 40.50, publisher: "EDELVIVES", required: false },
+  { id: "9788418380532-4eso", title: "ASÍS (CÓMIC) *Solo para alumnos nuevos", subject: "Religión", grade: "4º ESO", price: 22.00, retailPrice: 24.50, publisher: "Colegio", required: false },
+  { id: "9788414047224", title: "MATEMATICAS B", subject: "Matemáticas", grade: "4º ESO", price: 25.00, retailPrice: 55.00, publisher: "EDELVIVES", required: false },
+  { id: "9788421876954", title: "FÍSICA Y QUIMICA 4º.", subject: "Ciencias", grade: "4º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "9788414047347", title: "TECNOLOGÍA", subject: "Tecnología", grade: "4º ESO", price: 25.00, retailPrice: 46.30, publisher: "EDELVIVES", required: false },
+  { id: "9788421877012", title: "BIOLOGÍA Y GEOLOGÍA 4º.", subject: "Ciencias", grade: "4º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "9788414047378", title: "DIGITALIZACIÓN", subject: "Tecnología", grade: "4º ESO", price: 25.00, retailPrice: 36.35, publisher: "EDELVIVES", required: false },
+  { id: "9788414047194", title: "MATEMATICAS A", subject: "Matemáticas", grade: "4º ESO", price: 25.00, retailPrice: 57.70, publisher: "EDELVIVES", required: false },
+  { id: "9788421877197", title: "LATÍN 4 LOMLOE", subject: "Otros", grade: "4º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
+  { id: "9788414047286", title: "ECONOMÍA Y EMPRENDIMIENTO", subject: "Economía", grade: "4º ESO", price: 25.00, retailPrice: 46.73, publisher: "EDELVIVES", required: false },
+  { id: "9788448638771-4eso", title: "FORMACIÓN Y ORIENTACIÓN PERSONAL Y PROFESIONAL", subject: "Filosofía", grade: "4º ESO", price: 20.95, retailPrice: 24.95, publisher: "MAC GRAW HILL", required: false },
+  { id: "9788416009817-4eso", title: "OP : CULTURA CLÁSICA", subject: "Otros", grade: "4º ESO", price: 25.00, retailPrice: 48.80, publisher: "LABERINTO", required: false },
+  { id: "9788416009879-4eso", title: "OP : FILOSOFÍA", subject: "Filosofía", grade: "4º ESO", price: 25.00, retailPrice: 48.80, publisher: "LABERINTO", required: false },
+
+  // 4º ESO (Diversificación)
+  { id: "9788419062543", title: "LENGUA CASTELLANA Y LITERATURA 4 - DIVERSIFICACIÓN", subject: "Lengua", grade: "4º ESO (Diversificación)", price: 17.26, publisher: "Macmillan", required: false },
+  { id: "9788419062536", title: "GEOGRAFÍA E HISTORIA 4 - DIVERSIFICACIÓN", subject: "Sociales", grade: "4º ESO (Diversificación)", price: 17.26, publisher: "Macmillan", required: false },
+  { id: "9788419062550", title: "MATEMATICAS 4 - DIVERSIFICACIÓN", subject: "Matemáticas", grade: "4º ESO (Diversificación)", price: 17.26, publisher: "Macmillan", required: false },
+  { id: "9788419062529", title: "FÍSICA Y QUÍMICA 4 - DIVERSIFICACIÓN", subject: "Ciencias", grade: "4º ESO (Diversificación)", price: 17.26, publisher: "Macmillan", required: false },
+  { id: "9788419062512", title: "BIOLOGÍA Y GEOLOGÍA 4 - DIVERSIFICACIÓN", subject: "Ciencias", grade: "4º ESO (Diversificación)", price: 17.26, publisher: "Macmillan", required: false },
+  { id: "9789963519965-4esodiv", title: "INGLÉS: Weebbook. Advanced English in use ESO 4 PACK (SB+WB)", subject: "Inglés", grade: "4º ESO (Diversificación)", price: 42.27, retailPrice: 46.45, publisher: "Burlington Books", required: false },
+  { id: "9789963515042-4esodiv", title: "CLASSIC GHOST STORIES", subject: "Inglés", grade: "4º ESO (Diversificación)", price: 10.76, retailPrice: 11.45, publisher: "Burlington Books", required: false },
+  { id: "9789963485734-4esodiv", title: "THE WAR OF THE WORLDS", subject: "Inglés", grade: "4º ESO (Diversificación)", price: 10.76, retailPrice: 11.45, publisher: "Burlington Books", required: false },
+  { id: "9789963481866-4esodiv", title: "VILLANS!", subject: "Inglés", grade: "4º ESO (Diversificación)", price: 10.76, retailPrice: 11.45, publisher: "Burlington Books", required: false },
+  { id: "9788414047552-4esodiv", title: "RELIGIÓN.", subject: "Religión", grade: "4º ESO (Diversificación)", price: 25.00, retailPrice: 40.50, publisher: "EDELVIVES", required: false },
+  { id: "9788448638771-4esodiv", title: "FORMACIÓN Y ORIENTACIÓN PERSONAL Y PROFESIONAL", subject: "Filosofía", grade: "4º ESO (Diversificación)", price: 20.95, retailPrice: 24.95, publisher: "MAC GRAW HILL", required: false },
+  { id: "9788418380532-4esodiv", title: "ASÍS (CÓMIC) *Solo para alumnos nuevos", subject: "Religión", grade: "4º ESO (Diversificación)", price: 22.00, retailPrice: 24.50, publisher: "Colegio", required: false },
+  { id: "9788416009817-4esodiv", title: "OP : CULTURA CLÁSICA", subject: "Otros", grade: "4º ESO (Diversificación)", price: 25.00, retailPrice: 48.80, publisher: "LABERINTO", required: false },
+  { id: "9788416009879-4esodiv", title: "OP : FILOSOFÍA", subject: "Filosofía", grade: "4º ESO (Diversificación)", price: 25.00, retailPrice: 48.80, publisher: "LABERINTO", required: false },
+
+  // 1º Bachillerato
+  { id: "9788421874677", title: "LENGUA CASTELLANA Y LITERATURA I.", subject: "Lengua", grade: "1º Bachillerato", price: 52.74, publisher: "CASALS", required: false },
+  { id: "9789925305421", title: "INGLÉS: - MINDSET FOR BACHILLERATO 1 SB", subject: "Inglés", grade: "1º Bachillerato", price: 37.40, publisher: "Burlington Books", required: false },
+  { id: "9789925302567", title: "MINDSET FOR BACHILLERATO1 WB", subject: "Inglés", grade: "1º Bachillerato", price: 27.42, publisher: "Burlington Books", required: false },
+  { id: "9789925301607", title: "ALL ABOUT THE CINEMA", subject: "Inglés", grade: "1º Bachillerato", price: 10.85, publisher: "Burlington Books", required: false },
+  { id: "9789963273607", title: "WOMEN WHO MADE A DIFFERENCE", subject: "Inglés", grade: "1º Bachillerato", price: 10.85, publisher: "Burlington Books", required: false },
+  { id: "9789963479436", title: "A FOREIGNER IN AUSTRALIA", subject: "Inglés", grade: "1º Bachillerato", price: 8.10, publisher: "Burlington Books", required: false },
+  { id: "9788411202183", title: "FILOSOFÍA. 22", subject: "Filosofía", grade: "1º Bachillerato", price: 45.89, publisher: "SM", required: false },
+  { id: "9788421874813", title: "RELIGION. Religión Católica LOMLOE", subject: "Religión", grade: "1º Bachillerato", price: 34.78, publisher: "CASALS", required: false },
+  { id: "9788421874585", title: "MATEMÁTICAS I", subject: "Matemáticas", grade: "1º Bachillerato", price: 52.74, publisher: "CASALS", required: false },
+  { id: "9788411202145", title: "DIBUJO TÉCNICO I. 22", subject: "Artes", grade: "1º Bachillerato", price: 45.89, publisher: "SM", required: false },
+  { id: "9788411202121", title: "BIOLOGÍA, GEOLOGÍA Y CIENCIA MEDIOAMBIENTALES.", subject: "Ciencias", grade: "1º Bachillerato", price: 52.02, publisher: "SM", required: false },
+  { id: "9788411202169", title: "HISTORIA DEL MUNDO CONTEMPORÁNEO. 22", subject: "Sociales", grade: "1º Bachillerato", price: 45.89, publisher: "SM", required: false },
+  { id: "9788411202176", title: "ECONOMÍA 22", subject: "Economía", grade: "1º Bachillerato", price: 45.85, publisher: "SM", required: false },
+  { id: "9788421874608", title: "MATEMÁTICAS APLICADAS A LAS CIENCIAS SOCIALES I.", subject: "Matemáticas", grade: "1º Bachillerato", price: 52.74, publisher: "CASALS", required: false },
+  { id: "9788421874745-1bto", title: "LATÍN 1-2.", subject: "Otros", grade: "1º Bachillerato", price: 54.89, publisher: "CASALS", required: false },
+  { id: "9788419072139", title: "1º BACH. FRANCÉS - LES BLOGUEURS 5 B1 Livre ePk", subject: "Francés", grade: "1º Bachillerato", price: 38.32, publisher: "MAC MILLAN", required: false },
+  { id: "9788419072146", title: "1º BACH. FRANCÉS - LES BLOGUEURS 5 B1.1 Cahier ePk&Lecture", subject: "Francés", grade: "1º Bachillerato", price: 26.81, publisher: "MAC MILLAN", required: false },
+
+  // 2º Bachillerato
+  { id: "9788498561647", title: "HISTORIA DE LA FILOSOFÍA", subject: "Sociales", grade: "2º Bachillerato", price: 48.75, publisher: "SM", required: false },
+  { id: "9788421874691", title: "LENGUA CASTELLANA Y LITERATURA I. (Libro + licencia digital)", subject: "Lengua", grade: "2º Bachillerato", price: 52.74, publisher: "CASALS", required: false },
+  { id: "9789925305322", title: "INGLÉS: INGLÉS: - MINDSET FOR BACHILLERATO 2 SB", subject: "Inglés", grade: "2º Bachillerato", price: 37.40, publisher: "Burlington Books", required: false },
+  { id: "9789925302598", title: "MINDSET FOR BACHILLERATO 2 WB", subject: "Inglés", grade: "2º Bachillerato", price: 27.42, publisher: "Burlington Books", required: false },
+  { id: "9788421874622", title: "MATEMÁTICAS II.", subject: "Matemáticas", grade: "2º Bachillerato", price: 52.74, publisher: "CASALS", required: false },
+  { id: "9788498561128", title: "MODALIDAD A: BIOLOGÍA 23.", subject: "Ciencias", grade: "2º Bachillerato", price: 52.02, publisher: "SM", required: false },
+  { id: "9788419102560", title: "MODALIDAD B: DIBUJO TÉCNICO II.", subject: "Artes", grade: "2º Bachillerato", price: 48.75, publisher: "SM", required: false },
+  { id: "9788421874547", title: "OPT1: FÍSICA.", subject: "Ciencias", grade: "2º Bachillerato", price: 45.20, publisher: "CASALS", required: false },
+  { id: "9788421874660", title: "EMPRESA Y DISEÑO DE MODELOS DE NEGOCIO", subject: "Economía", grade: "2º Bachillerato", price: 52.74, publisher: "SM", required: false },
+  { id: "9788467534825", title: "GEOGRAFÍA", subject: "Sociales", grade: "2º Bachillerato", price: 51.22, publisher: "SM", required: false },
+  { id: "9788421874745-2bto", title: "MODALIDAD 1: LATÍN 1-2.", subject: "Otros", grade: "2º Bachillerato", price: 54.89, publisher: "CASALS", required: false },
+  { id: "9788421874646", title: "MODALIDAD 2: MATEMÁTICAS APLICADAS A LAS CIENCIAS SOCIALES", subject: "Matemáticas", grade: "2º Bachillerato", price: 52.74, publisher: "CASALS", required: false },
+  { id: "9788421874868", title: "OPT1: HISTORIA DEL ARTE", subject: "Sociales", grade: "2º Bachillerato", price: 52.31, publisher: "CASALS", required: false },];
 
 const DEFAULT_RESERVATIONS = [];
 
 const COURSES = [
   "Infantil 3 años", "Infantil 4 años", "Infantil 5 años",
   "1º Primaria", "2º Primaria", "3º Primaria", "4º Primaria", "5º Primaria", "6º Primaria",
-  "1º ESO", "2º ESO", "3º ESO", "4º ESO",
+  "1º ESO", "2º ESO", "3º ESO", "3º ESO (Diversificación)", "4º ESO", "4º ESO (Diversificación)",
   "1º Bachillerato", "2º Bachillerato"
 ];
 
@@ -248,7 +394,7 @@ const DB = {
     const oldBooks = localStorage.getItem("sb_books");
     const oldReservations = localStorage.getItem("sb_reservations");
     if (
-      (oldBooks && (oldBooks.includes("pri1-1") || oldBooks.includes("eso1-1"))) || 
+      (oldBooks && (oldBooks.includes("pri1-1") || oldBooks.includes("eso1-1") || !oldBooks.includes("3º ESO (Diversificación)"))) || 
       (oldReservations && oldReservations.includes("RES-2026-001"))
     ) {
       localStorage.removeItem("sb_books");

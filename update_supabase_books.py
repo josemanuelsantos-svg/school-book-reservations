@@ -74,8 +74,6 @@ for m in pattern.finditer(array_content):
             "publisher": book.get("publisher"),
             "required": book.get("required", False)
         }
-        if "retailPrice" in book and book["retailPrice"] is not None:
-            book_db["retail_price"] = book["retailPrice"]
         book_objects.append(book_db)
 
 print(f"Se han extraído {len(book_objects)} libros de app.js")
