@@ -172,6 +172,7 @@ const DEFAULT_BOOKS = [
   { id: "9788411208369", title: "EDUCACIÓN PLÁSTICA, VISUALY AUDIOVISUAL I (MAD) 22", subject: "Artes", grade: "1º ESO", price: 28.10, retailPrice: 31.20, publisher: "SM", required: false },
   { id: "9788421885109", title: "MUSICA I RADIX", subject: "Artes", grade: "1º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
   { id: "9788414040171", title: "RELIGION 1ºESO", subject: "Otros", grade: "1º ESO", price: 25.00, retailPrice: 40.50, publisher: "EDELVIVES", required: false },
+  { id: "9788411577052", title: "OP: FRANCÉS. LES BLOGUEURS 1 A1.1 Livre (licencia)", subject: "Francés", grade: "1º ESO", price: 27.95, retailPrice: 27.95, publisher: "MAC MILLAN", required: false },
   { id: "9788411577045", title: "FRANCÉS. LES BLOGUEURS 1 A1.1 Cahier", subject: "Francés", grade: "1º ESO", price: 22.75, retailPrice: 23.95, publisher: "MAC MILLAN", required: false },
   { id: "9788470637469", title: "OP: CIENCIAS DE LA COMPUTACIÓN 1º ESO – PROYECTO STAR código escuela 4.0", subject: "Tecnología", grade: "1º ESO", price: 17.41, retailPrice: 18.75, publisher: "DONOSTIARRA", required: false },
 
@@ -183,12 +184,12 @@ const DEFAULT_BOOKS = [
   { id: "9788414047101", title: "MATEMATICAS.", subject: "Matemáticas", grade: "2º ESO", price: 25.00, retailPrice: 54.50, publisher: "EDELVIVES", required: false },
   { id: "9788414060353", title: "GEOGRAFÍA E HISTORIA. 2º ESO - MADRID", subject: "Sociales", grade: "2º ESO", price: 25.00, retailPrice: 55.00, publisher: "EDELVIVES", required: false },
   { id: "9788421876930", title: "FÍSICA Y QUÍMICA 2 LOMLOE", subject: "Ciencias", grade: "2º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
-  { id: "173349", title: "PLATAFORMA ONLINE - ALUMNO (DIGITAL) + MATERIAL ROBÓTICA", subject: "Tecnología", grade: "2º ESO", price: 35.00, retailPrice: 47.15, publisher: "EDELVIVES", required: false },
   { id: "9788411200349", title: "EDUCACIÓN PLÁSTICA, VISUAL Y AUDIOVISUAL II 22", subject: "Artes", grade: "2º ESO", price: 28.10, retailPrice: 31.20, publisher: "SM", required: false },
   { id: "9788414047538", title: "RELIGIÓN. 2º ESO", subject: "Religión", grade: "2º ESO", price: 25.00, retailPrice: 40.50, publisher: "EDELVIVES", required: false },
   { id: "9788418380532-2eso", title: "ASÍS (CÓMIC)", subject: "Religión", grade: "2º ESO", price: 22.00, retailPrice: 24.50, publisher: "Colegio", required: false },
   { id: "9788414040256", title: "EDUCACIÓN EN VALORES CÍVICOS Y ÉTICOS", subject: "Otros", grade: "2º ESO", price: 25.00, retailPrice: 37.74, publisher: "EDELVIVES", required: false },
   { id: "9788414057490", title: "QUÍMICA INORGÁNICA. Nomenclatura y formulación", subject: "Ciencias", grade: "2º ESO", price: 21.78, retailPrice: 25.10, publisher: "EDELVIVES", required: false },
+  { id: "9788411577090", title: "OP: FRANCÉS. LES BLOGUEURS 2 A1.2 Livre (licencia)", subject: "Francés", grade: "2º ESO", price: 27.95, retailPrice: 27.95, publisher: "MAC MILLAN", required: false },
   { id: "9788411577106", title: "FRANCÉS. LES BLOGUEURS 2 A1.2 Cahier", subject: "Francés", grade: "2º ESO", price: 22.75, retailPrice: 23.95, publisher: "MAC MILLAN", required: false },
   { id: "9788470636899", title: "OP: CIENCIAS DE LA COMPUTACIÓN 2º ESO – PROYECTO STAR", subject: "Tecnología", grade: "2º ESO", price: 17.58, retailPrice: 18.70, publisher: "DONOSTIARRA", required: false },
 
@@ -206,6 +207,7 @@ const DEFAULT_BOOKS = [
   { id: "9788421876718-3eso", title: "MÚSICA II LOMLOE", subject: "Artes", grade: "3º ESO", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
   { id: "9788414040195-3eso", title: "RELIGION 3º ESO", subject: "Otros", grade: "3º ESO", price: 25.00, retailPrice: 40.50, publisher: "EDELVIVES", required: false },
   { id: "9788418380532-3eso", title: "ASÍS (CÓMIC) *Solo para alumnos nuevos", subject: "Religión", grade: "3º ESO", price: 22.00, retailPrice: 24.50, publisher: "Colegio", required: false },
+  { id: "9788411577144-3eso", title: "OP: FRANCÉS. LES BLOGUEURS 3 A2.1 Livre (licencia)", subject: "Francés", grade: "3º ESO", price: 27.95, retailPrice: 27.95, publisher: "MAC MILLAN", required: false },
   { id: "9788411577151-3eso", title: "FRANCÉS. LES BLOGUEURS 3 A2.1 Cahier", subject: "Francés", grade: "3º ESO", price: 22.75, retailPrice: 23.95, publisher: "MAC MILLAN", required: false },
   { id: "9788416009217-3eso", title: "OP: CULTURA CLÁSICA", subject: "Otros", grade: "3º ESO", price: 25.00, retailPrice: 48.80, publisher: "LABERINTO", required: false },
 
@@ -222,6 +224,7 @@ const DEFAULT_BOOKS = [
   { id: "9788421876718-3esodiv", title: "MÚSICA II LOMLOE", subject: "Artes", grade: "3º ESO (Diversificación)", price: 25.00, retailPrice: 27.00, publisher: "CASALS", required: false },
   { id: "9788414040195-3esodiv", title: "RELIGION 3º ESO", subject: "Otros", grade: "3º ESO (Diversificación)", price: 25.00, retailPrice: 40.50, publisher: "EDELVIVES", required: false },
   { id: "9788418380532-3esodiv", title: "ASÍS (CÓMIC) *Solo para alumnos nuevos", subject: "Religión", grade: "3º ESO (Diversificación)", price: 22.00, retailPrice: 24.50, publisher: "Colegio", required: false },
+  { id: "9788411577144-3esodiv", title: "OP: FRANCÉS. LES BLOGUEURS 3 A2.1 Livre (licencia)", subject: "Francés", grade: "3º ESO (Diversificación)", price: 27.95, retailPrice: 27.95, publisher: "MAC MILLAN", required: false },
   { id: "9788411577151-3esodiv", title: "FRANCÉS. LES BLOGUEURS 3 A2.1 Cahier", subject: "Francés", grade: "3º ESO (Diversificación)", price: 22.75, retailPrice: 23.95, publisher: "MAC MILLAN", required: false },
   { id: "9788416009217-3esodiv", title: "OP: CULTURA CLÁSICA", subject: "Otros", grade: "3º ESO (Diversificación)", price: 25.00, retailPrice: 48.80, publisher: "LABERINTO", required: false },
 
