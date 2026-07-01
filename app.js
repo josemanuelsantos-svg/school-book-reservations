@@ -24,6 +24,11 @@ window.toggleTheme = function() {
   render();
 };
 
+window.cleanBookTitle = function(title) {
+  if (!title) return "";
+  return title.replace(" [INACTIVO]", "");
+};
+
 // ==========================================
 // BASE DE DATOS Y DATOS POR DEFECTO
 // ==========================================
@@ -525,7 +530,8 @@ const state = {
     
     // Acciones masivas
     selectedResIds: [],
-    selectedEmailId: null
+    selectedEmailId: null,
+    showInactiveBooks: false
   }
 };
 
@@ -828,7 +834,7 @@ function renderStep2() {
   let totalFamilyPrice = 0;
 
   const sectionsHtml = form.students.map((student, studentIdx) => {
-    const courseBooks = allBooks.filter(b => b.grade === student.studentGrade);
+    const courseBooks = allBooks.filter(b => b.grade === student.studentGrade && !b.title.includes(" [INACTIVO]"));
     const selectedCount = courseBooks.filter(b => !b.notSoldInSchool && (b.required || student.selectedBooks.includes(b.id))).length;
     const studentTotal = courseBooks
       .filter(b => b.required || student.selectedBooks.includes(b.id))
@@ -876,7 +882,7 @@ function renderStep2() {
                       <span class="book-subject">${book.subject}</span>
                       ${book.required ? `<span class="badge-mandatory" style="font-size:10px; background-color:var(--primary); color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px; font-weight:600; text-transform:uppercase;">Obligatorio</span>` : ''}
                     </div>
-                    <h4 class="book-title">${book.title}</h4>
+                    <h4 class="book-title">${cleanBookTitle(book.title)}</h4>
                     <p class="book-publisher">Editorial: ${book.publisher}</p>
                   </div>
                   <div class="book-price" style="display:flex; flex-direction:column; align-items:flex-end; gap:2px; justify-content:center; text-align:right;">
@@ -937,7 +943,7 @@ function renderStep3() {
   let hasOptionalBooksInvolved = false;
 
   const summaryHtml = form.students.map((student, studentIdx) => {
-    const courseBooks = allBooks.filter(b => b.grade === student.studentGrade);
+    const courseBooks = allBooks.filter(b => b.grade === student.studentGrade && !b.title.includes(" [INACTIVO]"));
     const selectedBooksDetails = courseBooks.filter(b => b.required || student.selectedBooks.includes(b.id));
     const studentTotal = selectedBooksDetails.reduce((sum, b) => sum + b.price, 0);
     finalTotal += studentTotal;
@@ -950,7 +956,7 @@ function renderStep3() {
             ? `<p class="no-books-msg" style="font-size:12px; color:var(--text-muted);">No ha seleccionado ningún libro para este alumno.</p>`
             : selectedBooksDetails.map(b => `
                 <div class="summary-book-item">
-                  <span>${b.title} (${b.subject}) ${b.required ? '<small style="color:var(--text-muted); font-weight:600;">(Obligatorio)</small>' : ''}</span>
+                  <span>${cleanBookTitle(b.title)} (${b.subject}) ${b.required ? '<small style="color:var(--text-muted); font-weight:600;">(Obligatorio)</small>' : ''}</span>
                   <strong>${b.price.toFixed(2)} €</strong>
                 </div>
               `).join('')
@@ -1634,7 +1640,7 @@ function renderAdminDashboard() {
     .map(([id, count]) => {
       const book = books.find(b => b.id === id);
       return {
-        title: book ? book.title : "Libro Eliminado",
+        title: book ? cleanBookTitle(book.title) : "Libro Eliminado",
         grade: book ? book.grade : "-",
         count
       };
@@ -1677,7 +1683,7 @@ function renderAdminDashboard() {
           <tr>
             <td><span class="badge badge-outline">${b.grade}</span></td>
             <td><strong>[${b.subject}]</strong></td>
-            <td>${b.title}</td>
+            <td>${cleanBookTitle(b.title)}</td>
             <td>${b.publisher}</td>
             <td style="text-align:right;">${b.price.toFixed(2)} €</td>
             <td style="text-align:center; font-weight:700; color:var(--primary-light);">${item.count} ud.</td>
@@ -1867,7 +1873,7 @@ window.exportStockForecastCSV = function() {
   activeForecast.forEach(item => {
     const b = item.book;
     const subtotal = b.price * item.count;
-    csvContent += `"${b.grade}","${b.subject}","${b.title}","${b.publisher}",${b.price.toFixed(2)},${item.count},${subtotal.toFixed(2)}\n`;
+    csvContent += `"${b.grade}","${b.subject}","${cleanBookTitle(b.title)}","${b.publisher}",${b.price.toFixed(2)},${item.count},${subtotal.toFixed(2)}\n`;
   });
 
   const encodedUri = encodeURI(csvContent);
@@ -2214,7 +2220,9 @@ window.exportReservationsCSV = function() {
 
 // Pestaña Admin 3: Catálogo
 function renderAdminCatalog() {
-  const books = DB.getBooks();
+  const allBooks = DB.getBooks();
+  const showInactive = state.admin.showInactiveBooks;
+  const books = showInactive ? allBooks : allBooks.filter(b => !b.title.includes(" [INACTIVO]"));
   const filterGrade = state.admin.catGradeFilter;
 
   const filteredBooks = filterGrade === "" 
@@ -2237,14 +2245,20 @@ function renderAdminCatalog() {
     </div>
 
     <!-- Filtro Catálogo -->
-    <div class="filters-bar card-shadow">
-      <div style="display:flex; align-items:center; gap: 8px;">
-        <label for="catGradeSelect">Filtrar por curso:</label>
-        <div class="filter-select">
-          <select id="catGradeSelect" onchange="handleCatFilterChange(event)">
-            <option value="">Todos los cursos</option>
-            ${COURSES.map(c => `<option value="${c}" ${filterGrade === c ? 'selected' : ''}>${c}</option>`).join('')}
-          </select>
+    <div class="filters-bar card-shadow" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+      <div style="display:flex; align-items:center; gap: 16px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap: 8px;">
+          <label for="catGradeSelect">Filtrar por curso:</label>
+          <div class="filter-select">
+            <select id="catGradeSelect" onchange="handleCatFilterChange(event)">
+              <option value="">Todos los cursos</option>
+              ${COURSES.map(c => `<option value="${c}" ${filterGrade === c ? 'selected' : ''}>${c}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap: 8px;">
+          <input type="checkbox" id="showInactiveBooksChk" ${showInactive ? 'checked' : ''} onchange="toggleShowInactiveBooks(event)" style="width:auto; margin-bottom:0; cursor:pointer;">
+          <label for="showInactiveBooksChk" style="margin-bottom:0; font-weight:normal; cursor:pointer; font-size:13px; color:var(--text);">Mostrar libros inactivos/retirados</label>
         </div>
       </div>
       <div class="subtext">
@@ -2272,7 +2286,10 @@ function renderAdminCatalog() {
                 <tr>
                   <td><span class="badge badge-outline">${b.grade}</span></td>
                   <td><strong>${b.subject}</strong></td>
-                  <td>${b.title}</td>
+                  <td>
+                    ${cleanBookTitle(b.title)}
+                    ${b.title.includes(" [INACTIVO]") ? `<br><span class="badge" style="font-size:9px; background-color:#94a3b8; color:#fff; padding:1px 4px; border-radius:4px; display:inline-block; margin-top:4px;">Inactivo / Retirado</span>` : ''}
+                  </td>
                   <td>${b.publisher}</td>
                   <td>
                     ${b.notSoldInSchool 
@@ -2312,6 +2329,11 @@ window.handleCatFilterChange = function(e) {
   render();
 };
 
+window.toggleShowInactiveBooks = function(e) {
+  state.admin.showInactiveBooks = e.target.checked;
+  render();
+};
+
 window.openBookModal = function(bookId) {
   if (state.adminRole === "lotes") {
     alert("Acceso denegado: El personal de lotes no puede gestionar el catálogo.");
@@ -2336,9 +2358,15 @@ window.deleteBook = function(id) {
     alert("Acceso denegado: El personal de lotes no puede gestionar el catálogo.");
     return;
   }
-  if (confirm("¿Está seguro de que desea eliminar este libro? Esto no borrará las reservas ya realizadas que lo contengan, pero ya no aparecerá para nuevas reservas.")) {
-    let books = DB.getBooks();
-    books = books.filter(b => b.id !== id);
+  const books = DB.getBooks();
+  const book = books.find(b => b.id === id);
+  if (!book) return;
+
+  if (confirm(`¿Está seguro de que desea retirar "${cleanBookTitle(book.title)}" del catálogo? No aparecerá para nuevas reservas, pero se mantendrá para resolver los detalles de los pedidos existentes.`)) {
+    if (!book.title.includes(" [INACTIVO]")) {
+      book.title = book.title + " [INACTIVO]";
+      book.required = false; // Desactivar obligatoriedad al retirar
+    }
     DB.saveBooks(books);
     render();
   }
@@ -2359,20 +2387,31 @@ window.saveBook = function(e) {
   const price = notSoldInSchool ? 0 : parseFloat(document.getElementById("edit-book-price").value);
   const retailPriceInput = document.getElementById("edit-book-retail-price").value;
   const retailPrice = notSoldInSchool ? null : (retailPriceInput !== "" ? parseFloat(retailPriceInput) : null);
-  const required = notSoldInSchool ? false : document.getElementById("edit-book-required").checked;
+  
+  const isInactive = document.getElementById("edit-book-inactive").checked;
+  const required = (notSoldInSchool || isInactive) ? false : document.getElementById("edit-book-required").checked;
+
+  let finalTitle = title;
+  if (isInactive) {
+    if (!finalTitle.includes(" [INACTIVO]")) {
+      finalTitle = finalTitle + " [INACTIVO]";
+    }
+  } else {
+    finalTitle = finalTitle.replace(" [INACTIVO]", "");
+  }
 
   const books = DB.getBooks();
 
   if (idInput === "") {
     // Es nuevo libro
     const newId = "book-" + Date.now();
-    const newBook = { id: newId, title, subject, grade, publisher, price, retailPrice, notSoldInSchool, required };
+    const newBook = { id: newId, title: finalTitle, subject, grade, publisher, price, retailPrice, notSoldInSchool, required };
     books.push(newBook);
   } else {
     // Editar existente
     const idx = books.findIndex(b => b.id === idInput);
     if (idx > -1) {
-      books[idx] = { id: idInput, title, subject, grade, publisher, price, retailPrice, notSoldInSchool, required };
+      books[idx] = { id: idInput, title: finalTitle, subject, grade, publisher, price, retailPrice, notSoldInSchool, required };
     }
   }
 
@@ -2847,7 +2886,7 @@ function renderAdminModals() {
             ` : studentBooks.map(b => `
               <div class="modal-book-item" style="padding-left:12px; margin-bottom:4px;">
                 <div>
-                  <strong>[${b.subject}]</strong> ${b.title}
+                  <strong>[${b.subject}]</strong> ${cleanBookTitle(b.title)}
                   <small style="display:block; color:#64748b;">Editorial: ${b.publisher}</small>
                 </div>
                 <strong>${b.price.toFixed(2)} €</strong>
@@ -2940,7 +2979,7 @@ function renderAdminModals() {
             <div class="modal-body">
               <div class="form-group">
                 <label for="edit-book-title">Título del Libro *</label>
-                <input type="text" id="edit-book-title" required value="${book.title}" placeholder="Ej. Lengua Castellana 1º ESO">
+                <input type="text" id="edit-book-title" required value="${cleanBookTitle(book.title)}" placeholder="Ej. Lengua Castellana 1º ESO">
               </div>
 
               <div class="form-row">
@@ -2987,6 +3026,13 @@ function renderAdminModals() {
                   <label for="edit-book-not-sold" style="margin-bottom:0; font-weight:normal; cursor:pointer;">Este libro no se vende en el colegio (informativo, sin opción de compra)</label>
                 </div>
               </div>
+
+              <div class="form-row" style="margin-top: 8px;">
+                <div class="form-group col-12" style="display:flex; align-items:center; gap:8px;">
+                  <input type="checkbox" id="edit-book-inactive" ${book.title.includes(" [INACTIVO]") ? 'checked' : ''} style="width:auto; margin-bottom:0; cursor:pointer;">
+                  <label for="edit-book-inactive" style="margin-bottom:0; font-weight:normal; cursor:pointer; color:var(--text-danger, #ef4444);">Retirar este libro del catálogo (inactivo en nuevas reservas)</label>
+                </div>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-outline" onclick="closeBookModal()">Cancelar</button>
@@ -3006,7 +3052,7 @@ function renderAdminModals() {
     // Calcular gran total
     let grandTotal = 0;
     const studentsHtml = res.students.map((student, studentIdx) => {
-      const gradeBooks = books.filter(b => b.grade === student.studentGrade);
+      const gradeBooks = books.filter(b => b.grade === student.studentGrade && (!b.title.includes(" [INACTIVO]") || student.books.includes(b.id)));
       const subtotal = gradeBooks
         .filter(b => student.books.includes(b.id))
         .reduce((sum, b) => sum + b.price, 0);
@@ -3050,7 +3096,7 @@ function renderAdminModals() {
                     <label class="checkbox-label" style="display:flex; align-items:center; justify-content:space-between; padding: 4px 0; border-bottom: 1px dashed var(--border); font-weight: normal; font-size:12px; cursor:pointer;">
                       <div style="display:flex; align-items:center; gap:8px;">
                         <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleEditResStudentBook(${studentIdx}, '${b.id}')">
-                        <span><strong>[${b.subject}]</strong> ${b.title}</span>
+                        <span><strong>[${b.subject}]</strong> ${cleanBookTitle(b.title)}</span>
                       </div>
                       <strong>${b.price.toFixed(2)} €</strong>
                     </label>
