@@ -1226,6 +1226,7 @@ textarea:focus {
 .badge-confirmado { background-color: #d1fae5; color: #059669; }
 .badge-preparado { background-color: #e0e7ff; color: #4338ca; }
 .badge-entregado { background-color: #f1f5f9; color: var(--text-muted); }
+.badge-duplicado { background-color: #fee2e2; color: #dc2626; }
 
 /* ==========================================
    PORTAL ADMIN: GESTIÓN AJUSTES Y MODALES
@@ -1391,6 +1392,7 @@ textarea:focus {
 .btn-status-confirmado.active { background-color: #d1fae5; color: #059669; border-color: #10b981; }
 .btn-status-preparado.active { background-color: #e0e7ff; color: #4338ca; border-color: #6366f1; }
 .btn-status-entregado.active { background-color: #f1f5f9; color: var(--text-muted); border-color: var(--text-muted); }
+.btn-status-duplicado.active { background-color: #fee2e2; color: #dc2626; border-color: #f87171; }
 
 /* ==========================================
    ANIMACIONES

@@ -1311,6 +1311,16 @@ function renderAdminPortal() {
             </svg>
             Reservas / Pedidos
           </button>
+          <button class="nav-item ${state.adminTab === 'duplicates' ? 'active' : ''}" onclick="setAdminTab('duplicates')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="9" y1="3" x2="9" y2="21"/>
+              <line x1="15" y1="3" x2="15" y2="21"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="3" y1="15" x2="21" y2="15"/>
+            </svg>
+            Detectar Duplicados
+          </button>
           ${state.adminRole === 'lotes' ? '' : `
           <button class="nav-item ${state.adminTab === 'catalog' ? 'active' : ''}" onclick="setAdminTab('catalog')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
@@ -1417,6 +1427,8 @@ function renderAdminTabContent() {
       return renderAdminDashboard();
     case "reservations":
       return renderAdminReservations();
+    case "duplicates":
+      return renderAdminDuplicates();
     case "catalog":
       return renderAdminCatalog();
     case "comms":
@@ -1591,7 +1603,9 @@ window.setHelpTab = function(tab) {
 
 // Pestaña Admin 1: Dashboard
 function renderAdminDashboard() {
-  const reservations = DB.getReservations();
+  const allReservations = DB.getReservations();
+  const reservations = allReservations.filter(r => r.status !== "Duplicado");
+  const duplicatedCount = allReservations.filter(r => r.status === "Duplicado").length;
   const books = DB.getBooks();
 
   // Estadísticas clave
@@ -1698,6 +1712,18 @@ function renderAdminDashboard() {
       <h2>Panel General</h2>
       <p>Estadísticas del proceso de reserva en tiempo real</p>
     </div>
+
+    ${duplicatedCount > 0 ? `
+      <div style="background-color: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; padding: 12px 16px; border-radius: 6px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; animation: fadeIn 0.3s ease-in-out;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span>Se han detectado <strong>${duplicatedCount}</strong> reservas marcadas como <strong>Duplicadas</strong>. Han sido excluidas del cálculo de stock y estadísticas.</span>
+        </div>
+        <button class="btn btn-outline" style="border-color: #fca5a5; color: #b91c1c; font-size: 11px; padding: 4px 8px; background-color: transparent;" onclick="setAdminTab('duplicates')">Ver Pedidos Duplicados</button>
+      </div>
+    ` : ''}
 
     <!-- Tarjetas de métricas -->
     <div class="metrics-grid">
@@ -1850,7 +1876,8 @@ function renderAdminDashboard() {
 
 // Vinculación del CSV exporter de Previsión de stock
 window.exportStockForecastCSV = function() {
-  const reservations = DB.getReservations();
+  const allReservations = DB.getReservations();
+  const reservations = allReservations.filter(r => r.status !== "Duplicado");
   const books = DB.getBooks();
 
   const forecast = {};
@@ -2014,6 +2041,7 @@ function renderAdminReservations() {
           <option value="Confirmado" ${status === 'Confirmado' ? 'selected' : ''}>Confirmado</option>
           <option value="Preparado" ${status === 'Prepared' || status === 'Preparado' ? 'selected' : ''}>Preparado</option>
           <option value="Entregado" ${status === 'Entregado' ? 'selected' : ''}>Entregado</option>
+          <option value="Duplicado" ${status === 'Duplicado' ? 'selected' : ''}>Duplicado</option>
         </select>
       </div>
     </div>
@@ -3013,6 +3041,7 @@ function renderAdminModals() {
                   <button class="btn btn-status btn-status-confirmado ${r.status === 'Confirmado' ? 'active' : ''}" onclick="changeReservationStatus('${r.id}', 'Confirmado')">Confirmado</button>
                   <button class="btn btn-status btn-status-preparado ${r.status === 'Preparado' ? 'active' : ''}" onclick="changeReservationStatus('${r.id}', 'Preparado')">Preparado</button>
                   <button class="btn btn-status btn-status-entregado ${r.status === 'Entregado' ? 'active' : ''}" onclick="changeReservationStatus('${r.id}', 'Entregado')">Entregado</button>
+                  <button class="btn btn-status btn-status-duplicado ${r.status === 'Duplicado' ? 'active' : ''}" onclick="changeReservationStatus('${r.id}', 'Duplicado')">Duplicado</button>
                 </div>
               </div>
             </div>
@@ -3884,6 +3913,182 @@ window.initInteractiveCharts = function() {
       cutout: '60%'
     }
   });
+};
+
+function findDuplicateReservations() {
+  const reservations = DB.getReservations();
+  const groups = {};
+  
+  reservations.forEach(r => {
+    const students = r.students || [{ studentName: r.studentName, studentGrade: r.studentGrade }];
+    students.forEach(s => {
+      if (!s.studentName) return;
+      const nameNorm = s.studentName.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ");
+      if (nameNorm.length < 3) return;
+      const key = nameNorm + "||" + (s.studentGrade || "").trim();
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      if (!groups[key].some(item => item.res.id === r.id)) {
+        groups[key].push({ res: r, student: s });
+      }
+    });
+  });
+
+  const duplicates = [];
+  for (const [key, list] of Object.entries(groups)) {
+    if (list.length > 1) {
+      duplicates.push({
+        key,
+        studentName: list[0].student.studentName,
+        studentGrade: list[0].student.studentGrade,
+        reservations: list.map(item => item.res)
+      });
+    }
+  }
+  
+  return duplicates;
+}
+
+function renderAdminDuplicates() {
+  const duplicates = findDuplicateReservations();
+  const isLotes = state.adminRole === "lotes";
+
+  let groupsHtml = "";
+  if (duplicates.length === 0) {
+    groupsHtml = `
+      <div class="card-shadow" style="background-color: #fff; padding: 40px; text-align: center; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+        <div style="width: 64px; height: 64px; background-color: #d1fae5; color: #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <h3 style="font-family: var(--font-title); color: var(--primary); font-size: 18px; margin-bottom: 8px;">No se detectaron duplicados</h3>
+        <p style="color: var(--text-muted); font-size: 13px; max-width: 400px; margin: 0 auto;">
+          Todas las reservas registradas corresponden a alumnos distintos. No hay duplicidades en el sistema.
+        </p>
+      </div>
+    `;
+  } else {
+    groupsHtml = duplicates.map((group, gIdx) => {
+      return `
+        <div class="card-shadow" style="background-color: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 20px; overflow: hidden;">
+          <div style="background-color: var(--primary); color: #fff; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+              </svg>
+              <span style="font-weight: 700; font-size: 14px;">${group.studentName}</span>
+              <span style="background-color: rgba(255,255,255,0.2); font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 600;">${group.studentGrade}</span>
+            </div>
+            <span style="font-size: 12px; font-weight: 500; background-color: rgba(0,0,0,0.15); padding: 4px 10px; border-radius: 20px;">
+              ${group.reservations.length} reservas encontradas
+            </span>
+          </div>
+          
+          <div style="padding: 16px 20px;">
+            <div class="table-container" style="margin: 0; box-shadow: none; border: 1px solid var(--border);">
+              <table class="data-table" style="font-size: 12px;">
+                <thead>
+                  <tr>
+                    <th>Reserva ID</th>
+                    <th>Fecha</th>
+                    <th>Tutor</th>
+                    <th>Contacto</th>
+                    <th>Libros</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${group.reservations.map(r => {
+                    const isDuplicated = r.status === "Duplicado";
+                    return `
+                      <tr class="${isDuplicated ? 'row-duplicated-dimmed' : ''}" style="${isDuplicated ? 'opacity: 0.65; background-color: #f8fafc;' : ''}">
+                        <td><strong>${r.id}</strong></td>
+                        <td>${new Date(r.createdAt).toLocaleDateString("es-ES")}</td>
+                        <td>${r.parentName}</td>
+                        <td>
+                          <div style="display:flex; flex-direction:column; gap:2px;">
+                            <span>${r.parentEmail}</span>
+                            <small style="color:var(--text-muted);">${r.parentPhone}</small>
+                          </div>
+                        </td>
+                        <td>${r.books.length} libros</td>
+                        <td><strong>${r.total.toFixed(2)} €</strong></td>
+                        <td><span class="badge badge-${r.status.toLowerCase()}">${r.status}</span></td>
+                        <td>
+                          <div style="display:flex; gap:6px;">
+                            <button class="btn btn-icon-only" onclick="showReservationDetails('${r.id}')" title="Ver detalles del pedido">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                              </svg>
+                            </button>
+                            ${isDuplicated ? `
+                              <button class="btn btn-outline" style="font-size:11px; padding:4px 8px; border-color:#10b981; color:#059669; background-color: transparent;" onclick="changeReservationStatus('${r.id}', 'Pendiente')" title="Quitar marca de duplicado y reactivar">
+                                Reactivar
+                              </button>
+                            ` : `
+                              <button class="btn btn-outline" style="font-size:11px; padding:4px 8px; border-color:#f87171; color:#dc2626; background-color: transparent;" onclick="changeReservationStatus('${r.id}', 'Duplicado')" title="Marcar como duplicado para excluir de la previsión de stock">
+                                Marcar Duplicado
+                              </button>
+                            `}
+                            ${isLotes ? '' : `
+                              <button class="btn btn-icon-only btn-danger-text" onclick="deleteDuplicateReservation('${r.id}', '${group.studentName}')" title="Eliminar definitivamente esta reserva">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                  <polyline points="3 6 5 6 21 6"/>
+                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                              </button>
+                            `}
+                          </div>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  return `
+    <div class="admin-section-header">
+      <h2>Detección de Reservas Duplicadas</h2>
+      <p>Localice y marque los pedidos duplicados para que no afecten al cálculo de stock y estadísticas</p>
+    </div>
+    
+    <div style="margin-bottom: 20px; background-color: var(--bg-light); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 18px; font-size: 13px;">
+      <h4 style="font-weight:700; color:var(--primary); margin-bottom:4px;">¿Cómo funciona esta herramienta?</h4>
+      <p style="color:var(--text-muted); margin:0;">
+        El sistema agrupa automáticamente las reservas por el <strong>nombre y curso del alumno</strong>. Si un alumno figura en dos o más reservas distintas, aparecerán agrupadas aquí.
+        Puede marcar la reserva incorrecta como <strong>"Duplicado"</strong> para desactivarla sin borrar su historial, o bien <strong>eliminarla definitivamente</strong>.
+      </p>
+    </div>
+
+    <div class="duplicates-list">
+      ${groupsHtml}
+    </div>
+  `;
+}
+
+window.deleteDuplicateReservation = function(id, name) {
+  if (state.adminRole === "lotes") {
+    alert("Acceso denegado: El personal de lotes no puede borrar reservas.");
+    return;
+  }
+  if (confirm(`¿Está seguro de que desea eliminar definitivamente la reserva "${id}" de "${name}"? Esta acción no se puede deshacer y borrará la reserva físicamente de la base de datos.`)) {
+    const reservations = DB.getReservations();
+    const updated = reservations.filter(r => r.id !== id);
+    DB.saveReservations(updated);
+    render();
+  }
 };
 
 async function syncFromSupabase() {
