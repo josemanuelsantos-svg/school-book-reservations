@@ -531,7 +531,8 @@ const state = {
     // Acciones masivas
     selectedResIds: [],
     selectedEmailId: null,
-    showInactiveBooks: false
+    showInactiveBooks: false,
+    expandedResIds: []
   }
 };
 
@@ -2044,12 +2045,72 @@ function renderAdminReservations() {
             ? `<tr><td colspan="10" class="empty-table-cell">No se encontraron reservas con los filtros seleccionados.</td></tr>`
             : filteredReservations.map(r => {
                 const isChecked = selectedIds.includes(r.id);
+                const isExpanded = state.admin.expandedResIds && state.admin.expandedResIds.includes(r.id);
+                
+                let expandRowHtml = "";
+                if (isExpanded) {
+                  const books = DB.getBooks();
+                  const students = r.students || [{
+                    studentName: r.studentName,
+                    studentGrade: r.studentGrade,
+                    books: r.books,
+                    subtotal: r.total
+                  }];
+
+                  let studentsListHtml = "";
+                  students.forEach((student, sIdx) => {
+                    const studentBooks = books.filter(b => student.books.includes(b.id));
+                    studentsListHtml += `
+                      <div class="expandable-student-block" style="padding: 10px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); background-color: var(--bg-light); text-align: left;">
+                        <div style="font-weight: 700; font-size: 12px; color: var(--primary); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                          <span>Alumno #${sIdx + 1}: <strong>${student.studentName}</strong></span>
+                          <span class="badge badge-outline" style="margin-left: 6px;">${student.studentGrade}</span>
+                        </div>
+                        ${studentBooks.length === 0 ? `
+                          <div style="font-size: 11px; color: var(--text-muted); font-style: italic; padding-left: 8px;">No tiene libros reservados.</div>
+                        ` : `
+                          <div style="display: flex; flex-direction: column; gap: 4px; padding-left: 8px;">
+                            ${studentBooks.map(b => `
+                              <div style="display: flex; justify-content: space-between; font-size: 11px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
+                                <span><strong>[${b.subject}]</strong> ${cleanBookTitle(b.title)} <small style="color: var(--text-muted);">(${b.publisher})</small></span>
+                                <strong style="white-space: nowrap; margin-left: 12px;">${b.price.toFixed(2)} €</strong>
+                              </div>
+                            `).join('')}
+                          </div>
+                        `}
+                        <div style="text-align: right; font-size: 11px; font-weight: 700; margin-top: 6px; color: var(--text);">
+                          Subtotal: ${student.subtotal.toFixed(2)} €
+                        </div>
+                      </div>
+                    `;
+                  });
+
+                  expandRowHtml = `
+                    <tr class="expanded-row-details" style="background-color: var(--bg-light); border-left: 3px solid var(--primary);">
+                      <td></td>
+                      <td colspan="9" style="padding: 12px 20px;">
+                        <div style="max-width: 800px; margin: 0 auto 0 0;">
+                          <h5 style="font-size: 11px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); text-align: left;">Detalle de la Solicitud:</h5>
+                          ${studentsListHtml}
+                        </div>
+                      </td>
+                    </tr>
+                  `;
+                }
+
                 return `
                   <tr class="${isChecked ? 'row-selected' : ''}">
                     <td style="text-align:center;">
                       <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSelectReservation('${r.id}', event)">
                     </td>
-                    <td><strong>${r.id}</strong></td>
+                    <td>
+                      <div style="display:flex; align-items:center; gap:6px; cursor:pointer;" onclick="toggleExpandReservation('${r.id}', event)" title="Haga clic para expandir/colapsar detalles">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="transition: transform 0.2s; ${isExpanded ? 'transform: rotate(90deg);' : ''}">
+                          <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                        <strong>${r.id}</strong>
+                      </div>
+                    </td>
                     <td>${r.studentName}</td>
                     <td><span class="badge badge-outline">${r.studentGrade}</span></td>
                     <td>
@@ -2066,11 +2127,12 @@ function renderAdminReservations() {
                       <button class="btn btn-icon-only" onclick="showReservationDetails('${r.id}')" title="Ver Detalles">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                          <circle cx="12" cy="12" r="3"/>
+                           <circle cx="12" cy="12" r="3"/>
                         </svg>
                       </button>
                     </td>
                   </tr>
+                  ${expandRowHtml}
                 `;
               }).join('')
           }
@@ -2121,6 +2183,20 @@ window.toggleSelectReservation = function(id, e) {
     if (index > -1) {
       state.admin.selectedResIds.splice(index, 1);
     }
+  }
+  render();
+};
+
+window.toggleExpandReservation = function(id, event) {
+  if (event) event.stopPropagation();
+  if (!state.admin.expandedResIds) {
+    state.admin.expandedResIds = [];
+  }
+  const index = state.admin.expandedResIds.indexOf(id);
+  if (index > -1) {
+    state.admin.expandedResIds.splice(index, 1);
+  } else {
+    state.admin.expandedResIds.push(id);
   }
   render();
 };
