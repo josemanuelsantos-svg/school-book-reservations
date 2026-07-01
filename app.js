@@ -1971,6 +1971,9 @@ function renderAdminReservations() {
 
   // Filtrar
   const filteredReservations = reservations.filter(r => {
+    // Ocultar reservas canceladas por defecto a menos que se filtre explícitamente por "Cancelado"
+    if (r.status === "Cancelado" && status !== "Cancelado") return false;
+    
     const matchesSearch = r.studentName.toLowerCase().includes(search) || 
                           r.parentName.toLowerCase().includes(search) || 
                           r.id.toLowerCase().includes(search);
@@ -2046,6 +2049,7 @@ function renderAdminReservations() {
           <option value="Preparado" ${status === 'Prepared' || status === 'Preparado' ? 'selected' : ''}>Preparado</option>
           <option value="Entregado" ${status === 'Entregado' ? 'selected' : ''}>Entregado</option>
           <option value="Duplicado" ${status === 'Duplicado' ? 'selected' : ''}>Duplicado</option>
+          <option value="Cancelado" ${status === 'Cancelado' ? 'selected' : ''}>Cancelado / Eliminado</option>
         </select>
       </div>
     </div>
@@ -2233,7 +2237,7 @@ window.toggleExpandReservation = function(id, event) {
   render();
 };
 
-window.handleBulkAction = function(action) {
+window.handleBulkAction = async function(action) {
   if (!action) return;
   const ids = state.admin.selectedResIds;
   if (ids.length === 0) return;
@@ -2246,10 +2250,38 @@ window.handleBulkAction = function(action) {
       return;
     }
     if (confirm(`¿Está seguro de que desea eliminar las ${ids.length} reservas seleccionadas?`)) {
+      // Feedback visual deshabilitando el botón mientras se borra
+      const activeSelect = document.getElementById("bulkActionSelect");
+      if (activeSelect) activeSelect.disabled = true;
+
+      // 1. Borrar de Supabase físicamente
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient.from('reservations').delete().in('id', ids);
+          if (error) {
+            console.error("Error physically deleting from Supabase:", error);
+            // Fallback: marcar como cancelado en la base de datos para que no vuelva a aparecer
+            const toUpdate = reservations.filter(r => ids.includes(r.id));
+            toUpdate.forEach(r => r.status = "Cancelado");
+            await DB.saveReservations(reservations);
+          }
+        } catch (err) {
+          console.error("Network error deleting from Supabase:", err);
+          // Fallback: marcar como cancelado
+          const toUpdate = reservations.filter(r => ids.includes(r.id));
+          toUpdate.forEach(r => r.status = "Cancelado");
+          await DB.saveReservations(reservations);
+        }
+      }
+
+      // 2. Borrar del local storage síncronamente
       const updated = reservations.filter(r => !ids.includes(r.id));
-      DB.saveReservations(updated);
+      localStorage.setItem("sb_reservations", JSON.stringify(updated));
+
+      if (activeSelect) activeSelect.disabled = false;
       state.admin.selectedResIds = [];
       alert("Reservas eliminadas correctamente.");
+      render();
     }
   } else if (action === "email_recogida") {
     if (confirm(`¿Desea enviar emails simulados de recogida a los tutores de las ${ids.length} reservas seleccionadas? (También cambiará sus estados a "Preparado")`)) {
@@ -4135,15 +4167,41 @@ function renderAdminDuplicates() {
   `;
 }
 
-window.deleteDuplicateReservation = function(id, name) {
+window.deleteDuplicateReservation = async function(id, name) {
   if (state.adminRole === "lotes") {
     alert("Acceso denegado: El personal de lotes no puede borrar reservas.");
     return;
   }
   if (confirm(`¿Está seguro de que desea eliminar definitivamente la reserva "${id}" de "${name}"? Esta acción no se puede deshacer y borrará la reserva físicamente de la base de datos.`)) {
     const reservations = DB.getReservations();
+    
+    // 1. Borrar de Supabase físicamente
+    if (supabaseClient) {
+      try {
+        const { error } = await supabaseClient.from('reservations').delete().eq('id', id);
+        if (error) {
+          console.error("Error physically deleting duplicate from Supabase:", error);
+          // Fallback: marcar como cancelado
+          const r = reservations.find(item => item.id === id);
+          if (r) {
+            r.status = "Cancelado";
+            await DB.saveReservations(reservations);
+          }
+        }
+      } catch (err) {
+        console.error("Network error deleting duplicate from Supabase:", err);
+        // Fallback: marcar como cancelado
+        const r = reservations.find(item => item.id === id);
+        if (r) {
+          r.status = "Cancelado";
+          await DB.saveReservations(reservations);
+        }
+      }
+    }
+
+    // 2. Borrar del local storage síncronamente
     const updated = reservations.filter(r => r.id !== id);
-    DB.saveReservations(updated);
+    localStorage.setItem("sb_reservations", JSON.stringify(updated));
     render();
   }
 };

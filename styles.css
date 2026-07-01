@@ -1227,6 +1227,7 @@ textarea:focus {
 .badge-preparado { background-color: #e0e7ff; color: #4338ca; }
 .badge-entregado { background-color: #f1f5f9; color: var(--text-muted); }
 .badge-duplicado { background-color: #fee2e2; color: #dc2626; }
+.badge-cancelado { background-color: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
 
 /* ==========================================
    PORTAL ADMIN: GESTIÓN AJUSTES Y MODALES
