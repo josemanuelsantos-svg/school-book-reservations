@@ -342,7 +342,7 @@ const DB = {
   saveBooks(books) {
     localStorage.setItem("sb_books", JSON.stringify(books));
     if (supabaseClient) {
-      supabaseClient.from('books').upsert(books.map(b => {
+      return supabaseClient.from('books').upsert(books.map(b => {
         const payload = {
           id: b.id,
           title: b.title,
@@ -358,6 +358,7 @@ const DB = {
         return payload;
       })).then(({ error }) => { if (error) console.error("Error upserting books:", error); });
     }
+    return Promise.resolve();
   },
   getReservations() {
     const data = localStorage.getItem("sb_reservations");
@@ -2502,7 +2503,7 @@ window.deleteBook = function(id) {
   }
 };
 
-window.saveBook = function(e) {
+window.saveBook = async function(e) {
   e.preventDefault();
   if (state.adminRole === "lotes") {
     alert("Acceso denegado: El personal de lotes no puede gestionar el catálogo.");
@@ -2545,7 +2546,22 @@ window.saveBook = function(e) {
     }
   }
 
-  DB.saveBooks(books);
+  // Feedback visual en el botón de submit
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  let originalHtml = "";
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    originalHtml = submitBtn.innerHTML;
+    submitBtn.innerHTML = `<span class="spinner" style="display:inline-block; width:12px; height:12px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation:spin 1s linear infinite; margin-right:4px; vertical-align:middle;"></span>Guardando...`;
+  }
+
+  await DB.saveBooks(books);
+
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalHtml;
+  }
+
   state.admin.editingBook = null;
   render();
 };
@@ -2649,7 +2665,7 @@ window.sendPickupNotification = function(resId) {
   }
 };
 
-window.saveEditRes = function(e) {
+window.saveEditRes = async function(e) {
   e.preventDefault();
   const editRes = state.admin.editingRes;
   const reservations = DB.getReservations();
@@ -2689,7 +2705,22 @@ window.saveEditRes = function(e) {
     editRes.books = allBookIds;
     
     reservations[index] = editRes;
-    DB.saveReservations(reservations);
+
+    // Feedback visual en el botón de submit
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    let originalHtml = "";
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      originalHtml = submitBtn.innerHTML;
+      submitBtn.innerHTML = `<span class="spinner" style="display:inline-block; width:12px; height:12px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation:spin 1s linear infinite; margin-right:4px; vertical-align:middle;"></span>Guardando...`;
+    }
+
+    await DB.saveReservations(reservations);
+
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalHtml;
+    }
   }
   
   state.admin.editingRes = null;
