@@ -366,7 +366,7 @@ const DB = {
   saveReservations(reservations) {
     localStorage.setItem("sb_reservations", JSON.stringify(reservations));
     if (supabaseClient) {
-      supabaseClient.from('reservations').upsert(reservations.map(r => ({
+      return supabaseClient.from('reservations').upsert(reservations.map(r => ({
         id: r.id,
         student_name: r.studentName,
         student_grade: r.studentGrade,
@@ -378,8 +378,11 @@ const DB = {
         total: r.total,
         status: r.status,
         created_at: r.createdAt
-      }))).then(({ error }) => { if (error) console.error("Error upserting reservations:", error); });
+      }))).then(({ error }) => { 
+        if (error) console.error("Error upserting reservations:", error); 
+      });
     }
+    return Promise.resolve();
   },
   getEmails() {
     const data = localStorage.getItem("sb_emails");
@@ -2290,13 +2293,36 @@ window.closeReservationDetails = function() {
   render();
 };
 
-window.changeReservationStatus = function(id, newStatus) {
+window.changeReservationStatus = async function(id, newStatus) {
   const reservations = DB.getReservations();
   const index = reservations.findIndex(r => r.id === id);
   if (index > -1) {
     reservations[index].status = newStatus;
-    DB.saveReservations(reservations);
-    state.admin.selectedResId = id; // Mantener modal abierto con nuevo estado
+    
+    // Guardar si el modal de detalles estaba abierto
+    const wasModalOpen = state.admin.selectedResId === id;
+
+    // Feedback visual en el botón activo
+    const activeBtn = document.activeElement;
+    let originalHtml = "";
+    if (activeBtn && activeBtn.tagName === "BUTTON") {
+      activeBtn.disabled = true;
+      originalHtml = activeBtn.innerHTML;
+      activeBtn.innerHTML = `<span class="spinner" style="display:inline-block; width:12px; height:12px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation:spin 1s linear infinite; margin-right:4px; vertical-align:middle;"></span>Guardando...`;
+    }
+
+    await DB.saveReservations(reservations);
+
+    if (activeBtn && activeBtn.tagName === "BUTTON") {
+      activeBtn.disabled = false;
+      activeBtn.innerHTML = originalHtml;
+    }
+
+    if (wasModalOpen) {
+      state.admin.selectedResId = id; // Mantener modal abierto con nuevo estado
+    } else {
+      state.admin.selectedResId = null; // No abrir el modal si no lo estaba
+    }
     render();
   }
 };
