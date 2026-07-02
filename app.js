@@ -2179,7 +2179,17 @@ function renderAdminReservations() {
                     </td>
                     <td>${new Date(r.createdAt).toLocaleDateString("es-ES")}</td>
                     <td>${r.books.length}</td>
-                    <td><strong>${r.total.toFixed(2)} €</strong></td>
+                    <td>
+                      <strong>${r.total.toFixed(2)} €</strong>
+                      ${r.students && r.students.length > 1 ? `
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px; line-height: 1.2; font-weight: normal;">
+                          ${r.students.map(s => {
+                            const firstName = s.studentName.split(' ')[0] || 'Alumno';
+                            return `<span style="display:block; white-space:nowrap;">${firstName}: ${s.subtotal.toFixed(2)} €</span>`;
+                          }).join('')}
+                        </div>
+                      ` : ''}
+                    </td>
                     <td><span class="badge badge-${r.status.toLowerCase()}">${r.status}</span></td>
                     <td>
                       <button class="btn btn-icon-only" onclick="showReservationDetails('${r.id}')" title="Ver Detalles">
@@ -4162,7 +4172,17 @@ function renderAdminDuplicates() {
                           </div>
                         </td>
                         <td>${r.books.length} libros</td>
-                        <td><strong>${r.total.toFixed(2)} €</strong></td>
+                        <td>
+                          <strong>${r.total.toFixed(2)} €</strong>
+                          ${r.students && r.students.length > 1 ? `
+                            <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px; line-height: 1.2; font-weight: normal;">
+                              ${r.students.map(s => {
+                                const firstName = s.studentName.split(' ')[0] || 'Alumno';
+                                return `<span style="display:block; white-space:nowrap;">${firstName}: ${s.subtotal.toFixed(2)} €</span>`;
+                              }).join('')}
+                            </div>
+                          ` : ''}
+                        </td>
                         <td><span class="badge badge-${r.status.toLowerCase()}">${r.status}</span></td>
                         <td>
                           <div style="display:flex; gap:6px;">
