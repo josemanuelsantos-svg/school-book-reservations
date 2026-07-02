@@ -2032,7 +2032,7 @@ function renderAdminReservations() {
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
-        <input type="text" id="resSearchInput" placeholder="Buscar por Alumno, Tutor o Reserva ID..." value="${state.admin.resSearch}" oninput="handleResFilterChange(event, 'resSearch')">
+        <input type="text" id="resSearchInput" placeholder="Buscar por Alumno, Tutor o Reserva ID..." value="${state.admin.resSearch}" oninput="handleResSearchInput(event)">
       </div>
       
       <div class="filter-select">
@@ -2177,6 +2177,22 @@ function renderAdminReservations() {
     </div>
   `;
 }
+
+let searchDebounceTimeout = null;
+
+window.handleResSearchInput = function(e) {
+  state.admin.resSearch = e.target.value;
+  // Limpiar seleccionados al cambiar filtros para evitar errores
+  state.admin.selectedResIds = [];
+  
+  if (searchDebounceTimeout) {
+    clearTimeout(searchDebounceTimeout);
+  }
+  
+  searchDebounceTimeout = setTimeout(() => {
+    render();
+  }, 250); // 250ms debounce
+};
 
 window.handleResFilterChange = function(e, field) {
   state.admin[field] = e.target.value;
@@ -3407,6 +3423,11 @@ function render() {
   const root = document.getElementById("app-root");
   if (!root) return;
 
+  // Guardar elemento enfocado y posición del cursor para evitar saltos al re-renderizar
+  const activeElementId = document.activeElement ? document.activeElement.id : null;
+  const selectionStart = document.activeElement ? document.activeElement.selectionStart : null;
+  const selectionEnd = document.activeElement ? document.activeElement.selectionEnd : null;
+
   const headerHtml = renderHeader();
   const footerHtml = renderFooter();
   let mainHtml = "";
@@ -3424,6 +3445,17 @@ function render() {
       ${footerHtml}
     </div>
   `;
+
+  // Restaurar foco y posición del cursor
+  if (activeElementId) {
+    const el = document.getElementById(activeElementId);
+    if (el) {
+      el.focus();
+      if (selectionStart !== null && selectionEnd !== null && (el.type === "text" || el.type === "search" || el.type === "textarea")) {
+        el.setSelectionRange(selectionStart, selectionEnd);
+      }
+    }
+  }
 
   if (state.view === "admin" && state.adminTab === "dashboard") {
     setTimeout(() => {
