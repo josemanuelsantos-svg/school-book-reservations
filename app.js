@@ -2131,18 +2131,29 @@ function renderAdminReservations() {
                 const isChecked = selectedIds.includes(r.id);
                 const isExpanded = state.admin.expandedResIds && state.admin.expandedResIds.includes(r.id);
                 
+                const allStudents = r.students || [{
+                  studentName: r.studentName,
+                  studentGrade: r.studentGrade,
+                  books: r.books,
+                  subtotal: r.total
+                }];
+
+                // Si hay un curso filtrado, solo mostramos en esta fila al alumno correspondiente
+                const displayStudents = grade === "" 
+                  ? allStudents 
+                  : allStudents.filter(s => s.studentGrade === grade);
+
+                const displayStudentNames = displayStudents.map(s => s.studentName).join(", ");
+                const displayStudentGrades = displayStudents.map(s => s.studentGrade).join(", ");
+                const displayBooksCount = displayStudents.reduce((sum, s) => sum + s.books.length, 0);
+                const displayTotal = displayStudents.reduce((sum, s) => sum + s.subtotal, 0);
+
                 let expandRowHtml = "";
                 if (isExpanded) {
                   const books = DB.getBooks();
-                  const students = r.students || [{
-                    studentName: r.studentName,
-                    studentGrade: r.studentGrade,
-                    books: r.books,
-                    subtotal: r.total
-                  }];
-
                   let studentsListHtml = "";
-                  students.forEach((student, sIdx) => {
+                  
+                  displayStudents.forEach((student, sIdx) => {
                     const studentBooks = books.filter(b => student.books.includes(b.id));
                     studentsListHtml += `
                       <div class="expandable-student-block" style="padding: 10px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); background-color: var(--bg-light); text-align: left;">
@@ -2195,8 +2206,8 @@ function renderAdminReservations() {
                         <strong>${r.id}</strong>
                       </div>
                     </td>
-                    <td>${r.studentName}</td>
-                    <td><span class="badge badge-outline">${r.studentGrade}</span></td>
+                    <td>${displayStudentNames}</td>
+                    <td><span class="badge badge-outline">${displayStudentGrades}</span></td>
                     <td>
                       <div class="table-contact-cell">
                         <span>${r.parentName}</span>
@@ -2204,12 +2215,12 @@ function renderAdminReservations() {
                       </div>
                     </td>
                     <td>${new Date(r.createdAt).toLocaleDateString("es-ES")}</td>
-                    <td>${r.books.length}</td>
+                    <td>${displayBooksCount}</td>
                     <td>
-                      <strong>${r.total.toFixed(2)} €</strong>
-                      ${r.students && r.students.length > 1 ? `
+                      <strong>${displayTotal.toFixed(2)} €</strong>
+                      ${displayStudents.length > 1 ? `
                         <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px; line-height: 1.2; font-weight: normal;">
-                          ${r.students.map(s => {
+                          ${displayStudents.map(s => {
                             const firstName = s.studentName.split(' ')[0] || 'Alumno';
                             return `<span style="display:block; white-space:nowrap;">${firstName}: ${s.subtotal.toFixed(2)} €</span>`;
                           }).join('')}
