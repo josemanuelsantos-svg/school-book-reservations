@@ -29,6 +29,32 @@ window.cleanBookTitle = function(title) {
   return title.replace(" [INACTIVO]", "");
 };
 
+window.splitSpanishName = function(fullName) {
+  if (!fullName) return { firstName: "", lastName: "" };
+  
+  const trimmed = fullName.trim();
+  
+  // Si contiene una coma, asumimos el formato: Apellidos, Nombre
+  if (trimmed.includes(",")) {
+    const parts = trimmed.split(",");
+    const lastName = parts[0].trim();
+    const firstName = parts.slice(1).join(",").trim();
+    return { firstName, lastName };
+  }
+  
+  const words = trimmed.split(/\s+/);
+  if (words.length === 1) {
+    return { firstName: words[0], lastName: "" };
+  } else if (words.length === 2) {
+    return { firstName: words[0], lastName: words[1] };
+  } else {
+    // Si hay 3 o más palabras, las últimas dos son los apellidos
+    const lastName = words.slice(-2).join(" ");
+    const firstName = words.slice(0, -2).join(" ");
+    return { firstName, lastName };
+  }
+};
+
 // ==========================================
 // BASE DE DATOS Y DATOS POR DEFECTO
 // ==========================================
@@ -2410,20 +2436,45 @@ window.changeReservationStatus = async function(id, newStatus) {
 
 window.exportReservationsCSV = function() {
   const reservations = DB.getReservations();
-  const books = DB.getBooks();
-
-  let csvContent = "data:text/csv;charset=utf-8,ID Reserva,Fecha,Alumno,Curso,Tutor,Email,Telefono,Num Libros,Total,Estado\n";
+  
+  // Excel/CSV con BOM para compatibilidad total con acentos y Excel en Windows
+  let csvContent = "\uFEFF";
+  
+  // Cabecera por columnas requerida
+  csvContent += "Curso;Apellido;Nombre;Importe\n";
   
   reservations.forEach(r => {
     if (r.status === "Cancelado") return;
-    const date = new Date(r.createdAt).toLocaleDateString("es-ES");
-    csvContent += `"${r.id}","${date}","${r.studentName}","${r.studentGrade}","${r.parentName}","${r.parentEmail}","${r.parentPhone}",${r.books.length},${r.total.toFixed(2)},"${r.status}"\n`;
+    
+    // Obtener desglose de alumnos
+    const students = r.students || [{
+      studentName: r.studentName,
+      studentGrade: r.studentGrade,
+      books: r.books,
+      subtotal: r.total
+    }];
+    
+    students.forEach(student => {
+      if (!student.studentName) return;
+      
+      const parsedName = window.splitSpanishName(student.studentName);
+      const grade = student.studentGrade || "";
+      const price = student.subtotal !== undefined ? student.subtotal.toFixed(2) : 0;
+      
+      // Escapar comillas dobles y usar punto y coma como separador de Excel
+      const cleanGrade = grade.replace(/"/g, '""');
+      const cleanLastName = parsedName.lastName.replace(/"/g, '""');
+      const cleanFirstName = parsedName.firstName.replace(/"/g, '""');
+      
+      csvContent += `"${cleanGrade}";"${cleanLastName}";"${cleanFirstName}";"${price}"\n`;
+    });
   });
 
-  const encodedUri = encodeURI(csvContent);
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "reservas_libros_san_buenaventura.csv");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "listado_alumnos_libros.csv");
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
