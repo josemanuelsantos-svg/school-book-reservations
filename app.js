@@ -1978,7 +1978,7 @@ function renderAdminReservations() {
     const matchesSearch = r.studentName.toLowerCase().includes(search) || 
                           r.parentName.toLowerCase().includes(search) || 
                           r.id.toLowerCase().includes(search);
-    const matchesGrade = grade === "" || r.studentGrade === grade;
+    const matchesGrade = grade === "" || (r.studentGrade && r.studentGrade.split(", ").map(g => g.trim()).includes(grade));
     const matchesStatus = status === "" || r.status === status;
     return matchesSearch && matchesGrade && matchesStatus;
   }).reverse(); // Más nuevas primero
@@ -2196,7 +2196,7 @@ window.toggleSelectAllReservations = function(e) {
     const matchesSearch = r.studentName.toLowerCase().includes(search) || 
                           r.parentName.toLowerCase().includes(search) || 
                           r.id.toLowerCase().includes(search);
-    const matchesGrade = grade === "" || r.studentGrade === grade;
+    const matchesGrade = grade === "" || (r.studentGrade && r.studentGrade.split(", ").map(g => g.trim()).includes(grade));
     const matchesStatus = status === "" || r.status === status;
     return matchesSearch && matchesGrade && matchesStatus;
   });
