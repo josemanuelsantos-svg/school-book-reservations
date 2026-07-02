@@ -566,7 +566,7 @@ function updateDefaultSelectedBooks() {
   const books = DB.getBooks();
   state.bookingForm.students.forEach(student => {
     if (student.selectedBooks.length === 0) {
-      const filtered = books.filter(b => b.grade === student.studentGrade && !b.notSoldInSchool);
+      const filtered = books.filter(b => b.grade === student.studentGrade && !b.notSoldInSchool && !b.title.includes(" [INACTIVO]"));
       student.selectedBooks = filtered.map(b => b.id);
     }
   });
@@ -1113,7 +1113,7 @@ window.handleStudentGradeChange = function(index, e) {
   state.bookingForm.students[index].studentGrade = e.target.value;
   // Cargar libros por defecto de ese curso
   const books = DB.getBooks();
-  const gradeBooks = books.filter(b => b.grade === e.target.value && !b.notSoldInSchool);
+  const gradeBooks = books.filter(b => b.grade === e.target.value && !b.notSoldInSchool && !b.title.includes(" [INACTIVO]"));
   state.bookingForm.students[index].selectedBooks = gradeBooks.map(b => b.id);
   render();
 };
@@ -1127,7 +1127,7 @@ window.addStudentCard = function() {
   });
   // Cargar libros por defecto del nuevo estudiante
   const books = DB.getBooks();
-  const gradeBooks = books.filter(b => b.grade === "1º Primaria" && !b.notSoldInSchool);
+  const gradeBooks = books.filter(b => b.grade === "1º Primaria" && !b.notSoldInSchool && !b.title.includes(" [INACTIVO]"));
   state.bookingForm.students[state.bookingForm.students.length - 1].selectedBooks = gradeBooks.map(b => b.id);
   render();
 };
@@ -1215,7 +1215,8 @@ window.submitBookingReservation = function() {
 
   // Mapear desglose de alumnos
   const reservationStudents = form.students.map(s => {
-    const selectedBooksDetails = allBooks.filter(b => b.grade === s.studentGrade && (b.required || s.selectedBooks.includes(b.id)));
+    const courseBooks = allBooks.filter(b => b.grade === s.studentGrade && !b.title.includes(" [INACTIVO]"));
+    const selectedBooksDetails = courseBooks.filter(b => b.required || s.selectedBooks.includes(b.id));
     const subtotal = selectedBooksDetails.reduce((sum, b) => sum + b.price, 0);
     return {
       studentName: s.studentName,
@@ -2643,7 +2644,7 @@ window.handleEditResStudentGradeChange = function(studentIdx, e) {
   
   // Recargar libros por defecto
   const books = DB.getBooks();
-  const gradeBooks = books.filter(b => b.grade === newGrade && !b.notSoldInSchool);
+  const gradeBooks = books.filter(b => b.grade === newGrade && !b.notSoldInSchool && !b.title.includes(" [INACTIVO]"));
   student.books = gradeBooks.map(b => b.id);
   render();
 };
@@ -2666,7 +2667,7 @@ window.addEditResStudent = function() {
     books: []
   });
   const books = DB.getBooks();
-  const gradeBooks = books.filter(b => b.grade === "1º Primaria" && !b.notSoldInSchool);
+  const gradeBooks = books.filter(b => b.grade === "1º Primaria" && !b.notSoldInSchool && !b.title.includes(" [INACTIVO]"));
   state.admin.editingRes.students[state.admin.editingRes.students.length - 1].books = gradeBooks.map(b => b.id);
   render();
 };
