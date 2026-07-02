@@ -1207,7 +1207,7 @@ function sendSimulatedEmail(to, subject, body) {
   return newEmail;
 }
 
-window.submitBookingReservation = function() {
+window.submitBookingReservation = async function() {
   const form = state.bookingForm;
   if (!form.termsAccepted || !form.privacyAccepted) return;
 
@@ -1260,17 +1260,39 @@ window.submitBookingReservation = function() {
     createdAt: new Date().toISOString()
   };
 
-  currentReservations.push(newReservation);
-  DB.saveReservations(currentReservations);
+  // Feedback visual
+  const btn = document.getElementById("btn-submit-booking");
+  let originalHtml = "";
+  if (btn) {
+    btn.disabled = true;
+    originalHtml = btn.innerHTML;
+    btn.innerHTML = `<span class="spinner" style="display:inline-block; width:12px; height:12px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation:spin 1s linear infinite; margin-right:4px; vertical-align:middle;"></span>Guardando reserva...`;
+  }
 
-  // Enviar email virtual de confirmación
-  sendSimulatedEmail(
-    form.parentEmail,
-    `Confirmación de Reserva de Libros - Colegio San Buenaventura`,
-    `Estimado/a ${form.parentName},\n\nLe confirmamos que hemos recibido correctamente la reserva de libros para: ${allNames} (${allGrades}).\n\nEl importe total de ${total.toFixed(2)} € se cargará en su recibo escolar del mes de Septiembre. No tiene que realizar ningún pago ahora.\n\nPor favor, no conteste a este mail. Si necesita realizar cualquier trámite debe dirigirse a administracion@sanbuenaventura.org.\n\nUn cordial saludo,\nAdministración del Colegio San Buenaventura`
-  );
+  try {
+    currentReservations.push(newReservation);
+    // Await actual save to Supabase before proceeding!
+    await DB.saveReservations(currentReservations);
 
-  state.bookingForm.successReservation = newReservation;
+    // Enviar email virtual de confirmación
+    sendSimulatedEmail(
+      form.parentEmail,
+      `Confirmación de Reserva de Libros - Colegio San Buenaventura`,
+      `Estimado/a ${form.parentName},\n\nLe confirmamos que hemos recibido correctamente la reserva de libros para: ${allNames} (${allGrades}).\n\nEl importe total de ${total.toFixed(2)} € se cargará en su recibo escolar del mes de Septiembre. No tiene que realizar ningún pago ahora.\n\nPor favor, no conteste a este mail. Si necesita realizar cualquier trámite debe dirigirse a administracion@sanbuenaventura.org.\n\nUn cordial saludo,\nAdministración del Colegio San Buenaventura`
+    );
+
+    state.bookingForm.successReservation = newReservation;
+  } catch (err) {
+    console.error("Error saving reservation to Supabase:", err);
+    alert("Error al guardar la reserva en el servidor. Por favor, compruebe su conexión a internet e inténtelo de nuevo.");
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
+    }
+    // Deshacer inserción local
+    currentReservations.pop();
+  }
+  
   render();
 };
 
