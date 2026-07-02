@@ -1608,7 +1608,7 @@ window.setHelpTab = function(tab) {
 // Pestaña Admin 1: Dashboard
 function renderAdminDashboard() {
   const allReservations = DB.getReservations();
-  const reservations = allReservations.filter(r => r.status !== "Duplicado");
+  const reservations = allReservations.filter(r => r.status !== "Duplicado" && r.status !== "Cancelado");
   const duplicatedCount = allReservations.filter(r => r.status === "Duplicado").length;
   const books = DB.getBooks();
 
@@ -1881,7 +1881,7 @@ function renderAdminDashboard() {
 // Vinculación del CSV exporter de Previsión de stock
 window.exportStockForecastCSV = function() {
   const allReservations = DB.getReservations();
-  const reservations = allReservations.filter(r => r.status !== "Duplicado");
+  const reservations = allReservations.filter(r => r.status !== "Duplicado" && r.status !== "Cancelado");
   const books = DB.getBooks();
 
   const forecast = {};
@@ -1971,8 +1971,8 @@ function renderAdminReservations() {
 
   // Filtrar
   const filteredReservations = reservations.filter(r => {
-    // Ocultar reservas canceladas por defecto a menos que se filtre explícitamente por "Cancelado"
-    if (r.status === "Cancelado" && status !== "Cancelado") return false;
+    // Ocultar reservas canceladas permanentemente del portal de administración
+    if (r.status === "Cancelado") return false;
     
     const matchesSearch = r.studentName.toLowerCase().includes(search) || 
                           r.parentName.toLowerCase().includes(search) || 
@@ -2049,7 +2049,6 @@ function renderAdminReservations() {
           <option value="Preparado" ${status === 'Prepared' || status === 'Preparado' ? 'selected' : ''}>Preparado</option>
           <option value="Entregado" ${status === 'Entregado' ? 'selected' : ''}>Entregado</option>
           <option value="Duplicado" ${status === 'Duplicado' ? 'selected' : ''}>Duplicado</option>
-          <option value="Cancelado" ${status === 'Cancelado' ? 'selected' : ''}>Cancelado / Eliminado</option>
         </select>
       </div>
     </div>
@@ -2367,6 +2366,7 @@ window.exportReservationsCSV = function() {
   let csvContent = "data:text/csv;charset=utf-8,ID Reserva,Fecha,Alumno,Curso,Tutor,Email,Telefono,Num Libros,Total,Estado\n";
   
   reservations.forEach(r => {
+    if (r.status === "Cancelado") return;
     const date = new Date(r.createdAt).toLocaleDateString("es-ES");
     csvContent += `"${r.id}","${date}","${r.studentName}","${r.studentGrade}","${r.parentName}","${r.parentEmail}","${r.parentPhone}",${r.books.length},${r.total.toFixed(2)},"${r.status}"\n`;
   });
@@ -4009,6 +4009,7 @@ function findDuplicateReservations() {
   const groups = {};
   
   reservations.forEach(r => {
+    if (r.status === "Cancelado") return;
     const students = r.students || [{ studentName: r.studentName, studentGrade: r.studentGrade }];
     students.forEach(s => {
       if (!s.studentName) return;
