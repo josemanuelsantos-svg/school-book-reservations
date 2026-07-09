@@ -72,9 +72,9 @@ const DEFAULT_BOOKS = [
   // Infantil 3 años
   { id: "9788426391834", title: "Caballitos de mar ¿Lo ves? (Animales Letra Mayúscula)", subject: "Proyectos", grade: "Infantil 3 años", price: 34.52, publisher: "EDELVIVES", required: false },
   { id: "9788426391858", title: "Prehistoria ¿Lo ves? (Historia/Cultura Letra Mayúscula) con WQ", subject: "Proyectos", grade: "Infantil 3 años", price: 34.52, publisher: "EDELVIVES", required: false },
-  { id: "entusiasmat-3", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 3 años", price: 95.00, publisher: "TEKMAN BOOK", required: false },
-  { id: "9781107476677", title: "Great Little People. (Solo de venta en el centro) Material de aula + licencia y libro para la familia.", subject: "Inglés", grade: "Infantil 3 años", price: 42.75, publisher: "MACMILLAN", required: false },
-  { id: "religion-3ei", title: "Religión Católica. 3 años. Método propio.", subject: "Religión", grade: "Infantil 3 años", price: 18.00, publisher: "Colegio", required: false },
+  { id: "entusiasmat-3", title: "EntusiasMAT. Proyecto de innovación matemática (Sólo de venta en el colegio)", subject: "Matemáticas", grade: "Infantil 3 años", price: 95.00, publisher: "TEKMAN BOOK", required: true },
+  { id: "9781107476677", title: "Great Little People. (Solo de venta en el centro) Material de aula + licencia y libro para la familia.", subject: "Inglés", grade: "Infantil 3 años", price: 42.75, publisher: "MACMILLAN", required: true },
+  { id: "religion-3ei", title: "Religión Católica. 3 años. Método propio.", subject: "Religión", grade: "Infantil 3 años", price: 18.00, publisher: "Colegio", required: true },
   { id: "978-84-617-9261-0-3ei", title: "Mi amigo san Buenaventura", subject: "Religión", grade: "Infantil 3 años", price: 12.00, publisher: "Colegio", required: false },
 
   // Infantil 4 años
