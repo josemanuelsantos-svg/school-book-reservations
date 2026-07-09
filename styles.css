@@ -1194,6 +1194,17 @@ textarea:focus {
   border-bottom: 1.5px solid var(--border);
 }
 
+.data-table th[onclick] {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.data-table th[onclick]:hover {
+  background-color: #f1f5f9;
+  color: var(--primary);
+}
+
 .data-table td {
   padding: 14px 16px;
   border-bottom: 1px solid var(--border);

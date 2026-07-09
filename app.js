@@ -547,6 +547,8 @@ const state = {
     resSearch: "",
     resGradeFilter: "",
     resStatusFilter: "",
+    resSortBy: "date",
+    resSortOrder: "desc",
     selectedResId: null, // Para el modal de detalles de reserva
     catGradeFilter: "",
     editingBook: null, // Objeto libro si está en modal de edición, o 'new' si crea
@@ -2019,7 +2021,7 @@ function renderAdminReservations() {
   const status = state.admin.resStatusFilter;
 
   // Filtrar
-  const filteredReservations = reservations.filter(r => {
+  let filteredReservations = reservations.filter(r => {
     // Ocultar reservas canceladas permanentemente del portal de administración
     if (r.status === "Cancelado") return false;
     
@@ -2029,7 +2031,39 @@ function renderAdminReservations() {
     const matchesGrade = grade === "" || (r.studentGrade && r.studentGrade.split(", ").map(g => g.trim()).includes(grade));
     const matchesStatus = status === "" || r.status === status;
     return matchesSearch && matchesGrade && matchesStatus;
-  }).reverse(); // Más nuevas primero
+  });
+
+  // Ordenar
+  const sortBy = state.admin.resSortBy || "date";
+  const sortOrder = state.admin.resSortOrder || "desc";
+
+  filteredReservations.sort((a, b) => {
+    let valA, valB;
+
+    if (sortBy === "student") {
+      valA = (a.studentName || "").toLowerCase().trim();
+      valB = (b.studentName || "").toLowerCase().trim();
+    } else if (sortBy === "id") {
+      const numA = parseInt((a.id.match(/\d+$/) || [0])[0]);
+      const numB = parseInt((b.id.match(/\d+$/) || [0])[0]);
+      return sortOrder === "asc" ? numA - numB : numB - numA;
+    } else if (sortBy === "total") {
+      valA = a.total || 0;
+      valB = b.total || 0;
+      return sortOrder === "asc" ? valA - valB : valB - valA;
+    } else if (sortBy === "status") {
+      valA = (a.status || "").toLowerCase();
+      valB = (b.status || "").toLowerCase();
+    } else {
+      valA = new Date(a.createdAt || 0).getTime();
+      valB = new Date(b.createdAt || 0).getTime();
+      return sortOrder === "asc" ? valA - valB : valB - valA;
+    }
+
+    if (valA < valB) return sortOrder === "asc" ? -1 : 1;
+    if (valA > valB) return sortOrder === "asc" ? 1 : -1;
+    return 0;
+  });
 
   const selectedIds = state.admin.selectedResIds;
   const allSelectedOnPage = filteredReservations.length > 0 && filteredReservations.every(r => selectedIds.includes(r.id));
@@ -2113,14 +2147,24 @@ function renderAdminReservations() {
             <th style="width: 40px; text-align:center;">
               <input type="checkbox" ${allSelectedOnPage ? 'checked' : ''} onchange="toggleSelectAllReservations(event)">
             </th>
-            <th>Reserva ID</th>
-            <th>Alumno</th>
+            <th onclick="setResSort('id')" style="cursor:pointer; user-select:none;" title="Ordenar por ID de Reserva">
+              Reserva ID ${state.admin.resSortBy === 'id' ? (state.admin.resSortOrder === 'asc' ? '▲' : '▼') : ''}
+            </th>
+            <th onclick="setResSort('student')" style="cursor:pointer; user-select:none;" title="Ordenar por Nombre del Alumno">
+              Alumno ${state.admin.resSortBy === 'student' ? (state.admin.resSortOrder === 'asc' ? '▲' : '▼') : ''}
+            </th>
             <th>Curso</th>
             <th>Familiar</th>
-            <th>Fecha</th>
+            <th onclick="setResSort('date')" style="cursor:pointer; user-select:none;" title="Ordenar por Fecha">
+              Fecha ${state.admin.resSortBy === 'date' ? (state.admin.resSortOrder === 'asc' ? '▲' : '▼') : ''}
+            </th>
             <th>Libros</th>
-            <th>Total</th>
-            <th>Estado</th>
+            <th onclick="setResSort('total')" style="cursor:pointer; user-select:none;" title="Ordenar por Importe Total">
+              Total ${state.admin.resSortBy === 'total' ? (state.admin.resSortOrder === 'asc' ? '▲' : '▼') : ''}
+            </th>
+            <th onclick="setResSort('status')" style="cursor:pointer; user-select:none;" title="Ordenar por Estado de Preparación">
+              Estado ${state.admin.resSortBy === 'status' ? (state.admin.resSortOrder === 'asc' ? '▲' : '▼') : ''}
+            </th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -2267,6 +2311,16 @@ window.handleResFilterChange = function(e, field) {
   state.admin[field] = e.target.value;
   // Limpiar seleccionados al cambiar filtros para evitar errores
   state.admin.selectedResIds = [];
+  render();
+};
+
+window.setResSort = function(field) {
+  if (state.admin.resSortBy === field) {
+    state.admin.resSortOrder = state.admin.resSortOrder === "asc" ? "desc" : "asc";
+  } else {
+    state.admin.resSortBy = field;
+    state.admin.resSortOrder = field === "student" || field === "id" ? "asc" : "desc";
+  }
   render();
 };
 
