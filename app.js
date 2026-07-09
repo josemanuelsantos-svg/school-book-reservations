@@ -2041,8 +2041,21 @@ function renderAdminReservations() {
     let valA, valB;
 
     if (sortBy === "student") {
-      valA = (a.studentName || "").toLowerCase().trim();
-      valB = (b.studentName || "").toLowerCase().trim();
+      const studentsA = grade === "" 
+        ? (a.students || [{ studentName: a.studentName }]) 
+        : (a.students || [{ studentName: a.studentName, studentGrade: a.studentGrade }]).filter(s => s.studentGrade === grade);
+      const studentsB = grade === "" 
+        ? (b.students || [{ studentName: b.studentName }]) 
+        : (b.students || [{ studentName: b.studentName, studentGrade: b.studentGrade }]).filter(s => s.studentGrade === grade);
+
+      const nameA = studentsA[0] ? studentsA[0].studentName : (a.studentName || "");
+      const nameB = studentsB[0] ? studentsB[0].studentName : (b.studentName || "");
+
+      const parsedA = window.splitSpanishName(nameA);
+      const parsedB = window.splitSpanishName(nameB);
+
+      valA = (parsedA.lastName + " " + parsedA.firstName).toLowerCase().trim();
+      valB = (parsedB.lastName + " " + parsedB.firstName).toLowerCase().trim();
     } else if (sortBy === "id") {
       const numA = parseInt((a.id.match(/\d+$/) || [0])[0]);
       const numB = parseInt((b.id.match(/\d+$/) || [0])[0]);
