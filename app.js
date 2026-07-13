@@ -390,10 +390,14 @@ const DB = {
     const data = localStorage.getItem("sb_reservations");
     return data ? JSON.parse(data) : DEFAULT_RESERVATIONS;
   },
-  saveReservations(reservations) {
+  saveReservations(reservations, specificIds = null) {
     localStorage.setItem("sb_reservations", JSON.stringify(reservations));
     if (supabaseClient) {
-      return supabaseClient.from('reservations').upsert(reservations.map(r => ({
+      const toUpsert = specificIds 
+        ? reservations.filter(r => specificIds.includes(r.id))
+        : reservations;
+
+      return supabaseClient.from('reservations').upsert(toUpsert.map(r => ({
         id: r.id,
         student_name: r.studentName,
         student_grade: r.studentGrade,
@@ -406,7 +410,10 @@ const DB = {
         status: r.status,
         created_at: r.createdAt
       }))).then(({ error }) => { 
-        if (error) console.error("Error upserting reservations:", error); 
+        if (error) {
+          console.error("Error upserting reservations:", error);
+          throw error;
+        }
       });
     }
     return Promise.resolve();
@@ -2440,30 +2447,63 @@ window.handleBulkAction = async function(action) {
       const settings = DB.getSettings();
       const emailSubject = "Libros listos para recoger - " + settings.schoolName;
       
+      const oldStatuses = {};
       ids.forEach(id => {
         const r = reservations.find(item => item.id === id);
         if (r) {
+          oldStatuses[id] = r.status;
           r.status = "Preparado";
           const emailBody = `Estimado/a ${r.parentName || ''},\n\nNos complace informarle de que el lote de libros reservados para ${r.studentName || ''} ya está preparado.\n\nPuede pasar a recogerlo por la secretaría del centro en horario de 9:00 a 14:00.\n\nAtentamente,\nAdministración del Colegio San Buenaventura`;
           sendSimulatedEmail(r.parentEmail || '', emailSubject, emailBody);
         }
       });
       
-      DB.saveReservations(reservations);
-      state.admin.selectedResIds = [];
-      alert(`Se han cambiado los estados y se han enviado ${ids.length} avisos virtuales de recogida.`);
+      const activeSelect = document.getElementById("bulkActionSelect");
+      if (activeSelect) activeSelect.disabled = true;
+
+      try {
+        await DB.saveReservations(reservations, ids);
+        state.admin.selectedResIds = [];
+        alert(`Se han cambiado los estados y se han enviado ${ids.length} avisos virtuales de recogida.`);
+      } catch (err) {
+        console.error("Error saving bulk statuses:", err);
+        alert("Error al actualizar los estados en el servidor. Por favor, compruebe su conexión e inténtelo de nuevo.");
+        ids.forEach(id => {
+          const r = reservations.find(item => item.id === id);
+          if (r && oldStatuses[id]) r.status = oldStatuses[id];
+        });
+        localStorage.setItem("sb_reservations", JSON.stringify(reservations));
+      }
+      if (activeSelect) activeSelect.disabled = false;
     }
   } else {
     // Pendiente, Confirmado, Preparado, Entregado
+    const oldStatuses = {};
     ids.forEach(id => {
       const r = reservations.find(item => item.id === id);
       if (r) {
+        oldStatuses[id] = r.status;
         r.status = action;
       }
     });
-    DB.saveReservations(reservations);
-    state.admin.selectedResIds = [];
-    alert(`Se ha cambiado el estado de ${ids.length} reservas a "${action}".`);
+
+    const activeSelect = document.getElementById("bulkActionSelect");
+    if (activeSelect) activeSelect.disabled = true;
+
+    try {
+      await DB.saveReservations(reservations, ids);
+      state.admin.selectedResIds = [];
+      alert(`Se ha cambiado el estado de ${ids.length} reservas a "${action}".`);
+    } catch (err) {
+      console.error("Error saving bulk statuses:", err);
+      alert("Error al actualizar los estados en el servidor. Por favor, compruebe su conexión e inténtelo de nuevo.");
+      ids.forEach(id => {
+        const r = reservations.find(item => item.id === id);
+        if (r && oldStatuses[id]) r.status = oldStatuses[id];
+      });
+      localStorage.setItem("sb_reservations", JSON.stringify(reservations));
+    }
+    if (activeSelect) activeSelect.disabled = false;
   }
   render();
 };
@@ -2482,6 +2522,7 @@ window.changeReservationStatus = async function(id, newStatus) {
   const reservations = DB.getReservations();
   const index = reservations.findIndex(r => r.id === id);
   if (index > -1) {
+    const oldStatus = reservations[index].status;
     reservations[index].status = newStatus;
     
     // Guardar si el modal de detalles estaba abierto
@@ -2496,7 +2537,14 @@ window.changeReservationStatus = async function(id, newStatus) {
       activeBtn.innerHTML = `<span class="spinner" style="display:inline-block; width:12px; height:12px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation:spin 1s linear infinite; margin-right:4px; vertical-align:middle;"></span>Guardando...`;
     }
 
-    await DB.saveReservations(reservations);
+    try {
+      await DB.saveReservations(reservations, [id]);
+    } catch (err) {
+      console.error("Error al guardar estado de reserva:", err);
+      alert("Error al actualizar el estado en el servidor. Por favor, compruebe su conexión e inténtelo de nuevo.");
+      reservations[index].status = oldStatus;
+      localStorage.setItem("sb_reservations", JSON.stringify(reservations));
+    }
 
     if (activeBtn && activeBtn.tagName === "BUTTON") {
       activeBtn.disabled = false;
@@ -2925,16 +2973,25 @@ window.saveEditRes = async function(e) {
       submitBtn.innerHTML = `<span class="spinner" style="display:inline-block; width:12px; height:12px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation:spin 1s linear infinite; margin-right:4px; vertical-align:middle;"></span>Guardando...`;
     }
 
-    await DB.saveReservations(reservations);
+    try {
+      await DB.saveReservations(reservations, [editRes.id]);
+      state.admin.editingRes = null;
+      state.admin.selectedResId = editRes.id;
+    } catch (err) {
+      console.error("Error saving edits to Supabase:", err);
+      alert("Error al guardar los cambios en el servidor. Por favor, compruebe su conexión e inténtelo de nuevo.");
+      // Deshacer cambios locales cargando la reserva original
+      const originalRes = reservations.find(r => r.id === editRes.id);
+      // Recargar desde base de datos local para deshacer
+      const freshReservations = DB.getReservations();
+      render();
+    }
 
     if (submitBtn) {
       submitBtn.disabled = false;
       submitBtn.innerHTML = originalHtml;
     }
   }
-  
-  state.admin.editingRes = null;
-  state.admin.selectedResId = editRes.id;
   render();
 };
 
