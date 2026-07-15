@@ -3525,7 +3525,10 @@ function renderAdminModals() {
                     <label class="checkbox-label" style="display:flex; align-items:center; justify-content:space-between; padding: 4px 0; border-bottom: 1px dashed var(--border); font-weight: normal; font-size:12px; cursor:pointer;">
                       <div style="display:flex; align-items:center; gap:8px;">
                         <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleEditResStudentBook(${studentIdx}, '${b.id}')">
-                        <span><strong>[${b.subject}]</strong> ${cleanBookTitle(b.title)}</span>
+                        <span>
+                          <strong>[${b.subject}]</strong> ${cleanBookTitle(b.title)}
+                          ${b.required ? `<span class="badge-mandatory" style="font-size:9px; background-color:var(--primary); color:#fff; padding:1px 4px; border-radius:3px; margin-left:4px; font-weight:600; text-transform:uppercase;">Obligatorio</span>` : ''}
+                        </span>
                       </div>
                       <strong>${b.price.toFixed(2)} €</strong>
                     </label>
