@@ -65,6 +65,7 @@ const DEFAULT_SETTINGS = {
   contactEmail: "administracion@sanbuenaventura.org",
   contactPhone: "+34 915 267 161",
   deadlineDate: "2026-07-20",
+  bookingClosed: true,
   customReceiptMessage: "Gracias por realizar la reserva de libros. Recuerde que el cobro no se realiza por esta plataforma. Se cargará en el recibo escolar habitual del mes de Septiembre."
 };
 
@@ -345,7 +346,11 @@ const COURSES = [
 const DB = {
   getSettings() {
     const data = localStorage.getItem("sb_settings");
-    return data ? JSON.parse(data) : DEFAULT_SETTINGS;
+    const settings = data ? JSON.parse(data) : { ...DEFAULT_SETTINGS };
+    if (settings.bookingClosed === undefined) {
+      settings.bookingClosed = true;
+    }
+    return settings;
   },
   saveSettings(settings) {
     localStorage.setItem("sb_settings", JSON.stringify(settings));
@@ -722,6 +727,76 @@ window.setFamilyTab = function(tab) {
   render();
 };
 
+// Aviso de cierre de pedidos online
+function renderClosedBookingNotice() {
+  const settings = DB.getSettings();
+  return `
+    <section class="closed-notice-section">
+      <div class="closed-notice-card card-shadow">
+        
+        <div class="closed-notice-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="40" height="40">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+            <line x1="15" y1="14" x2="9" y2="18"/>
+            <line x1="9" y1="14" x2="15" y2="18"/>
+          </svg>
+        </div>
+
+        <h2 class="closed-notice-title">Plazo de reserva online cerrado</h2>
+        
+        <p class="closed-notice-subtitle">
+          El periodo de solicitud telemática para la reserva de libros de texto del <strong>Colegio San Buenaventura</strong> (Curso ${settings.schoolYear}) ha finalizado.
+        </p>
+
+        <div class="closed-instruction-box">
+          <div class="closed-instruction-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span>¿Necesita tramitar un pedido o solicitar algún cambio?</span>
+          </div>
+          
+          <p class="closed-instruction-text">
+            Si necesita hacer algún otro pedido fuera de plazo o solicitar algún cambio en su reserva, debe acudir personalmente a <strong>portería del colegio</strong> o enviar un correo electrónico a:
+          </p>
+
+          <div class="closed-email-container">
+            <a href="mailto:administracion@sanbuenaventura.org?subject=Consulta%20o%20Cambio%20en%20Reserva%20de%20Libros" class="closed-email-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              administracion@sanbuenaventura.org
+            </a>
+          </div>
+        </div>
+
+        <div class="closed-notice-actions">
+          <a href="mailto:administracion@sanbuenaventura.org?subject=Consulta%20o%20Cambio%20en%20Reserva%20de%20Libros" class="btn btn-primary" style="display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            Enviar Correo a Administración
+          </a>
+          <button type="button" class="btn btn-outline" onclick="setFamilyTab('lookup')" style="display:inline-flex; align-items:center; justify-content:center; gap:8px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            Consultar Estado de mi Reserva
+          </button>
+        </div>
+
+      </div>
+    </section>
+  `;
+}
+
 // Wizard de Familias
 function renderFamiliesPortal() {
   const form = state.bookingForm;
@@ -732,25 +807,33 @@ function renderFamiliesPortal() {
     return renderSuccessScreen();
   }
 
+  const isClosed = settings.bookingClosed !== false;
+
   let stepContent = "";
-  if (form.step === 1) {
-    stepContent = renderStep1();
-  } else if (form.step === 2) {
-    stepContent = renderStep2();
-  } else if (form.step === 3) {
-    stepContent = renderStep3();
+  if (!isClosed) {
+    if (form.step === 1) {
+      stepContent = renderStep1();
+    } else if (form.step === 2) {
+      stepContent = renderStep2();
+    } else if (form.step === 3) {
+      stepContent = renderStep3();
+    }
   }
 
   return `
     <main class="main-content">
       <!-- Menú de pestañas públicas -->
       <div class="family-nav-bar">
-        <button class="family-nav-tab ${state.familyTab === 'booking' ? 'active' : ''}" onclick="setFamilyTab('booking')">Nueva Reserva</button>
-        <button class="family-nav-tab ${state.familyTab === 'lookup' ? 'active' : ''}" onclick="setFamilyTab('lookup')">Consultar Estado</button>
+        <button class="family-nav-tab ${state.familyTab === 'booking' ? 'active' : ''}" onclick="setFamilyTab('booking')">
+          ${isClosed ? 'Información y Plazos' : 'Nueva Reserva'}
+        </button>
+        <button class="family-nav-tab ${state.familyTab === 'lookup' ? 'active' : ''}" onclick="setFamilyTab('lookup')">
+          Consultar Estado de mi Reserva
+        </button>
       </div>
 
       ${state.familyTab === 'booking' 
-        ? `
+        ? (isClosed ? renderClosedBookingNotice() : `
           <section class="info-hero">
             <div class="hero-card">
               <h2>Reserva de libros para el próximo curso</h2>
@@ -780,7 +863,7 @@ function renderFamiliesPortal() {
               ${stepContent}
             </div>
           </section>
-        `
+        `)
         : renderLookupTab()
       }
     </main>
@@ -1192,6 +1275,11 @@ window.handleStep1Submit = function(e) {
 };
 
 window.goToStep = function(step) {
+  const settings = DB.getSettings();
+  if (settings.bookingClosed !== false) {
+    alert("El plazo de reserva telemática ha finalizado. Si necesita realizar algún pedido o solicitar un cambio, acuda a portería o contacte en administracion@sanbuenaventura.org.");
+    return;
+  }
   state.bookingForm.step = step;
   render();
 };
@@ -1243,6 +1331,11 @@ function sendSimulatedEmail(to, subject, body) {
 }
 
 window.submitBookingReservation = async function() {
+  const settings = DB.getSettings();
+  if (settings.bookingClosed !== false) {
+    alert("El plazo de reserva telemática ha finalizado. Si necesita realizar algún pedido o solicitar un cambio, acuda a portería o contacte en administracion@sanbuenaventura.org.");
+    return;
+  }
   const form = state.bookingForm;
   if (!form.termsAccepted || !form.privacyAccepted) return;
 
@@ -1305,9 +1398,85 @@ window.submitBookingReservation = async function() {
   }
 
   try {
-    currentReservations.push(newReservation);
-    // Await actual save to Supabase before proceeding!
-    await DB.saveReservations(currentReservations);
+    // 1. Obtener la lista más reciente de IDs desde la nube (Supabase) para evitar usar cacheados desactualizados
+    let allExistingReservations = DB.getReservations();
+    if (typeof supabaseClient !== "undefined" && supabaseClient) {
+      const { data: cloudData, error: fetchErr } = await supabaseClient.from('reservations').select('id');
+      if (!fetchErr && cloudData) {
+        allExistingReservations = cloudData;
+      }
+    }
+
+    const numbers = allExistingReservations.map(r => {
+      const match = r.id ? r.id.match(/RES-2026-(\d+)/) : null;
+      return match ? parseInt(match[1]) : 0;
+    });
+    let nextNum = numbers.length > 0 ? Math.max(...numbers) + 1 : 1;
+
+    let successReservationObj = null;
+    let savedSuccessfully = false;
+    let attempts = 0;
+    const maxAttempts = 15;
+
+    // 2. Bucle atómico de inserción con reintento ante colisión (insert en lugar de upsert para NUNCA sobreescribir)
+    while (!savedSuccessfully && attempts < maxAttempts) {
+      attempts++;
+      const nextId = `RES-2026-${String(nextNum).padStart(3, '0')}`;
+
+      const newReservation = {
+        id: nextId,
+        studentName: allNames,
+        studentGrade: allGrades,
+        parentName: form.parentName,
+        parentEmail: form.parentEmail,
+        parentPhone: form.parentPhone,
+        books: allBookIds,
+        students: reservationStudents,
+        total: total,
+        status: "Pendiente",
+        createdAt: new Date().toISOString()
+      };
+
+      if (typeof supabaseClient !== "undefined" && supabaseClient) {
+        // Usar insert() en lugar de upsert() para rechazar duplicados y prevenir sobreescrituras
+        const { error: insertErr } = await supabaseClient.from('reservations').insert([{
+          id: newReservation.id,
+          student_name: newReservation.studentName,
+          student_grade: newReservation.studentGrade,
+          parent_name: newReservation.parentName,
+          parent_email: newReservation.parentEmail,
+          parent_phone: newReservation.parentPhone,
+          books: newReservation.books,
+          students: newReservation.students,
+          total: newReservation.total,
+          status: newReservation.status,
+          created_at: newReservation.createdAt
+        }]);
+
+        if (insertErr) {
+          // Si hubo colisión de clave primaria (código 23505 o duplicate key), incrementamos nextNum y probamos con el siguiente ID
+          if (insertErr.code === '23505' || (insertErr.message && insertErr.message.toLowerCase().includes('duplicate'))) {
+            console.warn(`Colisión de ID detectada en ${nextId}. Reintentando con el siguiente correlativo...`);
+            nextNum++;
+            continue;
+          } else {
+            throw insertErr;
+          }
+        }
+      }
+
+      // Si la inserción en la nube tuvo éxito, actualizar localStorage local
+      const currentReservations = DB.getReservations();
+      currentReservations.push(newReservation);
+      localStorage.setItem("sb_reservations", JSON.stringify(currentReservations));
+
+      successReservationObj = newReservation;
+      savedSuccessfully = true;
+    }
+
+    if (!savedSuccessfully) {
+      throw new Error("No se pudo asignar un código de reserva único tras varios intentos.");
+    }
 
     // Enviar email virtual de confirmación
     sendSimulatedEmail(
@@ -1316,7 +1485,7 @@ window.submitBookingReservation = async function() {
       `Estimado/a ${form.parentName},\n\nLe confirmamos que hemos recibido correctamente la reserva de libros para: ${allNames} (${allGrades}).\n\nEl importe total de ${total.toFixed(2)} € se cargará en su recibo escolar del mes de Septiembre. No tiene que realizar ningún pago ahora.\n\nPor favor, no conteste a este mail. Si necesita realizar cualquier trámite debe dirigirse a administracion@sanbuenaventura.org.\n\nUn cordial saludo,\nAdministración del Colegio San Buenaventura`
     );
 
-    state.bookingForm.successReservation = newReservation;
+    state.bookingForm.successReservation = successReservationObj;
   } catch (err) {
     console.error("Error saving reservation to Supabase:", err);
     alert("Error al guardar la reserva en el servidor. Por favor, compruebe su conexión a internet e inténtelo de nuevo.");
@@ -1324,8 +1493,6 @@ window.submitBookingReservation = async function() {
       btn.disabled = false;
       btn.innerHTML = originalHtml;
     }
-    // Deshacer inserción local
-    currentReservations.pop();
   }
   
   render();
@@ -3034,6 +3201,14 @@ function renderAdminSettings() {
           </div>
         </div>
 
+        <div class="form-group" style="background: rgba(220, 38, 38, 0.05); border: 1px solid rgba(220, 38, 38, 0.2); border-radius: 8px; padding: 14px 16px;">
+          <label for="bookingClosed" style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 4px;">
+            <input type="checkbox" id="bookingClosed" ${settings.bookingClosed !== false ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer;">
+            <strong style="color: #dc2626; font-size: 14px;">Cerrar entrada de nuevos pedidos (Portal de Familias cerrado)</strong>
+          </label>
+          <p class="field-help" style="margin-left: 28px; margin-top: 2px;">Al activar esta casilla, se bloquea el formulario de nuevas reservas en la web y se muestra a las familias el aviso para acudir a portería del colegio o escribir a administracion@sanbuenaventura.org.</p>
+        </div>
+
         <div class="form-group">
           <label for="customReceiptMessage">Instrucciones del Recibo de Solicitud</label>
           <textarea id="customReceiptMessage" rows="4">${settings.customReceiptMessage}</textarea>
@@ -3065,6 +3240,7 @@ window.handleSettingsSave = function(e) {
     schoolName: document.getElementById("schoolName").value.trim(),
     schoolYear: document.getElementById("schoolYear").value.trim(),
     deadlineDate: document.getElementById("deadlineDate").value,
+    bookingClosed: document.getElementById("bookingClosed") ? document.getElementById("bookingClosed").checked : true,
     contactEmail: document.getElementById("contactEmail").value.trim(),
     contactPhone: document.getElementById("contactPhone").value.trim(),
     customReceiptMessage: document.getElementById("customReceiptMessage").value.trim()

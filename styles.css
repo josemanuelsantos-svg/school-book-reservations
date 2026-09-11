@@ -2090,3 +2090,134 @@ body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ==========================================
+   AVISO DE CIERRE DE ENTRADA DE PEDIDOS
+   ========================================== */
+.closed-notice-section {
+  max-width: 660px;
+  margin: 36px auto;
+  padding: 0 16px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.closed-notice-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 44px 32px;
+  text-align: center;
+  box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.08);
+}
+
+.closed-notice-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  background: rgba(220, 38, 38, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #dc2626;
+}
+
+.closed-notice-title {
+  font-family: var(--font-title);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+
+[data-theme='dark'] .closed-notice-title {
+  color: #f1f5f9;
+}
+
+.closed-notice-subtitle {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+}
+
+.closed-instruction-box {
+  background: rgba(37, 99, 235, 0.06);
+  border-left: 4px solid var(--primary-light);
+  border-radius: 10px;
+  padding: 22px 20px;
+  text-align: left;
+  margin-bottom: 30px;
+}
+
+[data-theme='dark'] .closed-instruction-box {
+  background: rgba(59, 130, 246, 0.12);
+  border-left-color: #60a5fa;
+}
+
+.closed-instruction-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+
+[data-theme='dark'] .closed-instruction-header {
+  color: #93c5fd;
+}
+
+.closed-instruction-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+  margin: 0 0 12px 0;
+}
+
+.closed-email-container {
+  display: inline-block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.closed-email-link {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: underline;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  word-break: break-all;
+}
+
+[data-theme='dark'] .closed-email-link {
+  color: #60a5fa;
+}
+
+.closed-notice-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .closed-notice-card {
+    padding: 32px 18px;
+  }
+  .closed-notice-title {
+    font-size: 22px;
+  }
+  .closed-notice-actions {
+    flex-direction: column;
+  }
+  .closed-notice-actions .btn {
+    width: 100%;
+  }
+}
+
