@@ -2477,23 +2477,20 @@ body {
 
 /* ==========================================
    REGLAS DE IMPRESIÓN EXCLUSIVAS PARA FACTURA
-   Ajuste estricto en 1 SOLA PÁGINA A4
    ========================================== */
 @media print {
   @page {
     size: A4 portrait;
-    margin: 5mm 8mm 5mm 8mm;
+    margin: 6mm 10mm 6mm 10mm;
   }
 
-  html, body.printing-invoice {
+  body.printing-invoice,
+  body.invoice-modal-open {
     background: #ffffff !important;
     color: #000000 !important;
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
-    height: 100% !important;
-    max-height: 287mm !important;
-    overflow: hidden !important;
   }
 
   body.printing-invoice .main-header,
@@ -2503,26 +2500,24 @@ body {
   body.printing-invoice .no-print,
   body.printing-invoice .modal-footer,
   body.printing-invoice .invoice-sibling-tabs,
-  body.printing-invoice button {
+  body.printing-invoice button,
+  body.invoice-modal-open .main-header,
+  body.invoice-modal-open .main-footer,
+  body.invoice-modal-open .admin-sidebar,
+  body.invoice-modal-open .admin-main,
+  body.invoice-modal-open .no-print,
+  body.invoice-modal-open .modal-footer,
+  body.invoice-modal-open .invoice-sibling-tabs,
+  body.invoice-modal-open button {
     display: none !important;
   }
 
-  body.printing-invoice .modal-overlay {
-    position: static !important;
-    display: block !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background: transparent !important;
-    backdrop-filter: none !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
-    max-height: 285mm !important;
-    overflow: hidden !important;
-  }
-
+  body.printing-invoice .modal-overlay,
   body.printing-invoice .modal-card,
-  body.printing-invoice .invoice-modal-card {
+  body.printing-invoice .invoice-modal-card,
+  body.invoice-modal-open .modal-overlay,
+  body.invoice-modal-open .modal-card,
+  body.invoice-modal-open .invoice-modal-card {
     position: static !important;
     display: block !important;
     padding: 0 !important;
@@ -2532,16 +2527,15 @@ body {
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
-    max-height: 285mm !important;
-    overflow: hidden !important;
+    max-height: none !important;
+    overflow: visible !important;
     background: #ffffff !important;
   }
 
-  body.printing-invoice .invoice-paper {
+  body.printing-invoice .invoice-paper,
+  body.invoice-modal-open .invoice-paper {
     position: static !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
+    display: block !important;
     padding: 0 !important;
     margin: 0 !important;
     border: none !important;
@@ -2549,171 +2543,162 @@ body {
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
-    max-height: 282mm !important;
-    overflow: hidden !important;
+    max-height: none !important;
+    overflow: visible !important;
     background: #ffffff !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
 
-  body.printing-invoice .invoice-header-banner {
+  body.printing-invoice .invoice-header-banner,
+  body.invoice-modal-open .invoice-header-banner {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     background: #0f2942 !important;
     color: #ffffff !important;
     padding: 6px 12px !important;
-    margin-bottom: 5px !important;
+    margin-bottom: 6px !important;
     border-radius: 4px !important;
   }
 
-  body.printing-invoice .invoice-header-banner h2 {
-    font-size: 13.5px !important;
-    margin: 0 0 1px 0 !important;
-    line-height: 1.2 !important;
+  body.printing-invoice .invoice-header-banner h2,
+  body.invoice-modal-open .invoice-header-banner h2 {
+    font-size: 14px !important;
+    margin: 0 0 2px 0 !important;
   }
 
-  body.printing-invoice .invoice-header-banner div {
-    font-size: 9.5px !important;
-    line-height: 1.2 !important;
-  }
-
-  body.printing-invoice .invoice-grid-info {
+  body.printing-invoice .invoice-grid-info,
+  body.invoice-modal-open .invoice-grid-info {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     background: #f8fafc !important;
     border: 1px solid #cbd5e1 !important;
-    padding: 5px 10px !important;
-    margin-bottom: 5px !important;
+    padding: 6px 10px !important;
+    margin-bottom: 6px !important;
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
-    gap: 12px !important;
+    gap: 10px !important;
   }
 
-  body.printing-invoice .invoice-info-block h4 {
+  body.printing-invoice .invoice-info-block h4,
+  body.invoice-modal-open .invoice-info-block h4 {
     font-size: 9.5px !important;
     margin-bottom: 2px !important;
     padding-bottom: 2px !important;
   }
 
-  body.printing-invoice .invoice-info-block p {
+  body.printing-invoice .invoice-info-block p,
+  body.invoice-modal-open .invoice-info-block p {
     font-size: 9px !important;
     margin: 1px 0 !important;
-    line-height: 1.25 !important;
-  }
-
-  body.printing-invoice .invoice-field-group {
-    margin-bottom: 2px !important;
-  }
-
-  body.printing-invoice .invoice-field-group label {
-    font-size: 8.5px !important;
-    margin-bottom: 0 !important;
     line-height: 1.2 !important;
   }
 
-  body.printing-invoice .invoice-input-field {
+  body.printing-invoice .invoice-field-group,
+  body.invoice-modal-open .invoice-field-group {
+    margin-bottom: 1.5px !important;
+  }
+
+  body.printing-invoice .invoice-field-group label,
+  body.invoice-modal-open .invoice-field-group label {
+    font-size: 8.5px !important;
+    margin-bottom: 0 !important;
+  }
+
+  body.printing-invoice .invoice-input-field,
+  body.invoice-modal-open .invoice-input-field {
     border: none !important;
     background: transparent !important;
     padding: 0 !important;
     margin: 0 !important;
     font-size: 9px !important;
-    font-family: inherit !important;
     font-weight: 600 !important;
     color: #000000 !important;
-    box-shadow: none !important;
-    outline: none !important;
     display: inline-block !important;
     width: 100% !important;
-    line-height: 1.2 !important;
   }
 
-  body.printing-invoice .inv-header-input {
+  body.printing-invoice .inv-header-input,
+  body.invoice-modal-open .inv-header-input {
     border: none !important;
     background: transparent !important;
     color: #ffffff !important;
-    font-size: 10px !important;
+    font-size: 10.5px !important;
     font-weight: 700 !important;
     padding: 0 !important;
     text-align: right !important;
     width: auto !important;
-    line-height: 1.2 !important;
   }
 
-  body.printing-invoice .invoice-table-wrapper {
+  body.printing-invoice .invoice-table-wrapper,
+  body.invoice-modal-open .invoice-table-wrapper {
     overflow: visible !important;
     border: 1px solid #94a3b8 !important;
-    margin-bottom: 5px !important;
-    flex-grow: 1 !important;
+    margin-bottom: 6px !important;
   }
 
-  body.printing-invoice .invoice-table {
+  body.printing-invoice .invoice-table,
+  body.invoice-modal-open .invoice-table {
     width: 100% !important;
     border-collapse: collapse !important;
-    page-break-inside: auto !important;
-    font-size: 8.5px !important;
+    font-size: 9px !important;
   }
 
-  body.printing-invoice .invoice-table th {
+  body.printing-invoice .invoice-table th,
+  body.invoice-modal-open .invoice-table th {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     background-color: #1e3a8a !important;
     color: #ffffff !important;
     padding: 3px 5px !important;
-    font-size: 8px !important;
-    line-height: 1.15 !important;
+    font-size: 8.5px !important;
   }
 
-  body.printing-invoice .invoice-table td {
-    padding: 2px 5px !important;
+  body.printing-invoice .invoice-table td,
+  body.invoice-modal-open .invoice-table td {
+    padding: 2.5px 5px !important;
     border-bottom: 1px solid #e2e8f0 !important;
     color: #000000 !important;
-    font-size: 8.5px !important;
-    line-height: 1.2 !important;
+    font-size: 9px !important;
   }
 
-  body.printing-invoice .invoice-table tr {
-    page-break-inside: avoid !important;
-    page-break-after: auto !important;
-  }
-
-  body.printing-invoice .invoice-totals-container {
-    margin-top: 3px !important;
-    gap: 8px !important;
+  body.printing-invoice .invoice-totals-container,
+  body.invoice-modal-open .invoice-totals-container {
+    margin-top: 5px !important;
     display: flex !important;
     justify-content: space-between !important;
     align-items: flex-start !important;
   }
 
-  body.printing-invoice .invoice-totals-notes {
+  body.printing-invoice .invoice-totals-notes,
+  body.invoice-modal-open .invoice-totals-notes {
     font-size: 8px !important;
-    line-height: 1.2 !important;
-    max-width: 400px !important;
+    max-width: 420px !important;
   }
 
-  body.printing-invoice .invoice-totals-notes p {
-    margin: 1px 0 !important;
-  }
-
-  body.printing-invoice .invoice-totals-box {
+  body.printing-invoice .invoice-totals-box,
+  body.invoice-modal-open .invoice-totals-box {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     background: #f8fafc !important;
     border: 1px solid #cbd5e1 !important;
-    padding: 4px 10px !important;
+    padding: 5px 10px !important;
     min-width: 210px !important;
   }
 
-  body.printing-invoice .invoice-totals-row {
-    font-size: 8.5px !important;
-    margin-bottom: 1px !important;
-    line-height: 1.2 !important;
+  body.printing-invoice .invoice-totals-row,
+  body.invoice-modal-open .invoice-totals-row {
+    font-size: 9px !important;
+    margin-bottom: 1.5px !important;
   }
 
-  body.printing-invoice .invoice-totals-total {
-    font-size: 12px !important;
+  body.printing-invoice .invoice-totals-total,
+  body.invoice-modal-open .invoice-totals-total {
+    font-size: 12.5px !important;
     padding-top: 2px !important;
     border-top: 1.5px solid #94a3b8 !important;
-    line-height: 1.2 !important;
   }
 }
 

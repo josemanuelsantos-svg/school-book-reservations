@@ -5271,6 +5271,8 @@ window.openStudentInvoiceModal = function(resId, studentIndex = null) {
     }
   };
 
+  document.body.classList.add("invoice-modal-open");
+
   if (state.admin.invoiceQuickSearch.isOpen) {
     state.admin.invoiceQuickSearch.isOpen = false;
   }
@@ -5278,6 +5280,7 @@ window.openStudentInvoiceModal = function(resId, studentIndex = null) {
 };
 
 window.closeStudentInvoiceModal = function() {
+  document.body.classList.remove("invoice-modal-open");
   state.admin.invoiceModal.isOpen = false;
   render();
 };
@@ -5484,11 +5487,411 @@ window.copyInvoiceToClipboard = function(resId, studentIndex = null) {
 };
 
 window.printInvoice = function() {
+  const resId = state.admin.invoiceModal.resId;
+  const res = DB.getReservations().find(r => r.id === resId);
+  if (!res) return;
+
+  const allBooks = DB.getBooks();
+  const students = (res.students && res.students.length > 0)
+    ? res.students
+    : [{ studentName: res.studentName, studentGrade: res.studentGrade, books: res.books || [] }];
+
+  const sIdx = state.admin.invoiceModal.studentIndex;
+  const isSingle = (sIdx !== null && sIdx !== undefined && students[sIdx]);
+  const targetStudents = isSingle ? [students[sIdx]] : students;
+
+  const invData = state.admin.invoiceModal.data || {};
+  const invoiceNum = invData.invoiceNum || ("FAC-" + res.id.replace("RES-", "") + (isSingle ? "-" + (sIdx + 1) : ""));
+  const invoiceDate = invData.invoiceDate || (res.createdAt ? new Date(res.createdAt).toLocaleDateString("es-ES") : new Date().toLocaleDateString("es-ES"));
+  const parentName = invData.parentName || res.parentName || "";
+  const nif = invData.nif || "";
+  const address = invData.address || "";
+  const phone = invData.phone || res.parentPhone || "";
+  const email = invData.email || res.parentEmail || "";
+  const studentNames = invData.studentName || targetStudents.map(s => s.studentName).join(", ");
+  const studentGrades = invData.studentGrade || targetStudents.map(s => s.studentGrade).join(", ");
+
+  let lines = [];
+  let totalFactura = 0;
+  targetStudents.forEach(st => {
+    (st.books || []).forEach(bId => {
+      const b = allBooks.find(x => x.id === bId);
+      const price = b ? (typeof b.price === 'number' ? b.price : parseFloat(b.price) || 0) : 0;
+      totalFactura += price;
+      lines.push({
+        studentName: st.studentName,
+        studentGrade: st.studentGrade,
+        subject: b ? b.subject : "General",
+        title: b ? cleanBookTitle(b.title) : ("Libro " + bId),
+        publisher: b ? b.publisher : "N/A",
+        price: price
+      });
+    });
+  });
+
+  const baseImponible = totalFactura / 1.04;
+  const iva4 = totalFactura - baseImponible;
+
+  // Ajuste dinámico de densidad según la cantidad de libros para garantizar estrictamente 1 SOLA PÁGINA A4
+  const numRows = lines.length;
+  let rowPad = '3.5px 6px';
+  let tableFont = '9px';
+  let bannerPad = '6px 12px';
+  let gridPad = '6px 10px';
+
+  if (numRows > 18) {
+    rowPad = '1.5px 4px';
+    tableFont = '7px';
+    bannerPad = '4px 8px';
+    gridPad = '3px 8px';
+  } else if (numRows > 12) {
+    rowPad = '2.2px 5px';
+    tableFont = '8px';
+    bannerPad = '5px 10px';
+    gridPad = '4px 10px';
+  } else if (numRows > 7) {
+    rowPad = '3px 6px';
+    tableFont = '8.5px';
+    bannerPad = '6px 12px';
+    gridPad = '5px 10px';
+  }
+
+  const printHtml = `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>Factura ${invoiceNum} - ${studentNames}</title>
+      <style>
+        @page {
+          size: A4 portrait;
+          margin: 6mm 10mm 6mm 10mm;
+        }
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        html, body {
+          width: 100%;
+          background: #ffffff;
+          color: #0f172a;
+          margin: 0;
+          padding: 0;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        .page-wrapper {
+          width: 100%;
+          max-width: 100%;
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+          page-break-after: avoid !important;
+          break-after: avoid !important;
+        }
+        .banner {
+          background: #0f2942 !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          color: #ffffff !important;
+          padding: ${bannerPad};
+          border-radius: 4px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 6px;
+        }
+        .banner h1 {
+          font-size: 14.5px;
+          font-weight: 700;
+          margin: 0 0 1px 0;
+          color: #ffffff;
+          letter-spacing: 0.5px;
+        }
+        .banner .sub {
+          font-size: 10px;
+          color: #e2e8f0;
+          font-weight: 500;
+        }
+        .banner .addr {
+          font-size: 8.5px;
+          color: #cbd5e1;
+          margin-top: 1px;
+        }
+        .banner-right {
+          text-align: right;
+        }
+        .badge-factura {
+          display: inline-block;
+          background: rgba(255,255,255,0.2) !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          color: #ffffff;
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          padding: 2px 6px;
+          border-radius: 3px;
+        }
+        .inv-number {
+          font-size: 13px;
+          font-weight: 700;
+          margin-top: 2px;
+          color: #ffffff;
+        }
+        .inv-date {
+          font-size: 9.5px;
+          color: #cbd5e1;
+        }
+
+        .grid-info {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+          background: #f8fafc !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          border: 1px solid #cbd5e1;
+          border-radius: 4px;
+          padding: ${gridPad};
+          margin-bottom: 6px;
+        }
+        .info-col h4 {
+          font-size: 9px;
+          font-weight: 700;
+          text-transform: uppercase;
+          color: #1e3a8a;
+          border-bottom: 1px solid #cbd5e1;
+          padding-bottom: 2px;
+          margin-bottom: 2px;
+          letter-spacing: 0.5px;
+        }
+        .info-col p {
+          font-size: 8.5px;
+          margin: 1px 0;
+          color: #334155;
+          line-height: 1.2;
+        }
+        .info-col strong {
+          color: #0f172a;
+        }
+
+        .table-wrap {
+          border: 1px solid #94a3b8;
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 6px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: ${tableFont};
+        }
+        thead th {
+          background: #1e3a8a !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          color: #ffffff !important;
+          padding: 3px 5px;
+          font-size: 8px;
+          font-weight: 600;
+          text-transform: uppercase;
+          border-right: 1px solid #3b82f6;
+          text-align: left;
+        }
+        thead th:last-child {
+          border-right: none;
+        }
+        tbody td {
+          padding: ${rowPad};
+          border-bottom: 1px solid #e2e8f0;
+          border-right: 1px solid #e2e8f0;
+          color: #1e293b;
+          line-height: 1.2;
+        }
+        tbody td:last-child {
+          border-right: none;
+        }
+        tbody tr:nth-child(even) {
+          background: #f8fafc !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+
+        .footer-totals {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 12px;
+          margin-top: 4px;
+        }
+        .notes {
+          font-size: 8px;
+          color: #64748b;
+          line-height: 1.2;
+          max-width: 420px;
+        }
+        .notes p {
+          margin-bottom: 1.5px;
+        }
+        .totals-card {
+          background: #f8fafc !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          border: 1px solid #cbd5e1;
+          border-radius: 4px;
+          padding: 4px 10px;
+          min-width: 210px;
+        }
+        .totals-row {
+          display: flex;
+          justify-content: space-between;
+          font-size: 8.5px;
+          color: #475569;
+          margin-bottom: 1.5px;
+        }
+        .totals-grand {
+          display: flex;
+          justify-content: space-between;
+          font-size: 12.5px;
+          font-weight: 800;
+          color: #0f2942;
+          border-top: 1.5px solid #cbd5e1;
+          padding-top: 2px;
+          margin-top: 2px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="page-wrapper">
+        <!-- Banner Superior -->
+        <div class="banner">
+          <div>
+            <h1>COLEGIO SAN BUENAVENTURA</h1>
+            <div class="sub">Padres Franciscanos Menores Conventuales · Madrid</div>
+            <div class="addr">Calle del Greco, 16 · 28011 Madrid · Tel: 915 26 71 61 · administracion@sanbuenaventura.org</div>
+          </div>
+          <div class="banner-right">
+            <span class="badge-factura">FACTURA</span>
+            <div class="inv-number">${invoiceNum}</div>
+            <div class="inv-date">Fecha: ${invoiceDate}</div>
+          </div>
+        </div>
+
+        <!-- Cuadro Datos Emisor / Destinatario -->
+        <div class="grid-info">
+          <div class="info-col">
+            <h4>Datos del Emisor</h4>
+            <p><strong>Razón Social:</strong> Colegio San Buenaventura</p>
+            <p><strong>Titularidad:</strong> Padres Franciscanos Menores Conventuales</p>
+            <p><strong>C.I.F. / N.I.F.:</strong> R-7800955-B</p>
+            <p><strong>Dirección:</strong> C/ El Greco, 16, 28011 Madrid</p>
+            <p><strong>Teléfono:</strong> 915 26 71 61</p>
+            <p><strong>Email:</strong> administracion@sanbuenaventura.org</p>
+            <p style="margin-top:2px; font-size:7.5px; color:#64748b;"><strong>Concepto:</strong> Venta de Libros de Texto Escolares (Curso 2026/2027)</p>
+          </div>
+          <div class="info-col">
+            <h4>Datos del Destinatario</h4>
+            <p><strong>Tutor / Razón Social:</strong> ${parentName}</p>
+            ${nif ? `<p><strong>N.I.F. / D.N.I.:</strong> ${nif}</p>` : ''}
+            ${address ? `<p><strong>Domicilio:</strong> ${address}</p>` : ''}
+            <p><strong>Teléfono:</strong> ${phone || '-'}</p>
+            <p><strong>Email:</strong> ${email || '-'}</p>
+            <p><strong>Alumno(s):</strong> <span style="font-weight:700; color:#1e3a8a;">${studentNames}</span></p>
+            <p><strong>Curso(s):</strong> ${studentGrades}</p>
+          </div>
+        </div>
+
+        <!-- Tabla de Libros -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 26px; text-align:center;">#</th>
+                ${targetStudents.length > 1 ? '<th style="width: 120px;">Alumno</th>' : ''}
+                <th style="width: 70px;">Curso</th>
+                <th style="width: 95px;">Asignatura</th>
+                <th>Título del Libro</th>
+                <th style="width: 85px;">Editorial</th>
+                <th style="width: 65px; text-align:right;">PVP (€)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${lines.map((l, i) => `
+                <tr>
+                  <td style="text-align:center; color:#64748b;">${i + 1}</td>
+                  ${targetStudents.length > 1 ? `<td><strong>${l.studentName}</strong></td>` : ''}
+                  <td>${l.studentGrade}</td>
+                  <td><strong>${l.subject}</strong></td>
+                  <td>${l.title}</td>
+                  <td>${l.publisher}</td>
+                  <td style="text-align:right; font-weight:600;">${l.price.toFixed(2)} €</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pie de página / Totales -->
+        <div class="footer-totals">
+          <div class="notes">
+            <p>* Factura emitida en base al pedido <strong>${res.id}</strong> del Colegio San Buenaventura (Madrid).</p>
+            <p>* IVA superreducido del 4% incluido conforme a la legislación tributaria aplicable a material curricular escolar.</p>
+          </div>
+          <div class="totals-card">
+            <div class="totals-row">
+              <span>Base Imponible (IVA 4%):</span>
+              <span>${baseImponible.toFixed(2)} €</span>
+            </div>
+            <div class="totals-row">
+              <span>Cuota IVA (4%):</span>
+              <span>${iva4.toFixed(2)} €</span>
+            </div>
+            <div class="totals-grand">
+              <span>TOTAL FACTURA:</span>
+              <span style="color:#1e3a8a;">${totalFactura.toFixed(2)} €</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  let printFrame = document.getElementById("invoice-print-frame");
+  if (!printFrame) {
+    printFrame = document.createElement("iframe");
+    printFrame.id = "invoice-print-frame";
+    printFrame.style.position = "fixed";
+    printFrame.style.left = "-9999px";
+    printFrame.style.top = "0";
+    printFrame.style.width = "210mm";
+    printFrame.style.height = "297mm";
+    printFrame.style.border = "none";
+    printFrame.style.zIndex = "-1000";
+    document.body.appendChild(printFrame);
+  }
+
   document.body.classList.add("printing-invoice");
-  window.print();
+  const frameDoc = printFrame.contentWindow.document;
+  frameDoc.open();
+  frameDoc.write(printHtml);
+  frameDoc.close();
+
   setTimeout(() => {
-    document.body.classList.remove("printing-invoice");
-  }, 500);
+    try {
+      printFrame.contentWindow.focus();
+      printFrame.contentWindow.print();
+    } catch (err) {
+      console.warn("Iframe print error, falling back to window.print:", err);
+      window.print();
+    } finally {
+      setTimeout(() => {
+        document.body.classList.remove("printing-invoice");
+      }, 1000);
+    }
+  }, 350);
 };
 
 // Inicializar la App en pantalla
