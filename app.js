@@ -4080,8 +4080,17 @@ function renderInvoiceModal() {
   const baseImponible = totalFactura / 1.04;
   const iva4 = totalFactura - baseImponible;
 
-  const invoiceNum = "FAC-" + res.id.replace("RES-", "") + (isSingleSibling ? "-" + (selectedIdx + 1) : "");
-  const invoiceDate = res.createdAt ? new Date(res.createdAt).toLocaleDateString("es-ES") : new Date().toLocaleDateString("es-ES");
+  const invData = state.admin.invoiceModal.data || {
+    invoiceNum: "FAC-" + res.id.replace("RES-", "") + (isSingleSibling ? "-" + (selectedIdx + 1) : ""),
+    invoiceDate: res.createdAt ? new Date(res.createdAt).toLocaleDateString("es-ES") : new Date().toLocaleDateString("es-ES"),
+    parentName: res.parentName || "",
+    nif: state.admin.invoiceModal.nif || "",
+    address: "",
+    phone: res.parentPhone || "",
+    email: res.parentEmail || "",
+    studentName: targetStudents.map(s => s.studentName).join(", "),
+    studentGrade: targetStudents.map(s => s.studentGrade).join(", ")
+  };
 
   return `
     <div class="modal-overlay" onclick="closeStudentInvoiceModal()">
@@ -4112,49 +4121,90 @@ function renderInvoiceModal() {
           </div>
         ` : ''}
 
-        <!-- Hoja de Factura imprimible -->
+        <!-- Hoja de Factura imprimible y desplazable sin recortes -->
         <div class="invoice-paper" id="invoicePaperDocument">
           
-          <!-- Banner Superior / Cabecera -->
+          <!-- Banner Superior / Cabecera con datos del Colegio de Madrid -->
           <div class="invoice-header-banner">
             <div>
-              <h2 style="color:#ffffff; font-size:18px; margin:0 0 4px 0; font-family:var(--font-title);">COLEGIO SAN BUENAVENTURA</h2>
-              <div style="font-size:12px; color:#e2e8f0;">Franciscanos Capuchinos · Murcia</div>
-              <div style="font-size:11px; color:#cbd5e1; margin-top:2px;">Plaza de los Capuchinos, 1 · 30002 Murcia · administracion@sanbuenaventura.org</div>
+              <h2 style="color:#ffffff; font-size:18px; margin:0 0 3px 0; font-family:var(--font-title);">COLEGIO SAN BUENAVENTURA</h2>
+              <div style="font-size:12px; color:#e2e8f0; font-weight:500;">Padres Franciscanos Menores Conventuales · Madrid</div>
+              <div style="font-size:11px; color:#cbd5e1; margin-top:2px;">Calle del Greco, 16 · 28011 Madrid · Tel: 915 26 71 61 · administracion@sanbuenaventura.org</div>
             </div>
             <div style="text-align: right;">
-              <span style="display:inline-block; background:rgba(255,255,255,0.18); padding:4px 10px; border-radius:4px; font-weight:700; font-size:12px; letter-spacing:1px; text-transform:uppercase;">
-                FACTURA SIMPLIFICADA
+              <span style="display:inline-block; background:rgba(255,255,255,0.2); padding:3px 8px; border-radius:4px; font-weight:700; font-size:11px; letter-spacing:1px; text-transform:uppercase;">
+                FACTURA
               </span>
-              <div style="font-size:14px; font-weight:700; margin-top:4px;">${invoiceNum}</div>
-              <div style="font-size:11px; color:#e2e8f0;">Fecha: ${invoiceDate}</div>
+              <div style="margin-top:4px; display:flex; align-items:center; justify-content:flex-end; gap:4px;">
+                <span style="font-size:12px; color:#cbd5e1;">Nº:</span>
+                <input type="text" class="inv-header-input" value="${invData.invoiceNum || ''}" oninput="handleInvoiceFieldChange('invoiceNum', this.value)" style="width:145px; text-align:right; font-weight:700; color:#fff;" title="Número de factura editable">
+              </div>
+              <div style="margin-top:2px; display:flex; align-items:center; justify-content:flex-end; gap:4px;">
+                <span style="font-size:11px; color:#cbd5e1;">Fecha:</span>
+                <input type="text" class="inv-header-input" value="${invData.invoiceDate || ''}" oninput="handleInvoiceFieldChange('invoiceDate', this.value)" style="width:115px; text-align:right; font-size:11px; color:#fff;" title="Fecha editable">
+              </div>
             </div>
           </div>
 
-          <!-- Bloque de Información Emisor / Receptor -->
+          <!-- Bloque de Información Emisor / Destinatario Editable -->
           <div class="invoice-grid-info">
+            <!-- Emisor Oficial Madrid -->
             <div class="invoice-info-block">
               <h4>Datos del Emisor</h4>
               <p><strong>Razón Social:</strong> Colegio San Buenaventura</p>
-              <p><strong>N.I.F.:</strong> R-3000041-A</p>
-              <p><strong>Dirección:</strong> Pl. de los Capuchinos, 1, 30002 Murcia</p>
-              <p><strong>Concepto:</strong> Venta de Libros de Texto Escolar (Curso 2026/2027)</p>
+              <p><strong>Titularidad:</strong> Padres Franciscanos Menores Conventuales</p>
+              <p><strong>C.I.F. / N.I.F.:</strong> <span style="font-weight:700; color:#1e3a8a; font-size:13px;">R-7800955-B</span></p>
+              <p><strong>Dirección:</strong> C/ El Greco, 16, 28011 Madrid</p>
+              <p><strong>Teléfono:</strong> 915 26 71 61</p>
+              <p><strong>Email:</strong> administracion@sanbuenaventura.org</p>
+              <p style="margin-top:6px; font-size:11px; color:#64748b; line-height:1.4;">
+                <strong>Concepto:</strong> Venta de Libros de Texto Escolares (Curso 2026/2027)
+              </p>
             </div>
+
+            <!-- Destinatario Totalmente Editable -->
             <div class="invoice-info-block">
-              <h4>Datos del Destinatario / Alumno</h4>
-              <p><strong>Tutor/a:</strong> ${res.parentName}</p>
-              <p><strong>Email:</strong> ${res.parentEmail}</p>
-              <p><strong>Teléfono:</strong> ${res.parentPhone}</p>
-              <p><strong>Alumno(s):</strong> <span style="color:#1e3a8a; font-weight:700;">${targetStudents.map(s => s.studentName).join(', ')}</span></p>
-              <p><strong>Curso(s):</strong> ${targetStudents.map(s => s.studentGrade).join(', ')}</p>
-              <div style="margin-top: 6px;" class="no-print">
-                <label style="font-size:11px; color:#475569; font-weight:600;">NIF/DNI Titular (Opcional para la factura):</label>
-                <input type="text" id="invoiceNifInput" value="${state.admin.invoiceModal.nif || ''}"
-                       placeholder="Ej. 12345678Z..."
-                       oninput="handleInvoiceNifChange(event)"
-                       style="display:block; width:100%; max-width:240px; margin-top:2px; padding:4px 8px; font-size:12px; border:1px solid #cbd5e1; border-radius:4px; box-sizing:border-box;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">
+                <h4 style="margin:0; border:none; padding:0;">Datos del Destinatario</h4>
+                <span class="no-print" style="font-size:10.5px; color:#2563eb; background:#eff6ff; padding:2px 6px; border-radius:4px; font-weight:600;">✏️ Editables para PDF/Excel</span>
               </div>
-              ${state.admin.invoiceModal.nif ? `<p class="print-only" style="margin-top:2px;"><strong>N.I.F. Tutor:</strong> ${state.admin.invoiceModal.nif}</p>` : ''}
+
+              <div class="invoice-field-group">
+                <label>Tutor / Pagador / Razón Social:</label>
+                <input type="text" class="invoice-input-field" value="${invData.parentName || ''}" oninput="handleInvoiceFieldChange('parentName', this.value)" placeholder="Nombre del tutor/a o empresa">
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                <div class="invoice-field-group">
+                  <label>N.I.F. / D.N.I. / C.I.F.:</label>
+                  <input type="text" class="invoice-input-field" value="${invData.nif || ''}" oninput="handleInvoiceFieldChange('nif', this.value)" placeholder="Ej. 12345678Z">
+                </div>
+                <div class="invoice-field-group">
+                  <label>Teléfono:</label>
+                  <input type="tel" class="invoice-input-field" value="${invData.phone || ''}" oninput="handleInvoiceFieldChange('phone', this.value)" placeholder="Teléfono">
+                </div>
+              </div>
+
+              <div class="invoice-field-group">
+                <label>Domicilio / Dirección (opcional):</label>
+                <input type="text" class="invoice-input-field" value="${invData.address || ''}" oninput="handleInvoiceFieldChange('address', this.value)" placeholder="Calle, número, código postal, localidad">
+              </div>
+
+              <div class="invoice-field-group">
+                <label>Email:</label>
+                <input type="email" class="invoice-input-field" value="${invData.email || ''}" oninput="handleInvoiceFieldChange('email', this.value)" placeholder="Email de contacto">
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap:8px;">
+                <div class="invoice-field-group">
+                  <label>Alumno(s):</label>
+                  <input type="text" class="invoice-input-field" value="${invData.studentName || ''}" oninput="handleInvoiceFieldChange('studentName', this.value)">
+                </div>
+                <div class="invoice-field-group">
+                  <label>Curso(s):</label>
+                  <input type="text" class="invoice-input-field" value="${invData.studentGrade || ''}" oninput="handleInvoiceFieldChange('studentGrade', this.value)">
+                </div>
+              </div>
             </div>
           </div>
 
@@ -4192,17 +4242,17 @@ function renderInvoiceModal() {
 
           <!-- Resumen de Totales e Impuestos -->
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:16px; gap:20px; flex-wrap:wrap;">
-            <div style="font-size:11px; color:#64748b; max-width:400px; line-height:1.5;">
-              <p style="margin:0 0 4px 0;">* Factura emitida en base al pedido <strong>${res.id}</strong> del Colegio San Buenaventura.</p>
-              <p style="margin:0;">* IVA superreducido del 4% incluido conforme a la normativa tributaria para material curricular escolar.</p>
+            <div style="font-size:11px; color:#64748b; max-width:420px; line-height:1.5;">
+              <p style="margin:0 0 4px 0;">* Factura emitida en base al pedido <strong>${res.id}</strong> del Colegio San Buenaventura (Madrid).</p>
+              <p style="margin:0;">* IVA superreducido del 4% incluido conforme a la legislación tributaria aplicable a material curricular escolar.</p>
             </div>
 
-            <div style="min-width:240px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:12px 16px;">
+            <div style="min-width:240px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px 16px;">
               <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; color:#475569;">
                 <span>Base Imponible (IVA 4%):</span>
                 <span>${baseImponible.toFixed(2)} €</span>
               </div>
-              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px; color:#475569;">
+              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px; color:#475569;">
                 <span>Cuota IVA (4%):</span>
                 <span>${iva4.toFixed(2)} €</span>
               </div>
@@ -5189,10 +5239,38 @@ window.handleInvoiceQuickSearchInput = function(e) {
 };
 
 window.openStudentInvoiceModal = function(resId, studentIndex = null) {
-  state.admin.invoiceModal.isOpen = true;
-  state.admin.invoiceModal.resId = resId;
-  state.admin.invoiceModal.studentIndex = (studentIndex !== undefined && studentIndex !== null) ? Number(studentIndex) : null;
-  state.admin.invoiceModal.copied = false;
+  const res = DB.getReservations().find(r => r.id === resId);
+  if (!res) return;
+
+  const students = (res.students && res.students.length > 0)
+    ? res.students
+    : [{ studentName: res.studentName, studentGrade: res.studentGrade, books: res.books || [] }];
+
+  const sIdx = (studentIndex !== undefined && studentIndex !== null) ? Number(studentIndex) : null;
+  const isSingle = (sIdx !== null && students[sIdx]);
+  const targetStudents = isSingle ? [students[sIdx]] : students;
+
+  const invoiceNum = "FAC-" + res.id.replace("RES-", "") + (isSingle ? "-" + (sIdx + 1) : "");
+  const invoiceDate = res.createdAt ? new Date(res.createdAt).toLocaleDateString("es-ES") : new Date().toLocaleDateString("es-ES");
+
+  state.admin.invoiceModal = {
+    isOpen: true,
+    resId: resId,
+    studentIndex: sIdx,
+    copied: false,
+    data: {
+      invoiceNum: invoiceNum,
+      invoiceDate: invoiceDate,
+      parentName: res.parentName || "",
+      nif: "",
+      address: "",
+      phone: res.parentPhone || "",
+      email: res.parentEmail || "",
+      studentName: targetStudents.map(s => s.studentName).join(", "),
+      studentGrade: targetStudents.map(s => s.studentGrade).join(", ")
+    }
+  };
+
   if (state.admin.invoiceQuickSearch.isOpen) {
     state.admin.invoiceQuickSearch.isOpen = false;
   }
@@ -5205,12 +5283,37 @@ window.closeStudentInvoiceModal = function() {
 };
 
 window.setInvoiceStudentFilter = function(studentIndex) {
-  state.admin.invoiceModal.studentIndex = (studentIndex !== null && studentIndex !== undefined) ? Number(studentIndex) : null;
+  const res = DB.getReservations().find(r => r.id === state.admin.invoiceModal.resId);
+  if (!res) return;
+
+  const students = (res.students && res.students.length > 0)
+    ? res.students
+    : [{ studentName: res.studentName, studentGrade: res.studentGrade, books: res.books || [] }];
+
+  const sIdx = (studentIndex !== null && studentIndex !== undefined) ? Number(studentIndex) : null;
+  const isSingle = (sIdx !== null && students[sIdx]);
+  const targetStudents = isSingle ? [students[sIdx]] : students;
+
+  const invoiceNum = "FAC-" + res.id.replace("RES-", "") + (isSingle ? "-" + (sIdx + 1) : "");
+
+  state.admin.invoiceModal.studentIndex = sIdx;
+  if (!state.admin.invoiceModal.data) state.admin.invoiceModal.data = {};
+  state.admin.invoiceModal.data.invoiceNum = invoiceNum;
+  state.admin.invoiceModal.data.studentName = targetStudents.map(s => s.studentName).join(", ");
+  state.admin.invoiceModal.data.studentGrade = targetStudents.map(s => s.studentGrade).join(", ");
   render();
 };
 
+window.handleInvoiceFieldChange = function(field, val) {
+  if (!state.admin.invoiceModal.data) {
+    state.admin.invoiceModal.data = {};
+  }
+  state.admin.invoiceModal.data[field] = val;
+};
+
 window.handleInvoiceNifChange = function(e) {
-  state.admin.invoiceModal.nif = e.target.value;
+  if (!state.admin.invoiceModal.data) state.admin.invoiceModal.data = {};
+  state.admin.invoiceModal.data.nif = e.target.value;
 };
 
 window.downloadInvoiceExcel = function(resId, studentIndex = null) {
@@ -5226,22 +5329,30 @@ window.downloadInvoiceExcel = function(resId, studentIndex = null) {
   const isSingle = (sIdx !== null && students[sIdx]);
   const targetStudents = isSingle ? [students[sIdx]] : students;
 
-  const invoiceNum = "FAC-" + res.id.replace("RES-", "") + (isSingle ? "-" + (sIdx + 1) : "");
-  const dateStr = res.createdAt ? new Date(res.createdAt).toLocaleDateString("es-ES") : new Date().toLocaleDateString("es-ES");
-  const studentNames = targetStudents.map(s => s.studentName).join(" - ");
+  const invData = state.admin.invoiceModal.data || {};
+  const invoiceNum = invData.invoiceNum || ("FAC-" + res.id.replace("RES-", "") + (isSingle ? "-" + (sIdx + 1) : ""));
+  const dateStr = invData.invoiceDate || (res.createdAt ? new Date(res.createdAt).toLocaleDateString("es-ES") : new Date().toLocaleDateString("es-ES"));
+  const parentName = invData.parentName || res.parentName || "";
+  const nif = invData.nif || "No indicado";
+  const address = invData.address || "No indicada";
+  const phone = invData.phone || res.parentPhone || "";
+  const email = invData.email || res.parentEmail || "";
+  const studentNames = invData.studentName || targetStudents.map(s => s.studentName).join(" - ");
+  const studentGrades = invData.studentGrade || targetStudents.map(s => s.studentGrade).join(", ");
   const cleanStudentNameForFile = studentNames.replace(/[^a-zA-Z0-9_-]/g, "_");
 
-  // Armar datos formateados para la factura
+  // Armar datos formateados para la factura oficial de Madrid
   const data = [
-    ["COLEGIO SAN BUENAVENTURA - FRANCISCANOS CAPUCHINOS MURCIA"],
-    ["FACTURA SIMPLIFICADA / JUSTIFICANTE DE COMPRA DE LIBROS DE TEXTO"],
+    ["COLEGIO SAN BUENAVENTURA - FRANCISCANOS MENORES CONVENTUALES (MADRID)"],
+    ["FACTURA OFICIAL / JUSTIFICANTE DE COMPRA DE LIBROS DE TEXTO ESCOLARES"],
     [],
     ["Número Factura:", invoiceNum, "", "Fecha Emisión:", dateStr],
-    ["NIF Emisor:", "R-3000041-A", "", "Colegio:", "Colegio San Buenaventura"],
-    ["Tutor / Comprador:", res.parentName, "", "NIF Tutor:", state.admin.invoiceModal.nif || "No indicado"],
-    ["Email Tutor:", res.parentEmail, "", "Teléfono:", res.parentPhone],
-    ["Alumno(s):", studentNames, "", "Curso(s):", targetStudents.map(s => s.studentGrade).join(", ")],
-    ["Pedido Origen:", res.id, "", "Estado Pedido:", res.status],
+    ["NIF / CIF Emisor:", "R-7800955-B", "", "Colegio:", "Colegio San Buenaventura"],
+    ["Dirección Colegio:", "C/ El Greco, 16, 28011 Madrid", "", "Teléfono Colegio:", "915 26 71 61"],
+    ["Tutor / Destinatario:", parentName, "", "NIF / DNI Destinatario:", nif],
+    ["Domicilio Destinatario:", address, "", "Teléfono Destinatario:", phone],
+    ["Email Destinatario:", email, "", "Alumno(s):", studentNames],
+    ["Curso(s):", studentGrades, "", "Pedido Origen:", res.id],
     [],
     ["Nº", "Alumno", "Curso", "Asignatura", "Título del Libro", "Editorial", "Precio Unitario (€)", "Cantidad", "Importe (€)"]
   ];
@@ -5252,7 +5363,7 @@ window.downloadInvoiceExcel = function(resId, studentIndex = null) {
   targetStudents.forEach(st => {
     (st.books || []).forEach(bId => {
       const book = allBooks.find(b => b.id === bId);
-      const price = book ? (typeof book.price === 'number' ? book.price : parseFloat(book.price) || 0) : 0;
+      const price = book ? (typeof book.price === 'number' ? book.price : parseFloat(b.price) || 0) : 0;
       totalFactura += price;
       data.push([
         lineCounter++,
@@ -5324,9 +5435,20 @@ window.copyInvoiceToClipboard = function(resId, studentIndex = null) {
   const isSingle = (sIdx !== null && students[sIdx]);
   const targetStudents = isSingle ? [students[sIdx]] : students;
 
-  let text = "COLEGIO SAN BUENAVENTURA - DETALLE DE FACTURACIÓN\n";
-  text += `Reserva: ${res.id}\tTutor: ${res.parentName}\tNIF: ${state.admin.invoiceModal.nif || 'No indicado'}\n`;
-  text += `Alumno(s): ${targetStudents.map(s => s.studentName).join(', ')}\n\n`;
+  const invData = state.admin.invoiceModal.data || {};
+  const invoiceNum = invData.invoiceNum || ("FAC-" + res.id.replace("RES-", "") + (isSingle ? "-" + (sIdx + 1) : ""));
+  const dateStr = invData.invoiceDate || (res.createdAt ? new Date(res.createdAt).toLocaleDateString("es-ES") : new Date().toLocaleDateString("es-ES"));
+  const parentName = invData.parentName || res.parentName || "";
+  const nif = invData.nif || "No indicado";
+  const address = invData.address || "No indicada";
+  const studentNames = invData.studentName || targetStudents.map(s => s.studentName).join(", ");
+  const studentGrades = invData.studentGrade || targetStudents.map(s => s.studentGrade).join(", ");
+
+  let text = "COLEGIO SAN BUENAVENTURA - PADRES FRANCISCANOS MENORES CONVENTUALES (MADRID)\n";
+  text += "CIF Emisor: R-7800955-B · C/ El Greco, 16, 28011 Madrid · Tel: 915 26 71 61\n";
+  text += `Factura Nº: ${invoiceNum}\tFecha: ${dateStr}\tPedido Origen: ${res.id}\n`;
+  text += `Destinatario: ${parentName}\tNIF: ${nif}\tDomicilio: ${address}\n`;
+  text += `Alumno(s): ${studentNames}\tCurso(s): ${studentGrades}\n\n`;
   text += "Alumno\tCurso\tAsignatura\tTítulo del Libro\tEditorial\tPrecio (€)\n";
 
   let total = 0;
