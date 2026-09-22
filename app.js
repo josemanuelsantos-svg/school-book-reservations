@@ -694,6 +694,17 @@ function renderHeader() {
                  </svg>`
             }
           </button>
+          ${state.view === "admin" && state.adminAuthenticated ? `
+            <button class="btn btn-primary" onclick="openInvoiceQuickSearchModal()" style="display:inline-flex; align-items:center; gap:6px; background-color:#1e3a8a; border-color:#1e3a8a; font-size:13px; padding:6px 14px; margin-right:8px; font-weight:700; color:#ffffff;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15" style="color:#fbbf24;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+              Generar Factura
+            </button>
+          ` : ''}
           ${state.view === "families" 
             ? `<button class="btn btn-outline" onclick="setView('admin')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="margin-right:8px; vertical-align:middle;">
@@ -1553,6 +1564,15 @@ function renderAdminPortal() {
             </svg>
             Reservas / Pedidos
           </button>
+          <button class="nav-item" onclick="openInvoiceQuickSearchModal()" style="color: #fbbf24; font-weight: 700; background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.25); border-radius: 6px; margin: 4px 0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="color: #fbbf24;">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            📄 Emitir Factura
+          </button>
           <button class="nav-item ${state.adminTab === 'duplicates' ? 'active' : ''}" onclick="setAdminTab('duplicates')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
@@ -1950,9 +1970,20 @@ function renderAdminDashboard() {
       }).join('');
 
   return `
-    <div class="admin-section-header">
-      <h2>Panel General</h2>
-      <p>Estadísticas del proceso de reserva en tiempo real</p>
+    <div class="admin-section-header row-space" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h2>Panel General</h2>
+        <p>Estadísticas del proceso de reserva en tiempo real</p>
+      </div>
+      <button class="btn btn-primary" onclick="openInvoiceQuickSearchModal()" style="display:inline-flex; align-items:center; gap:8px; background-color:#1e3a8a; border-color:#1e3a8a; font-weight:700; padding:10px 18px; font-size:14px; box-shadow: 0 4px 10px rgba(30,58,138,0.25);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="color:#fbbf24;">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        📄 Generar Factura de Alumno
+      </button>
     </div>
 
     ${duplicatedCount > 0 ? `
