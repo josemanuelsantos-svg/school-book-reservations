@@ -576,7 +576,20 @@ const state = {
     selectedResIds: [],
     selectedEmailId: null,
     showInactiveBooks: false,
-    expandedResIds: []
+    expandedResIds: [],
+
+    // Facturación y Factura Individual
+    invoiceModal: {
+      isOpen: false,
+      resId: null,
+      studentIndex: null, // null = todos, o índice 0, 1... para hermano específico
+      nif: "",
+      copied: false
+    },
+    invoiceQuickSearch: {
+      isOpen: false,
+      query: ""
+    }
   }
 };
 
@@ -2284,7 +2297,17 @@ function renderAdminReservations() {
         <h2>Listado de Reservas</h2>
         <p>Gestión de las solicitudes recibidas por las familias</p>
       </div>
-      <div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <button class="btn btn-primary" onclick="openInvoiceQuickSearchModal()" style="display:inline-flex; align-items:center; gap:6px; background-color:#1e3a8a;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          Generar Factura
+        </button>
         <button class="btn btn-outline" onclick="exportReservationsCSV()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="margin-right:8px; vertical-align:middle;">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -2459,11 +2482,20 @@ function renderAdminReservations() {
                       ` : ''}
                     </td>
                     <td><span class="badge badge-${r.status.toLowerCase()}">${r.status}</span></td>
-                    <td>
+                    <td style="white-space: nowrap;">
                       <button class="btn btn-icon-only" onclick="showReservationDetails('${r.id}')" title="Ver Detalles">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      </button>
+                      <button class="btn btn-icon-only" onclick="openStudentInvoiceModal('${r.id}')" title="Emitir Factura" style="margin-left: 4px; color: #1e3a8a;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                          <line x1="16" y1="13" x2="8" y2="13"/>
+                          <line x1="16" y1="17" x2="8" y2="17"/>
+                          <polyline points="10 9 9 9 8 9"/>
                         </svg>
                       </button>
                     </td>
@@ -3558,6 +3590,15 @@ function renderAdminModals() {
                 </button>
               ` : `<div style="margin-right: auto;"></div>`}
 
+              <button class="btn btn-outline" style="border-color: #1e3a8a; color: #1e3a8a; margin-right: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;" onclick="openStudentInvoiceModal('${r.id}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+                Factura / Detalle
+              </button>
               <button class="btn btn-outline" onclick="closeReservationDetails()">Cerrar</button>
               <button class="btn btn-primary" onclick="window.print()">Imprimir Ficha</button>
             </div>
@@ -3810,7 +3851,375 @@ function renderAdminModals() {
     }
   }
 
+  // 5. Modal Búsqueda Rápida de Factura por Alumno
+  modalContent += renderInvoiceQuickSearchModal();
+
+  // 6. Modal de Emisión de Factura Individual / Detalle
+  modalContent += renderInvoiceModal();
+
   return modalContent;
+}
+
+// ----------------------------------------------------
+// RENDERIZADOR: Modal de Búsqueda Rápida de Facturas
+// ----------------------------------------------------
+function renderInvoiceQuickSearchModal() {
+  if (!state.admin.invoiceQuickSearch || !state.admin.invoiceQuickSearch.isOpen) {
+    return "";
+  }
+
+  const query = (state.admin.invoiceQuickSearch.query || "").trim().toLowerCase();
+  const allReservations = DB.getReservations();
+  const books = DB.getBooks();
+
+  let results = [];
+
+  allReservations.forEach(r => {
+    const students = (r.students && r.students.length > 0)
+      ? r.students
+      : [{ studentName: r.studentName, studentGrade: r.studentGrade, books: r.books || [] }];
+
+    students.forEach((s, sIdx) => {
+      const sName = (s.studentName || "").toLowerCase();
+      const pName = (r.parentName || "").toLowerCase();
+      const rId = (r.id || "").toLowerCase();
+      const sGrade = (s.studentGrade || "").toLowerCase();
+
+      if (query === "" || sName.includes(query) || pName.includes(query) || rId.includes(query) || sGrade.includes(query)) {
+        const subtotal = (s.books || []).reduce((sum, bId) => {
+          const b = books.find(x => x.id === bId);
+          return sum + (b ? (typeof b.price === 'number' ? b.price : parseFloat(b.price) || 0) : 0);
+        }, 0);
+
+        results.push({
+          resId: r.id,
+          studentIndex: sIdx,
+          studentName: s.studentName,
+          studentGrade: s.studentGrade,
+          parentName: r.parentName,
+          parentEmail: r.parentEmail,
+          parentPhone: r.parentPhone,
+          date: r.createdAt,
+          subtotal: subtotal,
+          orderTotal: r.total,
+          isMultiStudent: students.length > 1,
+          booksCount: (s.books || []).length
+        });
+      }
+    });
+  });
+
+  const displayResults = results.slice(0, 40);
+
+  return `
+    <div class="modal-overlay" onclick="closeInvoiceQuickSearchModal()">
+      <div class="modal-card card-shadow" onclick="event.stopPropagation()" style="max-width: 700px; width: 95%;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #0f2942 0%, #1e3a8a 100%); color: #ffffff; padding: 18px 24px; border-radius: var(--radius-md) var(--radius-md) 0 0; display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="background:rgba(255,255,255,0.15); width:38px; height:38px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fbbf24;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </div>
+            <div>
+              <h3 style="margin:0; font-size:18px; color:#ffffff; font-family:var(--font-title);">Generador de Facturas por Alumno</h3>
+              <p style="margin:2px 0 0 0; font-size:12px; color:#cbd5e1;">Escribe el nombre del alumno para emitir o descargar su factura al instante</p>
+            </div>
+          </div>
+          <button class="btn-close-modal" onclick="closeInvoiceQuickSearchModal()" style="color:#ffffff; font-size:24px; background:none; border:none; cursor:pointer;">&times;</button>
+        </div>
+
+        <div class="modal-body" style="padding: 20px 24px;">
+          <div class="form-group" style="margin-bottom: 16px;">
+            <div style="position:relative;">
+              <input type="text" id="invoiceQuickSearchInput"
+                     placeholder="Buscar por nombre de alumno (ej. Lucas, Vargas, Sofía, Aaron, RES-2026-348)..."
+                     value="${state.admin.invoiceQuickSearch.query || ''}"
+                     oninput="handleInvoiceQuickSearchInput(event)"
+                     autofocus
+                     style="width: 100%; padding: 12px 14px 12px 42px; font-size: 15px; border: 2px solid #3b82f6; border-radius: 8px; box-sizing: border-box; outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" width="20" height="20" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%);">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+              <small style="color:var(--text-muted); font-size:12px;">
+                ${query ? `Se han encontrado <strong>${results.length}</strong> coincidencia(s)` : `Mostrando todos los alumnos registrados (${results.length} en total)`}
+              </small>
+              <small style="color:#1e3a8a; font-weight:600; font-size:11px;">
+                Haz clic en cualquier alumno para generar su factura
+              </small>
+            </div>
+          </div>
+
+          <div style="max-height: 380px; overflow-y: auto; padding-right: 4px;">
+            ${displayResults.length === 0 ? `
+              <div style="text-align:center; padding: 40px 16px; color: #64748b;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="opacity: 0.35; margin-bottom: 8px;">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <p style="margin:0; font-size:15px; font-weight:600; color:#334155;">No se encontró ningún alumno con ese nombre</p>
+                <p style="margin:6px 0 0 0; font-size:12px; color:#94a3b8;">Prueba con un apellido, el nombre del padre/madre o el código de pedido.</p>
+              </div>
+            ` : displayResults.map(item => `
+              <div class="invoice-search-result-item" onclick="openStudentInvoiceModal('${item.resId}', ${item.isMultiStudent ? item.studentIndex : 'null'})" style="cursor: pointer;">
+                <div style="flex-grow:1; padding-right:12px;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <strong style="font-size: 15px; color: #0f172a;">${item.studentName}</strong>
+                    <span style="font-size: 11px; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; font-weight: 600;">${item.studentGrade}</span>
+                    ${item.isMultiStudent ? `<span style="font-size: 10px; background: #fef3c7; color: #92400e; padding: 1px 6px; border-radius: 10px; font-weight: 600;">Hermano #${item.studentIndex + 1}</span>` : ''}
+                  </div>
+                  <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+                    <span>Tutor: <strong>${item.parentName}</strong></span>
+                    <span style="margin: 0 6px;">•</span>
+                    <span>Pedido: <strong>${item.resId}</strong></span>
+                    <span style="margin: 0 6px;">•</span>
+                    <span>${item.booksCount} libro(s)</span>
+                  </div>
+                </div>
+                <div style="text-align: right; flex-shrink: 0;">
+                  <div style="font-size: 16px; font-weight: 700; color: #1e3a8a;">${item.subtotal.toFixed(2)} €</div>
+                  <button class="btn btn-sm btn-primary" style="margin-top: 4px; padding: 4px 12px; font-size: 11px; background-color: #1e3a8a; display:inline-flex; align-items:center; gap:4px;" onclick="event.stopPropagation(); openStudentInvoiceModal('${item.resId}', ${item.isMultiStudent ? item.studentIndex : 'null'})">
+                    <span>Generar Factura</span> ➔
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+            ${results.length > 40 ? `
+              <p style="text-align:center; font-size:12px; color:#64748b; margin-top:10px;">
+                Mostrando 40 de ${results.length} coincidencias. Escribe más letras para filtrar.
+              </p>
+            ` : ''}
+          </div>
+        </div>
+
+        <div class="modal-footer" style="padding: 12px 24px; background: #f8fafc; border-top: 1px solid #e2e8f0; display:flex; justify-content: flex-end;">
+          <button type="button" class="btn btn-outline" onclick="closeInvoiceQuickSearchModal()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ----------------------------------------------------
+// RENDERIZADOR: Modal de Factura / Detalle Imprimible
+// ----------------------------------------------------
+function renderInvoiceModal() {
+  if (!state.admin.invoiceModal || !state.admin.invoiceModal.isOpen || !state.admin.invoiceModal.resId) {
+    return "";
+  }
+
+  const res = DB.getReservations().find(r => r.id === state.admin.invoiceModal.resId);
+  if (!res) return "";
+
+  const allBooks = DB.getBooks();
+  const students = (res.students && res.students.length > 0)
+    ? res.students
+    : [{ studentName: res.studentName, studentGrade: res.studentGrade, books: res.books || [] }];
+
+  const selectedIdx = state.admin.invoiceModal.studentIndex;
+  const isSingleSibling = (selectedIdx !== null && selectedIdx !== undefined && students[selectedIdx]);
+
+  // Si hay un hermano seleccionado facturamos solo a ese alumno; si es null, a toda la familia
+  const targetStudents = isSingleSibling ? [students[selectedIdx]] : students;
+
+  // Recopilar líneas de libros
+  let lines = [];
+  let totalFactura = 0;
+
+  targetStudents.forEach(st => {
+    (st.books || []).forEach(bookId => {
+      const book = allBooks.find(b => b.id === bookId);
+      const price = book ? (typeof book.price === 'number' ? book.price : parseFloat(book.price) || 0) : 0;
+      totalFactura += price;
+      lines.push({
+        studentName: st.studentName,
+        studentGrade: st.studentGrade,
+        bookTitle: book ? cleanBookTitle(book.title) : ("Libro ID: " + bookId),
+        subject: book ? book.subject : "General",
+        publisher: book ? book.publisher : "N/A",
+        price: price
+      });
+    });
+  });
+
+  const baseImponible = totalFactura / 1.04;
+  const iva4 = totalFactura - baseImponible;
+
+  const invoiceNum = "FAC-" + res.id.replace("RES-", "") + (isSingleSibling ? "-" + (selectedIdx + 1) : "");
+  const invoiceDate = res.createdAt ? new Date(res.createdAt).toLocaleDateString("es-ES") : new Date().toLocaleDateString("es-ES");
+
+  return `
+    <div class="modal-overlay" onclick="closeStudentInvoiceModal()">
+      <div class="modal-card invoice-modal-card card-shadow" onclick="event.stopPropagation()">
+        
+        <!-- Pestañas de Hermanos si es reserva múltiple -->
+        ${students.length > 1 ? `
+          <div class="no-print" style="background: #f1f5f9; padding: 12px 24px; border-bottom: 1px solid #cbd5e1;">
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #475569; margin-bottom: 6px;">
+              Seleccionar Destinatario de la Factura:
+            </div>
+            <div class="invoice-sibling-tabs" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
+              <button class="invoice-sibling-btn ${selectedIdx === null ? 'active' : ''}" onclick="setInvoiceStudentFilter(null)">
+                Toda la Familia (${res.total.toFixed(2)} €)
+              </button>
+              ${students.map((st, sIdx) => {
+                const sTotal = (st.books || []).reduce((acc, bId) => {
+                  const b = allBooks.find(x => x.id === bId);
+                  return acc + (b ? (typeof b.price === 'number' ? b.price : parseFloat(b.price) || 0) : 0);
+                }, 0);
+                return `
+                  <button class="invoice-sibling-btn ${selectedIdx === sIdx ? 'active' : ''}" onclick="setInvoiceStudentFilter(${sIdx})">
+                    ${st.studentName} (${sTotal.toFixed(2)} €)
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Hoja de Factura imprimible -->
+        <div class="invoice-paper" id="invoicePaperDocument">
+          
+          <!-- Banner Superior / Cabecera -->
+          <div class="invoice-header-banner">
+            <div>
+              <h2 style="color:#ffffff; font-size:18px; margin:0 0 4px 0; font-family:var(--font-title);">COLEGIO SAN BUENAVENTURA</h2>
+              <div style="font-size:12px; color:#e2e8f0;">Franciscanos Capuchinos · Murcia</div>
+              <div style="font-size:11px; color:#cbd5e1; margin-top:2px;">Plaza de los Capuchinos, 1 · 30002 Murcia · administracion@sanbuenaventura.org</div>
+            </div>
+            <div style="text-align: right;">
+              <span style="display:inline-block; background:rgba(255,255,255,0.18); padding:4px 10px; border-radius:4px; font-weight:700; font-size:12px; letter-spacing:1px; text-transform:uppercase;">
+                FACTURA SIMPLIFICADA
+              </span>
+              <div style="font-size:14px; font-weight:700; margin-top:4px;">${invoiceNum}</div>
+              <div style="font-size:11px; color:#e2e8f0;">Fecha: ${invoiceDate}</div>
+            </div>
+          </div>
+
+          <!-- Bloque de Información Emisor / Receptor -->
+          <div class="invoice-grid-info">
+            <div class="invoice-info-block">
+              <h4>Datos del Emisor</h4>
+              <p><strong>Razón Social:</strong> Colegio San Buenaventura</p>
+              <p><strong>N.I.F.:</strong> R-3000041-A</p>
+              <p><strong>Dirección:</strong> Pl. de los Capuchinos, 1, 30002 Murcia</p>
+              <p><strong>Concepto:</strong> Venta de Libros de Texto Escolar (Curso 2026/2027)</p>
+            </div>
+            <div class="invoice-info-block">
+              <h4>Datos del Destinatario / Alumno</h4>
+              <p><strong>Tutor/a:</strong> ${res.parentName}</p>
+              <p><strong>Email:</strong> ${res.parentEmail}</p>
+              <p><strong>Teléfono:</strong> ${res.parentPhone}</p>
+              <p><strong>Alumno(s):</strong> <span style="color:#1e3a8a; font-weight:700;">${targetStudents.map(s => s.studentName).join(', ')}</span></p>
+              <p><strong>Curso(s):</strong> ${targetStudents.map(s => s.studentGrade).join(', ')}</p>
+              <div style="margin-top: 6px;" class="no-print">
+                <label style="font-size:11px; color:#475569; font-weight:600;">NIF/DNI Titular (Opcional para la factura):</label>
+                <input type="text" id="invoiceNifInput" value="${state.admin.invoiceModal.nif || ''}"
+                       placeholder="Ej. 12345678Z..."
+                       oninput="handleInvoiceNifChange(event)"
+                       style="display:block; width:100%; max-width:240px; margin-top:2px; padding:4px 8px; font-size:12px; border:1px solid #cbd5e1; border-radius:4px; box-sizing:border-box;">
+              </div>
+              ${state.admin.invoiceModal.nif ? `<p class="print-only" style="margin-top:2px;"><strong>N.I.F. Tutor:</strong> ${state.admin.invoiceModal.nif}</p>` : ''}
+            </div>
+          </div>
+
+          <!-- Tabla de Libros / Conceptos -->
+          <div class="invoice-table-wrapper">
+            <table class="invoice-table">
+              <thead>
+                <tr>
+                  <th style="width: 35px; text-align:center;">#</th>
+                  ${targetStudents.length > 1 ? '<th style="width: 140px;">Alumno</th>' : ''}
+                  <th style="width: 100px;">Curso</th>
+                  <th style="width: 120px;">Asignatura</th>
+                  <th>Título del Libro</th>
+                  <th style="width: 100px;">Editorial</th>
+                  <th style="width: 85px; text-align:right;">PVP (€)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${lines.length === 0 ? `
+                  <tr><td colspan="${targetStudents.length > 1 ? 7 : 6}" style="text-align:center; padding:16px; color:#64748b;">No hay libros registrados en esta selección.</td></tr>
+                ` : lines.map((l, i) => `
+                  <tr>
+                    <td style="text-align:center; color:#64748b;">${i + 1}</td>
+                    ${targetStudents.length > 1 ? `<td><strong>${l.studentName}</strong></td>` : ''}
+                    <td>${l.studentGrade}</td>
+                    <td><strong>${l.subject}</strong></td>
+                    <td>${l.bookTitle}</td>
+                    <td>${l.publisher}</td>
+                    <td style="text-align:right; font-weight:600;">${l.price.toFixed(2)} €</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Resumen de Totales e Impuestos -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:16px; gap:20px; flex-wrap:wrap;">
+            <div style="font-size:11px; color:#64748b; max-width:400px; line-height:1.5;">
+              <p style="margin:0 0 4px 0;">* Factura emitida en base al pedido <strong>${res.id}</strong> del Colegio San Buenaventura.</p>
+              <p style="margin:0;">* IVA superreducido del 4% incluido conforme a la normativa tributaria para material curricular escolar.</p>
+            </div>
+
+            <div style="min-width:240px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:12px 16px;">
+              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; color:#475569;">
+                <span>Base Imponible (IVA 4%):</span>
+                <span>${baseImponible.toFixed(2)} €</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px; color:#475569;">
+                <span>Cuota IVA (4%):</span>
+                <span>${iva4.toFixed(2)} €</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:800; color:#0f2942; border-top:2px solid #cbd5e1; padding-top:6px;">
+                <span>TOTAL FACTURA:</span>
+                <span style="color:#1e3a8a;">${totalFactura.toFixed(2)} €</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Botones de Acción / Descarga -->
+        <div class="modal-footer no-print" style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:14px 24px; border-top:1px solid #e2e8f0; flex-wrap:wrap; gap:8px;">
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-outline" onclick="closeStudentInvoiceModal()">Cerrar</button>
+            <button class="btn btn-outline" style="border-color:#10b981; color:#065f46; display:inline-flex; align-items:center; gap:6px;" onclick="copyInvoiceToClipboard('${res.id}', ${selectedIdx !== null && selectedIdx !== undefined ? selectedIdx : 'null'})">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              ${state.admin.invoiceModal.copied ? "✓ ¡Copiado al Portapapeles!" : "Copiar Tabla (Word/Excel)"}
+            </button>
+          </div>
+
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary" style="background-color:#059669; border-color:#059669; display:inline-flex; align-items:center; gap:6px;" onclick="downloadInvoiceExcel('${res.id}', ${selectedIdx !== null && selectedIdx !== undefined ? selectedIdx : 'null'})">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Descargar Excel (.xlsx)
+            </button>
+            <button class="btn btn-primary" style="background-color:#1e3a8a; border-color:#1e3a8a; display:inline-flex; align-items:center; gap:6px;" onclick="printInvoice()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                <polyline points="6 9 6 2 18 2 18 9"/>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                <rect x="6" y="14" width="12" height="8"/>
+              </svg>
+              Imprimir / PDF
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
 }
 
 // ==========================================
@@ -4719,6 +5128,215 @@ async function syncFromSupabase() {
     console.error("Error al sincronizar desde Supabase:", error);
   }
 }
+
+// ==========================================
+// CONTROLADORES DE FACTURACIÓN Y BÚSQUEDA DE FACTURAS
+// ==========================================
+window.openInvoiceQuickSearchModal = function() {
+  state.admin.invoiceQuickSearch.isOpen = true;
+  state.admin.invoiceQuickSearch.query = "";
+  render();
+  setTimeout(() => {
+    const el = document.getElementById("invoiceQuickSearchInput");
+    if (el) el.focus();
+  }, 50);
+};
+
+window.closeInvoiceQuickSearchModal = function() {
+  state.admin.invoiceQuickSearch.isOpen = false;
+  render();
+};
+
+window.handleInvoiceQuickSearchInput = function(e) {
+  state.admin.invoiceQuickSearch.query = e.target.value;
+  render();
+  const el = document.getElementById("invoiceQuickSearchInput");
+  if (el) {
+    el.focus();
+    el.selectionStart = el.selectionEnd = el.value.length;
+  }
+};
+
+window.openStudentInvoiceModal = function(resId, studentIndex = null) {
+  state.admin.invoiceModal.isOpen = true;
+  state.admin.invoiceModal.resId = resId;
+  state.admin.invoiceModal.studentIndex = (studentIndex !== undefined && studentIndex !== null) ? Number(studentIndex) : null;
+  state.admin.invoiceModal.copied = false;
+  if (state.admin.invoiceQuickSearch.isOpen) {
+    state.admin.invoiceQuickSearch.isOpen = false;
+  }
+  render();
+};
+
+window.closeStudentInvoiceModal = function() {
+  state.admin.invoiceModal.isOpen = false;
+  render();
+};
+
+window.setInvoiceStudentFilter = function(studentIndex) {
+  state.admin.invoiceModal.studentIndex = (studentIndex !== null && studentIndex !== undefined) ? Number(studentIndex) : null;
+  render();
+};
+
+window.handleInvoiceNifChange = function(e) {
+  state.admin.invoiceModal.nif = e.target.value;
+};
+
+window.downloadInvoiceExcel = function(resId, studentIndex = null) {
+  const res = DB.getReservations().find(r => r.id === resId);
+  if (!res) return;
+
+  const allBooks = DB.getBooks();
+  const students = (res.students && res.students.length > 0)
+    ? res.students
+    : [{ studentName: res.studentName, studentGrade: res.studentGrade, books: res.books || [] }];
+
+  const sIdx = (studentIndex !== null && studentIndex !== undefined) ? Number(studentIndex) : null;
+  const isSingle = (sIdx !== null && students[sIdx]);
+  const targetStudents = isSingle ? [students[sIdx]] : students;
+
+  const invoiceNum = "FAC-" + res.id.replace("RES-", "") + (isSingle ? "-" + (sIdx + 1) : "");
+  const dateStr = res.createdAt ? new Date(res.createdAt).toLocaleDateString("es-ES") : new Date().toLocaleDateString("es-ES");
+  const studentNames = targetStudents.map(s => s.studentName).join(" - ");
+  const cleanStudentNameForFile = studentNames.replace(/[^a-zA-Z0-9_-]/g, "_");
+
+  // Armar datos formateados para la factura
+  const data = [
+    ["COLEGIO SAN BUENAVENTURA - FRANCISCANOS CAPUCHINOS MURCIA"],
+    ["FACTURA SIMPLIFICADA / JUSTIFICANTE DE COMPRA DE LIBROS DE TEXTO"],
+    [],
+    ["Número Factura:", invoiceNum, "", "Fecha Emisión:", dateStr],
+    ["NIF Emisor:", "R-3000041-A", "", "Colegio:", "Colegio San Buenaventura"],
+    ["Tutor / Comprador:", res.parentName, "", "NIF Tutor:", state.admin.invoiceModal.nif || "No indicado"],
+    ["Email Tutor:", res.parentEmail, "", "Teléfono:", res.parentPhone],
+    ["Alumno(s):", studentNames, "", "Curso(s):", targetStudents.map(s => s.studentGrade).join(", ")],
+    ["Pedido Origen:", res.id, "", "Estado Pedido:", res.status],
+    [],
+    ["Nº", "Alumno", "Curso", "Asignatura", "Título del Libro", "Editorial", "Precio Unitario (€)", "Cantidad", "Importe (€)"]
+  ];
+
+  let lineCounter = 1;
+  let totalFactura = 0;
+
+  targetStudents.forEach(st => {
+    (st.books || []).forEach(bId => {
+      const book = allBooks.find(b => b.id === bId);
+      const price = book ? (typeof book.price === 'number' ? book.price : parseFloat(book.price) || 0) : 0;
+      totalFactura += price;
+      data.push([
+        lineCounter++,
+        st.studentName,
+        st.studentGrade,
+        book ? book.subject : "General",
+        book ? cleanBookTitle(book.title) : ("Libro ID: " + bId),
+        book ? book.publisher : "N/A",
+        price,
+        1,
+        price
+      ]);
+    });
+  });
+
+  const baseImponible = totalFactura / 1.04;
+  const iva4 = totalFactura - baseImponible;
+
+  data.push([]);
+  data.push(["", "", "", "", "", "", "Base Imponible (IVA 4%):", "", Number(baseImponible.toFixed(2))]);
+  data.push(["", "", "", "", "", "", "Cuota IVA (4%):", "", Number(iva4.toFixed(2))]);
+  data.push(["", "", "", "", "", "", "TOTAL A PAGAR / COBRADO:", "", Number(totalFactura.toFixed(2))]);
+
+  const fileName = `Factura_${invoiceNum}_${cleanStudentNameForFile}.xlsx`;
+
+  if (window.XLSX) {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    // Configuración de anchos de columna
+    ws['!cols'] = [
+      { wch: 6 },  // Nº
+      { wch: 25 }, // Alumno
+      { wch: 16 }, // Curso
+      { wch: 20 }, // Asignatura
+      { wch: 45 }, // Título
+      { wch: 18 }, // Editorial
+      { wch: 18 }, // PVP
+      { wch: 10 }, // Cantidad
+      { wch: 14 }  // Importe
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, "Factura");
+    XLSX.writeFile(wb, fileName);
+  } else {
+    // Fallback a CSV
+    const csvContent = "\uFEFF" + data.map(row => row.map(cell => `"${String(cell || '').replace(/"/g, '""')}"`).join(";")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", fileName.replace(".xlsx", ".csv"));
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+};
+
+window.copyInvoiceToClipboard = function(resId, studentIndex = null) {
+  const res = DB.getReservations().find(r => r.id === resId);
+  if (!res) return;
+
+  const allBooks = DB.getBooks();
+  const students = (res.students && res.students.length > 0)
+    ? res.students
+    : [{ studentName: res.studentName, studentGrade: res.studentGrade, books: res.books || [] }];
+
+  const sIdx = (studentIndex !== null && studentIndex !== undefined) ? Number(studentIndex) : null;
+  const isSingle = (sIdx !== null && students[sIdx]);
+  const targetStudents = isSingle ? [students[sIdx]] : students;
+
+  let text = "COLEGIO SAN BUENAVENTURA - DETALLE DE FACTURACIÓN\n";
+  text += `Reserva: ${res.id}\tTutor: ${res.parentName}\tNIF: ${state.admin.invoiceModal.nif || 'No indicado'}\n`;
+  text += `Alumno(s): ${targetStudents.map(s => s.studentName).join(', ')}\n\n`;
+  text += "Alumno\tCurso\tAsignatura\tTítulo del Libro\tEditorial\tPrecio (€)\n";
+
+  let total = 0;
+  targetStudents.forEach(st => {
+    (st.books || []).forEach(bId => {
+      const book = allBooks.find(b => b.id === bId);
+      const price = book ? (typeof book.price === 'number' ? book.price : parseFloat(b.price) || 0) : 0;
+      total += price;
+      text += `${st.studentName}\t${st.studentGrade}\t${book ? book.subject : ''}\t${book ? cleanBookTitle(book.title) : bId}\t${book ? book.publisher : ''}\t${price.toFixed(2).replace('.', ',')} €\n`;
+    });
+  });
+
+  const base = total / 1.04;
+  const iva = total - base;
+
+  text += `\nBase Imponible (IVA 4%):\t${base.toFixed(2).replace('.', ',')} €\n`;
+  text += `IVA (4%):\t${iva.toFixed(2).replace('.', ',')} €\n`;
+  text += `TOTAL:\t${total.toFixed(2).replace('.', ',')} €\n`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    state.admin.invoiceModal.copied = true;
+    render();
+    setTimeout(() => {
+      if (state.admin.invoiceModal.isOpen) {
+        state.admin.invoiceModal.copied = false;
+        render();
+      }
+    }, 2500);
+  }).catch(err => {
+    console.error("Error al copiar al portapapeles:", err);
+    alert("No se pudo copiar automáticamente. Puedes seleccionar el texto de la tabla manualmente.");
+  });
+};
+
+window.printInvoice = function() {
+  document.body.classList.add("printing-invoice");
+  window.print();
+  setTimeout(() => {
+    document.body.classList.remove("printing-invoice");
+  }, 500);
+};
 
 // Inicializar la App en pantalla
 document.addEventListener("DOMContentLoaded", () => {
