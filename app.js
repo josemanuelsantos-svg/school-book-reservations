@@ -4241,22 +4241,22 @@ function renderInvoiceModal() {
           </div>
 
           <!-- Resumen de Totales e Impuestos -->
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:16px; gap:20px; flex-wrap:wrap;">
-            <div style="font-size:11px; color:#64748b; max-width:420px; line-height:1.5;">
+          <div class="invoice-totals-container" style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:16px; gap:20px; flex-wrap:wrap;">
+            <div class="invoice-totals-notes" style="font-size:11px; color:#64748b; max-width:420px; line-height:1.5;">
               <p style="margin:0 0 4px 0;">* Factura emitida en base al pedido <strong>${res.id}</strong> del Colegio San Buenaventura (Madrid).</p>
               <p style="margin:0;">* IVA superreducido del 4% incluido conforme a la legislación tributaria aplicable a material curricular escolar.</p>
             </div>
 
-            <div style="min-width:240px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px 16px;">
-              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; color:#475569;">
+            <div class="invoice-totals-box" style="min-width:240px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px 16px;">
+              <div class="invoice-totals-row" style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; color:#475569;">
                 <span>Base Imponible (IVA 4%):</span>
                 <span>${baseImponible.toFixed(2)} €</span>
               </div>
-              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px; color:#475569;">
+              <div class="invoice-totals-row" style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px; color:#475569;">
                 <span>Cuota IVA (4%):</span>
                 <span>${iva4.toFixed(2)} €</span>
               </div>
-              <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:800; color:#0f2942; border-top:2px solid #cbd5e1; padding-top:6px;">
+              <div class="invoice-totals-total" style="display:flex; justify-content:space-between; font-size:16px; font-weight:800; color:#0f2942; border-top:2px solid #cbd5e1; padding-top:6px;">
                 <span>TOTAL FACTURA:</span>
                 <span style="color:#1e3a8a;">${totalFactura.toFixed(2)} €</span>
               </div>
